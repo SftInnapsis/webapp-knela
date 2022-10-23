@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*":["src/components/*"],
+      "@sections/*":["src/components/sections/*"],
+      "@views/*":["src/views/*"],
+      "@assets/*":["src/assets/*"],
+      "@rdx/*":["src/redux/*"],
+      "@routers/*":["src/routers/*"],
+      "@service/*":["src/service/*"],
+      "@models/*":["src/service/models/*"],
+      "@toolbox/*":["src/toolbox/*"],
+      "@constants/*":["src/toolbox/constants/*"],
+      "@defaults/*":["src/toolbox/defaults/*"],
+      "@helpers/*":["src/toolbox/helpers/*"],
+      "@hooks/*":["src/toolbox/hooks/*"],
+    }
+  }
+}

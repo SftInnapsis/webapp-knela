@@ -1,0 +1,49 @@
+/*ESTILOS PARA MODALES*/
+.modal-login__header{
+   text-align: center;
+   color: #fff !important;
+   padding: 5px 10px;
+   display: flex;
+ }
+ .modal-modal-title{
+   color:rgb(3, 3, 3);
+ }
+ .modal-body{
+   display: flex;
+   flex-direction: column;
+   padding: 15px;
+ }
+ .modal-footer{
+   justify-content: space-around;
+   /* align-items: center; */
+ }
+ .modal-login__input{
+    border-radius: 15px ;
+    font-size: 16px;
+    border:solid 0.5px rgb(150, 150, 150);
+    height: 40px;
+    width: 100%;
+    padding:0px 10px;
+ }
+ .modal-login__input:focus{
+    outline: 2px solid #48e;
+
+ }
+ .modal-img{
+   width: 80px;
+   margin:0 auto;
+ }
+ .modal-tittle{
+   width: 100%;
+   font-weight: bold;
+   padding-bottom: 20px;
+ }
+
+ .modal-header{
+    text-align: center;
+    color: rgb(255, 255, 255) !important;
+    background-color: #155172;
+    margin-bottom: 15px;
+    display: flex;
+    padding: 3px;
+  }

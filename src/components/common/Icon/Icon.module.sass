@@ -1,0 +1,33 @@
+
+@mixin icon-size($size)
+   width: $size
+   height: $size
+
+.Container
+   display: inline-block
+   text-transform: none
+   line-height: 1
+   font-size: 0px
+   padding: 2px
+   svg
+      fill: currentColor
+
+.Icon-
+   &1x
+      @include icon-size(16px)
+   &2x
+      @include icon-size(20px)
+   &3x
+      @include icon-size(24px)
+   &4x
+      @include icon-size(28px)
+   &5x
+      @include icon-size(32px)
+   &6x
+      @include icon-size(40px)
+   &7x
+      @include icon-size(48px)
+   &8x
+      @include icon-size(56px)
+   &9x
+      @include icon-size(64px)

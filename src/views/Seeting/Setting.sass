@@ -1,0 +1,25 @@
+.button-container
+  width: fit-content
+  svg
+    width: 14px
+    margin-left: 10px
+.c-setting
+  &__header
+    display: flex
+    align-items: center
+    justify-content: space-between
+    margin-bottom: 27px
+  &__header .c-section__title h1
+    margin: 0
+    @media screen and (max-width: 768px)
+      margin-bottom: 27px
+  &__table-container
+    background-color: #fff
+    height: 500px
+    padding: 1em 1.5em
+  @media screen and (max-width: 768px)
+    padding: 1.5em
+    &__header
+      display: block
+    .button-container
+      margin: 0 auto

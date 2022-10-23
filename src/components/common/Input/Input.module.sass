@@ -1,0 +1,119 @@
+@import "../../../toolbox/styles/_color"
+
+.InputContent
+   display: flex
+   align-items: flex-start
+
+.Container
+   color: $color-text-dark
+
+.InputControl
+   display: flex
+   flex-direction: column
+   width: 100%
+
+.InputContainer
+   display: flex
+   align-items: center
+   border-radius: 5px
+   max-width: none
+   border: 1px solid #b9b1a9
+
+.Input
+   width: calc(100% + 4px)
+   display: inline-block
+   min-width: 0px
+   line-height: 20px
+   color: rgba(0, 0, 0, 0.87)
+   background-color: transparent
+   font-size: 1rem
+   border: none
+   outline: none !important
+   height: 1.1876em
+   padding: 6px 10px
+   margin: -2px
+   min-height: 48px
+   &.Dense
+      min-height: 38px
+   &.Shake
+      animation: shake 0.80s cubic-bezier(.36,.07,.19,.97) both
+      transform: translate3d(0, 0, 0)
+   &::placeholder
+      text-overflow: ellipsis
+      max-width: 100%
+      width: 100%
+   &:focus
+      outline: none !important
+
+.Elevation
+   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12)
+
+.Details
+   display: flex
+   margin: 4px 0px 4px
+   padding: 0px 12px
+   line-height: 12px
+   font-size: 12px
+   .Messages
+      display: flex
+      flex-direction: column
+      width: 100%
+      overflow: hidden
+      span
+         text-align: left
+         word-break: break-word
+         word-wrap: break-word
+         &:not(:last-child)
+            margin-bottom: 2px
+      .Message
+         white-space: pre-wrap
+
+.Counter
+   margin-left: 8px
+   white-space: nowrap
+   min-height: 12px
+   line-height: 12px
+
+.Adornment
+   display: inline-flex
+   &.Prepend
+      margin: 0px 9px 0px 0px
+   &.PrependInner
+      align-self: center
+      padding-right: 4px
+   &.Append
+      align-self: center
+      padding-left: 4px
+   &.AppendOuter
+      margin: 0px 0px 0px 9px
+
+.Success
+   .BorderColor
+      border: 2px solid $color-success
+   p, span, button, label
+      color: $color-success !important
+
+.Error
+   .BorderColor
+      border: 2px solid $color-error
+   p, span, button, label
+      color: $color-error !important
+
+.Disabled
+   .BorderColor
+      border: 2px solid rgba(0, 0, 0, 0)
+   p, span, button, label
+      color: $color-disabled !important
+
+@keyframes shake
+   10%, 90%
+      transform: translate3d(-0.5px, 0, 0)
+
+   20%, 80%
+      transform: translate3d(1px, 0, 0)
+
+   30%, 50%, 70%
+      transform: translate3d(-2px, 0, 0)
+
+   40%, 60%
+      transform: translate3d(2px, 0, 0)

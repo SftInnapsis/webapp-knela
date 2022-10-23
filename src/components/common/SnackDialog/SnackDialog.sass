@@ -1,0 +1,72 @@
+@import "../../../toolbox/styles/_color"
+.c-snack-dialog-continer
+    border-radius: 10px !important
+    box-shadow: -1px 6px 8px -7px rgba($color-black,0.2), 0px 12px 20px 3px rgba($color-black,0.14) !important
+
+.c-snack-dialog-title
+    text-align: center
+    font-size: 18px
+    color: $color-black
+    line-height: 20px
+    font-family: sans-serif
+    background: #59c4e4
+    padding: 20px 80px !important
+    box-sizing: border-box
+    svg
+        fill: white
+        width: 90px
+        height: 90px
+        rect
+            fill: rgb(228, 89, 89)
+.c-snack-dialog-content
+    display: flex
+    justify-content: center
+    align-items: center
+    flex-direction: column
+    padding: 20px 24px 10px 24px !important
+    h2
+        font-size: 18px
+        font-family: Ubuntu
+        font-style: normal
+        font-weight: 500
+        line-height: 20px
+        margin-bottom: 8px
+    p
+        font-family: Ubuntu
+        text-align: center
+
+.c-snack-dialog-message
+    p
+        font-family: Ubuntu
+        line-height: 30px
+        font-size: 16px
+    
+.c-snack-dialog-action
+    padding: 20px 24px !important
+    display: flex
+    justify-content: space-around !important
+
+    button[datatype="info"]
+        background: #44bee2
+        border-color: #0eb4e4
+        &:hover,
+        &:active
+            background: #0eb4e4 !important
+    button[datatype="warning"]
+        background: #f4a42e
+        border-color: #f29915
+        &:hover,
+        &:active
+            background: #f29915 !important
+    button[datatype="error"]
+        background: #e45959
+        border-color: #f04f4f
+        &:hover,
+        &:active
+            background: #f04f4f !important
+    button[datatype="success"]
+        background: #4caf83
+        border-color: #479c76
+        &:hover,
+        &:active
+            background: #479c76 !important

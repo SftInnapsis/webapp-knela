@@ -1,0 +1,15 @@
+export const ROUTE_HOME            = '/';
+export const ROUTE_LOGIN           = '/login/:type';
+export const ROUTE_ACCOUNT         = "/cuenta";
+export const ROUTE_NOTIFY          = "/notificaciones";
+export const ROUTE_ENTITY          = "/empresas";
+export const ROUTE_ENTITY_CREATE   = "/empresas/crear";
+export const ROUTE_ENTITY_UPDATE   = "/empresas/detalle";
+export const ROUTE_ENTITY_USERS    = "/empresas/usuarios";
+export const ROUTE_PERFIL          = "/perfil";
+export const ROUTE_CONFIGURACION   = "/configuracion";
+export const ROUTE_USER            = "/usuarios";
+export const ROUTE_USER_CREATE     = "/usuarios/crear";
+export const ROUTE_USER_UPDATE     = "/usuarios/detalle";
+export const ROUTE_PATIENT         = "/patient";
+export const ROUTE_BUSINESS_AREA   = "/business-area";

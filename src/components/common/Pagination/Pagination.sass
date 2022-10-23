@@ -1,0 +1,29 @@
+@import "./../../../toolbox/styles/_color"
+.c-pagination
+   margin: 1.5em 0
+
+.c-pagination-btn
+  display: flex
+  margin: 0.2em auto
+  font-size: 1.3em
+  width: fit-content
+  color: $color-blue
+   a
+      display: inline-block
+      padding: .2em 0
+      min-width: 1.5em
+      text-align: center
+      color: inherit
+      border-radius: 3px
+      cursor: pointer
+
+.c-pagination-btn__prev:hover
+   background-color: var(--color-bg-button)
+
+.c-pagination-btn__next:hover
+   background-color: var(--color-bg-button)
+
+.c-pagination-btn--active
+   background-color: $color-blue
+   color: var(--color-white)
+   border-radius: 3px

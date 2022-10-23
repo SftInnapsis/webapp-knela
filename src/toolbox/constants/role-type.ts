@@ -1,0 +1,4 @@
+export const ROLE_SUPER_ADMIN = 'SUPERADMIN';
+export const ROLE_ADMIN = 'ADMINISTRADOR';
+export const ROLE_SUPERVISOR = 'SUPERVISOR';
+export const ROLE_VENDEDOR= 'VENDEDOR';
