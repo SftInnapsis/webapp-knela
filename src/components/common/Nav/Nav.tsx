@@ -10,6 +10,10 @@ import useResponsive from '../../../hooks/useResponsive';
 // components
 import Scrollbar from '../Scrollbar/Scrollbar';
 import NavSection from '../Header/NavSection';
+import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
+import { KEY_USER_DATA } from '@/toolbox/constants/local-storage';
+import { ROLE_ADMIN, ROLE_SUPERVISOR } from '@/toolbox/constants/role-type';
+import { ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
 //
 // import navConfig from './config';
 // import navSubConfigdashboard from './sub-config';
@@ -45,10 +49,11 @@ export default function Nav({ openNav, onCloseNav }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  const data_user = readLocalStorage(KEY_USER_DATA);
   const account = {
     photoURL: '',
-    displayName: 'Luis Fernando',
-    role: 'Superadmin'
+    displayName: data_user.user.name + ' '+ data_user.user.last_name,
+    role: data_user.user.role
   }
   const renderContent = (
     <Scrollbar
@@ -79,8 +84,8 @@ export default function Nav({ openNav, onCloseNav }) {
         </Link>
       </Box>
 
-      <NavSection/>
-
+        <NavSection/>
+     
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>
   );

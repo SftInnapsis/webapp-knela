@@ -29,7 +29,7 @@ import { authenticationSoftnetService } from "@/service/api/services/Authentific
 // import { bypassService } from "@/service/services/Bypass.service";
 import { KEY_BYPASS, KEY_TOKEN_KYTE, KEY_USER_DATA } from "@/toolbox/constants/local-storage";
 import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-storage-helper";
-import { ROLE_ADMIN, ROLE_ADMIN_PROYECCION,  ROLE_PACIENTE,  ROLE_SUPER_ADMIN, ROLE_TRABAJADOR } from "@/toolbox/defaults/static-roles";
+import { ROLE_ADMIN, ROLE_ADMIN_PROYECCION,  ROLE_DOCTOR,  ROLE_DOCTOR_IND,  ROLE_FAMILIAR,  ROLE_PACIENTE,  ROLE_SUPER_ADMIN, ROLE_TRABAJADOR, ROLE_TUTOR } from "@/toolbox/defaults/static-roles";
 // import firebase from '@/config/firebase';
 import Pusher from "pusher-js"
 import Echo from 'laravel-echo'
@@ -80,6 +80,15 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
    // const { rut, usuario, password } = props.location && qs.parse(ruta.slice(1, -1));
    const validateType = () => {
       switch (name) {
+         case 'admin':
+            setData(prev => ({ ...prev, perfil: 1 }));
+            break;
+         case 'admin-centro-medico':
+            setData(prev => ({ ...prev, perfil: 2 }));
+            break;
+         case 'doctor-independiente':
+            setData(prev => ({ ...prev, perfil: 3 }));
+            break;
          case 'doctor':
             setData(prev => ({ ...prev, perfil: 4 }));
             break;
@@ -90,6 +99,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
             setData(prev => ({ ...prev, perfil: 6 }));
             break;
          default:
+            //revisar
             setData(prev => ({ ...prev, perfil: 4 }));
             history.push(`/login/tutor`);
       }
@@ -224,9 +234,23 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
          if (data.user.role == ROLE_ADMIN) {
             history.push(ROUTE_HOME)
          }
+         if (data.user.role == ROLE_DOCTOR_IND) {
+            history.push(ROUTE_HOME)
+         }
+         if (data.user.role == ROLE_DOCTOR) {
+            history.push(ROUTE_HOME)
+         }
          if (data.user.role == ROLE_PACIENTE) {
             history.push(ROUTE_HOME)
          }
+         if (data.user.role == ROLE_FAMILIAR) {
+            history.push(ROUTE_HOME)
+         }
+         if (data.user.role == ROLE_TUTOR) {
+            history.push(ROUTE_HOME)
+         }
+
+         
 
          // props.$action.actionSetListNotification(2)
          // if (data) {

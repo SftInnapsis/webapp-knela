@@ -33,6 +33,8 @@ import Menu from '@mui/material/Menu';
 import { authenticationService } from "@/service/services/Authentication.service";
 import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
+import { ROLE_ADMIN } from "@/toolbox/constants/role-type";
+import { ROLE_SUPER_ADMIN } from "@/toolbox/defaults/static-roles";
 const itemData = [
     {
         id: 1,
@@ -140,12 +142,12 @@ export const HomeDoctor = (props) => {
     //         label: "Los Angeles",
     //     },
     // ];
-    console.log(dataUser.user.role);
+    // console.log(dataUser.user.role);
     const logout = () => {
         handleMenuClose();
         authenticationService.logout().then(res => {
             if (!res.error) {
-                switch(dataUser.user.role)
+                switch(dataUser?.user?.role)
                 {
                     case 'DOCTOR':
                         window.location.replace('/login/doctor');
@@ -156,6 +158,11 @@ export const HomeDoctor = (props) => {
                     case 'TUTOR':
                         window.location.replace('/login/tutor');
                         break;
+                    case ROLE_ADMIN:
+                        window.location.replace('/login/admin-centro-medico');
+                        break;
+                    case ROLE_SUPER_ADMIN:
+                        window.location.replace('/login/admin')
                 }
                
             }

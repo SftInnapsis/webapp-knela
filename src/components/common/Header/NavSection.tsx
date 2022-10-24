@@ -7,6 +7,24 @@ import { Box, List, ListItemText } from '@mui/material';
 import { ListItemIcon, ListItemButton } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import GroupIcon from '@mui/icons-material/Group';
+import BadgeIcon from '@mui/icons-material/Badge';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import ContactsIcon from '@mui/icons-material/Contacts';
+import PeopleIcon from '@mui/icons-material/People';
+import HandymanIcon from '@mui/icons-material/Handyman';
+import AddToQueueIcon from '@mui/icons-material/AddToQueue';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ChatIcon from '@mui/icons-material/Chat';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import ThreePIcon from '@mui/icons-material/ThreeP';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
+import { KEY_USER_DATA } from '@/toolbox/constants/local-storage';
+import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 // import { StyledNavItem, StyledNavSubItem,StyledNavItemIcon } from './NavSection-styles';
 // import SvgColor from '../../components/svg';
 // import WidgetsIcon from '@mui/icons-material/Widgets';
@@ -15,47 +33,173 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 // ----------------------------------------------------------------------
 
 // const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
+
+
+const rutasAdmin = [
+  {
+    id:1,
+    name: "Maestros",
+    icon: <HandymanIcon />,
+    rutas: [
+      {
+        name_ruta: "Areas",
+        location: "/areas",
+        icon: <GroupIcon/>,
+      },
+      {
+        name_ruta: "Especialidades",
+        location: "/especialidades",
+        icon: <BadgeIcon/>,
+      },
+      {
+        name_ruta: "Doctores",
+        location: "/doctores",
+        icon: <AssignmentIndIcon/>,
+      },
+      {
+        name_ruta: "Pacientes",
+        location: "/pacientes",
+        icon: <ContactsIcon/>,
+      },
+      {
+        name_ruta: "Profesionales",
+        location: "/profesionales",
+        icon: <PeopleIcon/>,
+      }
+    ] 
+  },
+  {
+    id:2,
+    name: "Atenciones",
+    icon: <AddToQueueIcon/>,
+    rutas: [
+      {
+        name_ruta: "Crear Atenciones",
+        location: "/crear-atenciones",
+        icon: <AddCommentIcon/>,
+      },
+      {
+        name_ruta: "Gestión de Atenciones",
+        location: "/gestion-atenciones",
+        icon: <ThreePIcon/>,
+      }
+    ] 
+  },
+  {
+    id:2,
+    name: "Reporte",
+    icon: <DashboardIcon/>,
+    rutas: [
+      {
+        name_ruta: "Atenciones",
+        location: "/reporte-atenciones",
+        icon: <AddToQueueIcon/>,
+      },
+      {
+        name_ruta: "Chats Cerrados",
+        location: "/chats-cerrados",
+        icon: <ChatIcon/>,
+      }
+    ] 
+  }
+]
+
+
+const rutasSuperAdmin = [
+  {
+    id:1,
+    name: "Maestros",
+    icon: <HandymanIcon />,
+    rutas: [
+      {
+        name_ruta: "Centro Medico",
+        location: "/centro-medico",
+        icon: <LocalHospitalIcon/>,
+      },
+      {
+        name_ruta: "Areas",
+        location: "/areas",
+        icon: <GroupIcon/>,
+      },
+      {
+        name_ruta: "Especialidades",
+        location: "/especialidades",
+        icon: <BadgeIcon/>,
+      },
+      {
+        name_ruta: "Doctores",
+        location: "/doctores",
+        icon: <AssignmentIndIcon/>,
+      },
+      {
+        name_ruta: "Pacientes",
+        location: "/pacientes",
+        icon: <ContactsIcon/>,
+      },
+      {
+        name_ruta: "Profesionales",
+        location: "/profesionales",
+        icon: <PeopleIcon/>,
+      }
+    ] 
+  },
+  {
+    id:2,
+    name: "Doctores Independientes",
+    icon: <PermContactCalendarIcon/>,
+    rutas: [
+      {
+        name_ruta: "Solicitudes",
+        location: "/doc-ind-solicitudes",
+        icon: <AddCommentIcon/>,
+      },
+      {
+        name_ruta: "Control",
+        location: "/membresias",
+        icon: <ThreePIcon/>,
+      }
+    ] 
+  },
+  {
+    id:2,
+    name: "Alertas",
+    icon: <CampaignIcon/>,
+    rutas: [
+      {
+        name_ruta: "Gestión de Alertas",
+        location: "/gestion-alertas",
+        icon: <TipsAndUpdatesIcon/>,
+      }
+    ] 
+  }
+]
+
+
 export default function NavSection() {
   const history = useHistory()
   const [ruta, setRuta] = React.useState('');
-  const [tipo, setTipo] = React.useState(1);
+  const data_user = readLocalStorage(KEY_USER_DATA);
+  const type_user = data_user.user.role;
+  const [rutasHeader, setRutasHeader] = React.useState([])
 
-  const rutasHeader = [
-    {
-      id:1,
-      name: "Maestros",
-      icon: <AccountCircleIcon sx={{color:'#bdbdbd'}}/>,
-      rutas: [
-        {
-          name_ruta: "Areas",
-          location: "/areas",
-          icon: <AccountCircleIcon/>,
-        },
-        {
-          name_ruta: "Especialidades",
-          location: "/especialidades",
-          icon: <AccountCircleIcon/>,
-        }
-      ] 
-    },
-    {
-      id:2,
-      name: "Atenciones",
-      icon: <AccountCircleIcon/>,
-      rutas: [
-        {
-          name_ruta: "Crear Atenciones",
-          location: "/areas",
-          icon: <AccountCircleIcon/>,
-        },
-        {
-          name_ruta: "Gestión de Atenciones",
-          location: "/especialidades",
-          icon: <AccountCircleIcon/>,
-        }
-      ] 
+  const validateType = () => {
+    switch (type_user) {
+       case ROLE_SUPER_ADMIN:
+         setRutasHeader(rutasSuperAdmin)
+          break;
+       case ROLE_ADMIN:
+        setRutasHeader(rutasAdmin)
+          break;
+      default:
+        console.log('vamos a ver que ponemos')
+        break;
     }
-  ]
+ }
+ 
+ React.useEffect(()=>{
+  validateType();
+ },[])
+  
 
   const renderPrueba =
     <Box>

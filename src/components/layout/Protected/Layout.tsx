@@ -16,6 +16,7 @@ import './Layout.sass';
 import { Backdrop, CircularProgress } from '@mui/material';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
 import { styled } from '@mui/material/styles';
+import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
 interface ProtectedProps {
    className?: string,
    children?: React.ReactNode | React.ReactNode[] | null,
@@ -59,7 +60,7 @@ const Main = styled('div')(({ theme }) => ({
    const modalStatus = useRef<SanckRef>(null);
    const dataUser    = authenticationService.currentUserValue;
    const authUser    = authenticationService.authCookie();
-
+   console.log(dataUser);
    const history  = useHistory();
    const location = useLocation();
 
@@ -122,8 +123,12 @@ const Main = styled('div')(({ theme }) => ({
        <StyledRoot>
       {/* <Header onOpenNav={() => setOpen(true)} /> */}
 
+    {
+      dataUser.user.role === ROLE_ADMIN || dataUser.user.role === ROLE_SUPER_ADMIN &&
       <Nav openNav={openNew} onCloseNav={() => setOpenNew(false)} />
 
+    }
+    
       <Main>
      { props.children}
       </Main>
