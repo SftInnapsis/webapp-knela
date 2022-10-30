@@ -47,6 +47,8 @@ useEffect(() => {
  
 
    // }
+// console.log(data.user.idmedical_center);
+   props.$action.SelectMedicalCenter(data && data.user && data.user.idmedical_center);
 },[])
 
 const ContNotify = async () => {

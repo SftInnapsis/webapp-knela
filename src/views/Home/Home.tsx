@@ -14,8 +14,8 @@ import { Alert, Backdrop, CircularProgress, Container, Divider, Grid, IconButton
 import { Link } from "react-router-dom";
 import { Box } from "@mui/system";
 import { useLocalStorage } from '@/toolbox/hooks/local-storage.hook';
-import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
-import { KEY_ARRAY_MY_MENU, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
+import { readLocalStorage, saveLocalStorage } from '@/toolbox/helpers/local-storage-helper';
+import { KEY_ARRAY_MY_MENU, KEY_RUTA, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
 import { SpinnerGrow } from '@/components/common/Spinner';
 import { Chart } from "react-google-charts";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -24,9 +24,17 @@ import { moneyFormatInt } from '@/toolbox/helpers/money.helper';
 import logokyte from "@assets/img/vacio.png";
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import { HomeDoctor } from './Doctor';
+import { ROLE_DOCTOR, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
+import { MedicalCenter } from '../MedicalCenter';
+import { ROLE_ADMIN } from '@/toolbox/constants/role-type';
+import { Doctor } from '../Doctors';
+import { PatientMaster } from '../PatientMaster';
+import { DoctorView } from '../Doctors/Doctors';
+import { useHistory } from 'react-router-dom';
+import { AttentionView } from '../Attention';
 
 export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
-   const { MessageReducer='' } = props;
+   const { MessageReducer='' ,MedicalCenterReducer} = props;
    const [anchorEl, setAnchorEl] = React.useState(null);
    const [anchorElLeads, setAnchorElLeads] = React.useState(null);
    const [anchorElLeadsChannel, setAnchorElLeadsChannel] = React.useState(null);
@@ -37,9 +45,33 @@ export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
 
    // }, [])
    //  console.log(MessageReducer);
-   return (
-      <Protected>
+   const dataUser: any = readLocalStorage(KEY_USER_DATA);
+   const type_user = dataUser.user.role
+   console.log(type_user)
 
+   const validateHome = ( ) => {
+      
+      // if(type_user == ROLE_ADMIN){
+      //    return <Doctor/>
+      // } 
+
+      switch(type_user){
+         case ROLE_SUPER_ADMIN:
+            console.log('superadmin')
+            return <MedicalCenter/>
+         case ROLE_ADMIN:
+             saveLocalStorage(KEY_RUTA,'Atenciones')
+             return <AttentionView/>
+         case ROLE_DOCTOR:
+            console.log('doctor')
+            return <HomeDoctor/>
+         default:
+            console.log('default')
+            return <HomeDoctor/>
+      }
+   }
+   return (
+      <>
          <Backdrop
             sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={openView}
@@ -53,9 +85,9 @@ export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
                
             </Grid>
          </Backdrop>
-         <HomeDoctor />
+        {validateHome()}
          {/* <div>{MessageReducer.messageChats}</div> */}
-      </Protected>
+      </>
    )
 };
 

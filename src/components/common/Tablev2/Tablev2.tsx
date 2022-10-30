@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Paper, TableBody, TableCell, TableContainer, Typography, TableHead, TablePagination, TableRow, Table, createTheme, ThemeProvider, Button, Container, Stack, Card, Checkbox, Avatar, IconButton, Popover, MenuItem, Chip } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Paper, TableBody, TableCell, TableContainer, Typography, TableHead, TablePagination, TableRow, Grid, Table, createTheme, ThemeProvider, Button, Container, Stack, Card, Checkbox, Avatar, IconButton, Popover, MenuItem, Chip, InputBase } from '@mui/material';
 import { esES } from '@mui/material/locale';
 import { VisibilityIcon, PencilIcon, DeleteIcon, MoreIcon, UsersIcon, DeleteRedIcon } from "@toolbox/constants/icons";
 import ErrorIcon from '@mui/icons-material/Error';
@@ -23,7 +23,15 @@ import TuneIcon from '@mui/icons-material/Tune';
 import ListHeader from './ListHeader';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Filter } from '@mui/icons-material';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditIcon from '@mui/icons-material/Edit';
+// import Label from '@components/common/label'
+// import { sentenceCase } from 'change-case';
+import { Box } from "@mui/material";
+import DownloadIcon from '@mui/icons-material/Download';
+import UploadIcon from '@mui/icons-material/Upload';
 
+import SearchIcon from "@mui/icons-material/Search";
 type TableProps = {
    header?: Array<any>,
    data?: Array<any>,
@@ -32,40 +40,21 @@ type TableProps = {
    Recuperarid?: (data) => void,
    perPage?: (perPage) => void,
    page?: (page) => void,
+   actionSelect?: any,
    total?: any,
    setAddOpen?: any,
-   colorHeader?: any
+   colorHeader?: any,
+   status_action?: boolean,
+   title?: any,
+   text_button_add?:any,
+   text_eliminar?:any,
+   checkbox?: boolean,
+   setModalSave?:any,
+   disabled_action_save?:boolean,
+   select_button?:boolean,
+   dataInitial?:any,
+   dataSearch?:any
 }
-
-const TABLE_HEAD = [
-   { id: 'name', label: 'Name', alignRight: false },
-   { id: 'company', label: 'Company', alignRight: false },
-   { id: 'role', label: 'Role', alignRight: false },
-   { id: 'isVerified', label: 'Verified', alignRight: false },
-   { id: 'status', label: 'Status', alignRight: false },
-   { id: '' },
-];
-
-const USERLIST = [
-   { name: 'aldair' },
-   { name: 'company' },
-   { name: 'role' },
-   { name: 'isVerified' },
-   { name: 'status' },
-   { name: 'xd' },
-   { name: 'aldair' },
-   { name: 'company' },
-   { name: 'role' },
-   { name: 'isVerified' },
-   { name: 'status' },
-   { name: 'xd' },
-   { name: 'aldair' },
-   { name: 'company' },
-   { name: 'role' },
-   { name: 'isVerified' },
-   { name: 'status' },
-   { name: 'xd' },
-];
 
 // ----------------------------------------------------------------------
 
@@ -86,7 +75,6 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-   console.log(array);
    const stabilizedThis = array.map((el, index) => [el, index]);
    stabilizedThis.sort((a, b) => {
       const order = comparator(a[0], b[0]);
@@ -106,7 +94,8 @@ export const TableDataV2: React.FC<TableProps> = (
    const history = useHistory();
    const [page, setPage] = useState(0);
    const [rowsPerPage, setRowsPerPage] = useState(5);
-
+   const [dataSelected, setDataSelected] = useState<any>({});
+   const [search, setSearch] = useState('');
    const nextPage = (toroute, row) => {
       history.push(toroute, row);
    };
@@ -127,16 +116,18 @@ export const TableDataV2: React.FC<TableProps> = (
 
       setPage(0);
    };
-
+   console.log(props.select_button)
    //////////////////////////////////////////
    const [open, setOpen] = useState(null);
    const [order, setOrder] = useState('asc');
-   const [selected, setSelected] = useState([]);
+   const [selected, setSelected] = useState<any>([]);
    const [orderBy, setOrderBy] = useState('name');
    const [filterName, setFilterName] = useState('');
 
-   const handleOpenMenu = (event) => {
+   const handleOpenMenu = (event, data) => {
+      console.log(data);
       setOpen(event.currentTarget);
+      setDataSelected(data);
    };
 
    const handleCloseMenu = () => {
@@ -150,7 +141,7 @@ export const TableDataV2: React.FC<TableProps> = (
    };
    const handleSelectAllClick = (event) => {
       if (event.target.checked) {
-         const newSelecteds = USERLIST.map((n) => n.name);
+         const newSelecteds = props.data.map((n) => n.name);
          setSelected(newSelecteds);
          return;
       }
@@ -159,9 +150,12 @@ export const TableDataV2: React.FC<TableProps> = (
 
    const handleClick = (event, name) => {
       const selectedIndex = selected.indexOf(name);
+      console.log(selectedIndex);
       let newSelected = [];
       if (selectedIndex === -1) {
+         console.log(selected)
          newSelected = newSelected.concat(selected, name);
+         console.log(newSelected)
       } else if (selectedIndex === 0) {
          newSelected = newSelected.concat(selected.slice(1));
       } else if (selectedIndex === selected.length - 1) {
@@ -172,13 +166,33 @@ export const TableDataV2: React.FC<TableProps> = (
       setSelected(newSelected);
    };
 
+   const handleInputSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+      try{   const name = event.target.name;
+         
+         const value = event.target.value;
+         console.log(value)
+           if(value.length>3)
+               {
+                  props?.dataSearch &&  props?.dataSearch(value)
+               }
+               if(value.length==0)
+               {
+                  props.dataInitial && props.dataInitial()
+               }
+               setSearch(value);
 
-   const handleFilterByName = (event) => {
-      setPage(0);
-      setFilterName(event.target.value);
-   };
+             
+      }catch(e){
+         console.log(e)
+      }
+      };
 
-   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+   // const handleFilterByName = (event) => {
+   //    setPage(0);
+   //    setFilterName(event.target.value);
+   // };
+
+   // const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
    const filteredUsers = applySortFilter(props.data, getComparator(order, orderBy), filterName);
    let recorrido = [];
@@ -188,20 +202,73 @@ export const TableDataV2: React.FC<TableProps> = (
       recorrido = filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
    }
 
-   const isNotFound = !filteredUsers.length && !!filterName;
+   // const isNotFound = !filteredUsers.length && !!filterName;
    return (
       <>
          <Container>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-               <Typography variant="h4" gutterBottom>
-                  Usuarios
+            <Box
+               sx={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  m: -1,
+                  py: 3
+               }}
+            >
+               <Typography
+                  sx={{ m: 1 , fontWeight:600}}
+                  variant="h4"
+               >
+                  {props.title}
                </Typography>
-               {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button> */}
-            </Stack>
+               
+              {
+               !props.disabled_action_save &&
+               <Box sx={{ m: 1 }}>
+               <Button
+                  startIcon={(<UploadIcon fontSize="small" />)}
+                  sx={{ mr: 1 }}
+               >
+                  Import
+               </Button>
+               <Button
+                  startIcon={(<DownloadIcon fontSize="small" />)}
+                  sx={{ mr: 1 }}
+               >
+                  Export
+               </Button>
+               <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={()=>{props.setModalSave(true); props.actionSelect('save')}}
+               >
+                Agregar
+               </Button>
+            </Box>
+              }
+            </Box>
 
+            <Paper
+                  // component="form"
+                  sx={{ p: "0px 2px",mb:2, display: "flex" }}
+                  // fullWidth
+                  elevation={2}
+               >
+                  <InputBase
+                     fullWidth
+                      value={search}
+                     onChange={handleInputSearch}
+                     // on
+                     sx={{ ml: 1, flex: 1 }}
+                     placeholder="Buscador"
+                  />
+                  <IconButton type="button" aria-label="search">
+                     <SearchIcon />
+                  </IconButton>
+               </Paper>
             <Card>
+               {/* <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} /> */}
                {/* <Scrollbar> */}
                <TableContainer sx={{ minWidth: 800 }}>
                   <Table>
@@ -213,69 +280,57 @@ export const TableDataV2: React.FC<TableProps> = (
                         numSelected={selected.length}
                         onRequestSort={handleRequestSort}
                         onSelectAllClick={handleSelectAllClick}
+                        status_action={props.status_action}
+                        checkbox={props.checkbox}
                      />
                      <TableBody>
                         {
                            recorrido.map((data, id_data) => {
+                              const { id, name } = data;
+                              const selectedUser = selected.indexOf(name) !== -1;
                               return (
-                                 <TableRow hover key={id_data} >
+                                 <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                                    {props.checkbox && <TableCell padding="checkbox">
+                                       <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                                    </TableCell>}
                                     {props.header.map((cabecera, id) => {
                                        const value = data[cabecera.name];
-                                       if (cabecera.evento) {
-                                          return (
-                                             <TableCell key={id} sx={{ background: id_data % 2 != 0 ? '#f3f3f3' : '#fff' }}>
-                                                <Button sx={{ textTransform: 'inherit', textAlign: 'left' }} onClick={() => { props.RecuperarData({ ...data, action: "click" }) }}
-                                                >
-                                                   {value}
-                                                </Button>
-                                             </TableCell>
-                                          )
-                                       }
-                                       if (cabecera.money) {
-                                          return (
-                                             <TableCell key={id} sx={{ background: id_data % 2 != 0 ? '#f3f3f3' : '#fff' }}>
-                                                {value ? moneyFormat(value) : ''}
-                                             </TableCell>
-                                          );
-                                       }
-                                       if (cabecera.integer) {
-                                          return (
-                                             <TableCell key={id} sx={{ background: id_data % 2 != 0 ? '#f3f3f3' : '#fff' }}>
-                                                {value ? parseInt(value) : ''}
-                                             </TableCell>
-                                          );
-                                       }
-                                       else {
-                                          return (
-                                             <TableCell key={id} sx={{ background: id_data % 2 != 0 ? '#f3f3f3' : '#fff' }}>
-                                                {value}
-                                             </TableCell>
-                                          );
-                                       }
+                                       return (
+                                          <TableCell key={id} align="center">
+                                             <Grid container direction="row"
+                                                justifyContent="center"
+                                                alignItems="center">
+                                                <Grid sx={{ pr: 1 }}>
+                                                   {cabecera.avatar &&
+                                                      <Avatar
+                                                         alt="Remy Sharp"
+                                                         src="http://view.k-nela.cl/assets/images/avatars/avatar_8.jpg"
+                                                         sx={{ width: 30, height: 30 }}
+                                                      />
+                                                   }
+                                                </Grid>
+                                                <Grid sx={{ pl: 1 }}>
+                                                   <Typography sx={{ fontFamily: '"Public Sans", sans-serif !important' }} variant='inherit' fontWeight={500}>
+                                                      {/* {value} */}
+                                                      {cabecera.name === 'status' ? 
+                                                   (
+                                                      value == 1? 'ACTIVO': 'DESACTIVADO'
+                                                   ):(value)   
+                                                   }
+                                                   </Typography>
+                                                </Grid>
+                                             </Grid>
+                                          </TableCell>
+                                       )
                                     })}
-                                    {props.action ? (
-                                       <TableCell align='center' sx={{ background: id_data % 2 != 0 ? '#f3f3f3' : '#fff' }}>
-                                          {props.action.map((ac: any, i: number) => {
-                                             const Name = ac["name"]
-                                             switch (Name) {
-                                                case 'delete':
-                                                   return (
-                                                      <Tooltip title="Eliminar">
-                                                         <Button key={i} onClick={() => { props.RecuperarData(data) }}>
-                                                            <DeleteRedIcon />
-                                                         </Button>
-                                                      </Tooltip>
-                                                   );
-                                                case 'ResendPassword':
-                                                   return (
-                                                      <Tooltip title="Enviar accesos por email">
-                                                         <Button key={i} onClick={() => { props.RecuperarData({ ...data, action: "ResendPassword" }) }}>
-                                                            <ForwardToInboxIcon color='warning' />
-                                                         </Button>
-                                                      </Tooltip>);
-                                             }
-                                          })}
-                                       </TableCell>) : null}
+                                   {props.select_button &&  <TableCell align="center">
+                                       <Button variant='outlined' color='primary' onClick={() => { props.RecuperarData({...data, action:'seleccionar'}) }}>Seleccionar</Button>
+                                    </TableCell>}
+                                    <TableCell align="left" >
+                                       <IconButton size="large" color="inherit" onClick={(e) => { handleOpenMenu(e, data) }}>
+                                          <MoreVertIcon />
+                                       </IconButton>
+                                    </TableCell>
                                  </TableRow>
                               );
                            })}
@@ -314,14 +369,14 @@ export const TableDataV2: React.FC<TableProps> = (
                },
             }}
          >
-            <MenuItem>
-               {/* <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} /> */}
-               Edit
+            <MenuItem sx={{ alignItems: 'center' }} onClick={()=>{props.RecuperarData({...dataSelected,action:'edit'}); props.actionSelect('edit')}}>
+               <EditIcon fontSize='medium' />
+               Editar
             </MenuItem>
 
-            <MenuItem sx={{ color: 'error.main' }}>
-               {/* <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} /> */}
-               Delete
+            <MenuItem sx={{ color: 'error.main', alignItems: 'center' }} onClick={()=>{props.RecuperarData({...dataSelected,action:'delete'})}}>
+               <DeleteOutlineIcon fontSize='medium' />
+               <Typography> {props?.text_eliminar || 'Eliminar'}</Typography>
             </MenuItem>
          </Popover>
       </>

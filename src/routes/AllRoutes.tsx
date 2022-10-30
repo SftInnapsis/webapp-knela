@@ -14,7 +14,13 @@ import { HomeView } from '@/views/Home';
 import { LoginView } from '@/views/Login';
 import { Patient } from '@/views/Patient';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
-import { BusinessArea } from '@/views/BusinessArea/BusinessArea';
+import { BusinessArea } from '@/views/BusinessArea';
+import { Doctor } from '@/views/Doctors';
+import { MedicalCenter } from '@/views/MedicalCenter';
+import { PatientMaster } from '@/views/PatientMaster';
+import { Professional } from '@/views/Professional';
+import { Specialty } from '@/views/Speciality';
+import { AttentionList, AttentionView } from '@/views/Attention';
 
 const AllRoutes: React.FC = () => {
 
@@ -30,19 +36,48 @@ const AllRoutes: React.FC = () => {
       <PrivateRoute key={5} exact path={Routes.ROUTE_PATIENT} component={Patient} />,
    ];
 
+   const modulePatientMaster = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_PATIENT_MASTER} component={PatientMaster} />,
+   ];
+
    const moduleBusinessArea = [
       <PrivateRoute key={5} exact path={Routes.ROUTE_BUSINESS_AREA} component={BusinessArea} />,
    ];
 
+   const moduleDoctors = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_DOCTORS} component={Doctor} />,
+   ];
+
+   const moduleMedicalCenter = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_MEDICAL_CENTER} component={MedicalCenter} />,
+   ];
+
+   const moduleProfessional = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_PROFESSIONALS} component={Professional} />,
+   ];
+
+   const moduleSpeciality = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_SPECIALITY} component={Specialty} />,
+   ];
+
+   const moduleAttention = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_ATTENTION} component={AttentionView}/>
+   ]
+
+   const moduleAttentionList = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_ATTENTION_LIST} component={AttentionList}/>
+   ]
+
    const routes = useMemo(() => {
       let role: string = 'prueba';
-      //console.log(role)
+      console.log(role)
       if (!!dataUser) {
          if (!!dataUser.user) {
             role = dataUser.user.role;
          }
       }
 
+      console.log(role)
       switch (role) {
          case ROLE_SUPER_ADMIN:
             return (
@@ -50,6 +85,16 @@ const AllRoutes: React.FC = () => {
                   <Switch>
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {moduleHome}
+                     {moduleBusinessArea}
+                     {moduleDoctors}
+                     {moduleMedicalCenter}
+                     {modulePatient}
+                     {modulePatientMaster}
+                     {moduleProfessional}
+                     {moduleSpeciality}
+                     {<Route path='*' exact={true} component={() => {
+                        return <Redirect to={Routes.ROUTE_HOME} />
+                     }} />}
                   </Switch>
                </Router>
             );
@@ -59,7 +104,15 @@ const AllRoutes: React.FC = () => {
                   <Switch>
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {moduleHome}
+                     {moduleBusinessArea}
+                     {moduleDoctors}
+                     {moduleMedicalCenter}
                      {modulePatient}
+                     {modulePatientMaster}
+                     {moduleProfessional}
+                     {moduleSpeciality}
+                     {moduleAttention}
+                     {moduleAttentionList}
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_HOME} />
                      }} />}
@@ -85,8 +138,16 @@ const AllRoutes: React.FC = () => {
             return (
                <Router>
                   <Switch>
-                     {moduleHome}
-                    {modulePatient}
+                    {moduleHome}
+                     {moduleBusinessArea}
+                     {moduleDoctors}
+                     {moduleMedicalCenter}
+                     {modulePatient}
+                     {modulePatientMaster}
+                     {moduleProfessional}
+                     {moduleSpeciality}
+                     {moduleAttention}
+                     {moduleAttentionList}
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_LOGIN} />

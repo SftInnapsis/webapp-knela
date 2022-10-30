@@ -49,6 +49,10 @@ export const ROUTES_FOR_ADMIN = [
      navigators: []
    },
    {
+      module: ROUTE_PERFIL,
+     navigators: []
+   },
+   {
       module: ROUTE_ACCOUNT,
       navigators: [
          ROUTE_PERFIL,

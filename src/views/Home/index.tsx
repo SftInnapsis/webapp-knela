@@ -1,21 +1,23 @@
-import { HomeView as Home} from './Home';
+import { HomeView as Home } from './Home';
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
-import { actionSetListNotification, getMessagetChat } from '@/redux/actions';
+import { actionSetListNotification, getMessagetChat, SelectMedicalCenter } from '@/redux/actions';
 
 
-const mapStateToProps = ({ NotificationReducer, MessageReducer}) => ({
+const mapStateToProps = ({ NotificationReducer, MessageReducer, MedicalCenterReducer }) => ({
    // $store: {
-      NotificationReducer,
-      MessageReducer,
+   NotificationReducer,
+   MessageReducer,
+   MedicalCenterReducer
    // },
 });
 const mapDispatchToProps = (dispatch) => ({
    $action: bindActionCreators(
       {
          actionSetListNotification: actionSetListNotification,
-         getMessagetChat:getMessagetChat
+         getMessagetChat: getMessagetChat,
+         SelectMedicalCenter: SelectMedicalCenter
       },
       dispatch
    ),

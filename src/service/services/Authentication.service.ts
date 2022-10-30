@@ -67,7 +67,6 @@ async function ChangePassword(password){
 async function login( rut: string, password: string, perfil: number) : Promise<Authentication> {
    try {
       const login = await authenticationRepository.login(rut, password, perfil);
-
       if (!!login.error) {
          return {
             user  : null,

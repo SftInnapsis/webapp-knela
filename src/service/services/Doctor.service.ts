@@ -1,0 +1,40 @@
+import { doctorRepository } from "../repositories/Doctor.repository";
+export const doctorService = {
+ 
+   getDoctorPage,
+   getDoctorDataInitial,
+   getDoctorType,
+   getDoctorSearchPage,
+   createDoctor,
+   updateDoctor,
+   deleteDoctor
+};
+
+async function getDoctorPage (perPage=null, page=null, medical_center, idarea=null) {
+   const doctor= await doctorRepository.getDoctorPage(perPage=null, page=null, medical_center, idarea=null);
+   return doctor
+}
+async function getDoctorDataInitial() {
+   const doctor = await doctorRepository.getDoctorDataInitial();
+   return doctor
+}
+async function getDoctorType () {
+    const doctor= await doctorRepository.getDoctorType();
+    return doctor
+ }
+ async function getDoctorSearchPage (perPage=null, page=null, medical_center, idarea=null, term) {
+    const doctor= await doctorRepository.getDoctorSearchPage(perPage=null, page=null, medical_center, idarea=null, term);
+    return doctor
+ }
+async function createDoctor (dataDoctor) {
+    const doctor= await doctorRepository.createDoctor(dataDoctor);
+    return doctor
+ }
+ async function updateDoctor (id: number, dataDoctor) {
+    const doctor= await doctorRepository.updateDoctor(id, dataDoctor);
+    return doctor
+ }
+ async function deleteDoctor (id: number, medical_center) {
+    const doctor= await doctorRepository.deleteDoctor(id, medical_center);
+    return doctor
+ }

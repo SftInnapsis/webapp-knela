@@ -17,6 +17,15 @@ export const STATIC_ROUTERS = [
       "route-navigators": [
       ],
     },
+    {
+      "name": "Perfil",
+      "icon": "EvaluateIcon",
+      "moduloId": 2,
+      "route": ROUTE_PERFIL,
+      "isMenu": true,
+      "route-navigators": [
+      ],
+    },
    //  {
    //    "name": "Configuración",
    //    "icon": "SettingIcon",

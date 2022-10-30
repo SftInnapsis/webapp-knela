@@ -27,7 +27,7 @@ import { authenticationSoftnetService } from "@/service/api/services/Authentific
 // import { RecoverymailService } from "@/service/services/Recovery.service";
 // import { notifyService } from "@/service/services/Notify.service";
 // import { bypassService } from "@/service/services/Bypass.service";
-import { KEY_BYPASS, KEY_TOKEN_KYTE, KEY_USER_DATA } from "@/toolbox/constants/local-storage";
+import { KEY_BYPASS, KEY_RUTA, KEY_TOKEN_KYTE, KEY_USER_DATA } from "@/toolbox/constants/local-storage";
 import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { ROLE_ADMIN, ROLE_ADMIN_PROYECCION,  ROLE_DOCTOR,  ROLE_DOCTOR_IND,  ROLE_FAMILIAR,  ROLE_PACIENTE,  ROLE_SUPER_ADMIN, ROLE_TRABAJADOR, ROLE_TUTOR } from "@/toolbox/defaults/static-roles";
 // import firebase from '@/config/firebase';
@@ -66,6 +66,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
       showPassword: false
    });
    const name = props.location.pathname.split("/")[2];
+   // aca esta como descomponemos la ruta osea si www.lhdsfjj.com/login/admin toma admin y lo manda al switch
    // const msg = firebase.messaging();
    console.log(name);
    const [snackBarConfig, setSnackBarConfig] = useState<any>({
@@ -79,6 +80,9 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
    // const ruta = props.location.search + '.';
    // const { rut, usuario, password } = props.location && qs.parse(ruta.slice(1, -1));
    const validateType = () => {
+      // console.log(name)
+      // estos son los logins de cada perfil
+      //checa la linea 69
       switch (name) {
          case 'admin':
             setData(prev => ({ ...prev, perfil: 1 }));
@@ -219,7 +223,8 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
 
    const authSubmit = async (rut, password, perfil) => {
       setLoading(true);
-      const response = await authenticationService.login(rut, password, perfil);
+      const response:any = await authenticationService.login(rut, password, perfil);
+      // console.log(response.user.medical_center[0].id)
       if (response.data?.token == '') {
          setSnackBarConfig(prev => ({
             ...prev,
@@ -227,6 +232,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
             message: response.data.message,
          }));
       } else {
+         response && response.user && props.$action.SelectMedicalCenter(response.user.medical_center[0].id);
          const data = readLocalStorage(KEY_USER_DATA)
          if (data.user.role == ROLE_SUPER_ADMIN) {
             history.push(ROUTE_HOME);

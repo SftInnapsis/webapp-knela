@@ -1,0 +1,1 @@
+export {MedicalCenter} from './MedicalCenter'

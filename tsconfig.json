@@ -30,7 +30,8 @@
     "src/**/*.tsx",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "**/*.ts"
+    "**/*.ts",
+    "src/components/common/Header/AccountPopover.tsx"
   ],
   "exclude": [
     "node_modules"

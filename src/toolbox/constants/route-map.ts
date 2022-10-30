@@ -11,5 +11,14 @@ export const ROUTE_CONFIGURACION   = "/configuracion";
 export const ROUTE_USER            = "/usuarios";
 export const ROUTE_USER_CREATE     = "/usuarios/crear";
 export const ROUTE_USER_UPDATE     = "/usuarios/detalle";
-export const ROUTE_PATIENT         = "/patient";
+
 export const ROUTE_BUSINESS_AREA   = "/business-area";
+export const ROUTE_MEDICAL_CENTER  = "/medical-center";
+export const ROUTE_SPECIALITY      = "/speciality";
+export const ROUTE_PROFESSIONALS   = "/professionals";
+export const ROUTE_DOCTORS         = "/doctors";
+export const ROUTE_PATIENT_MASTER = "/patient-master";
+
+export const ROUTE_PATIENT         = "/patient";
+export const ROUTE_ATTENTION        = "/attention";
+export const ROUTE_ATTENTION_LIST = "/attenttion-list"

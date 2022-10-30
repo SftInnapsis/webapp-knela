@@ -35,6 +35,11 @@ import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-stor
 import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
 import { ROLE_ADMIN } from "@/toolbox/constants/role-type";
 import { ROLE_SUPER_ADMIN } from "@/toolbox/defaults/static-roles";
+import { ROLE_DOCTOR } from '@/toolbox/defaults/static-roles';
+
+import { Protected } from "@/components/layout/Protected";
+import { attentionService } from '@/service/services/Attention.service';
+
 const itemData = [
     {
         id: 1,
@@ -93,12 +98,14 @@ const itemData = [
 ];
 
 
-export const HomeDoctor = (props) => {
+export const HomeDoctorView = (props) => {
+    const { MedicalCenterReducer ='' } = props;
+    console.log(MedicalCenterReducer)
     const [search, setSearch] = useState("");
     const [archivo, setArchivo] = useState("");
     const tipoUsuario = localStorage.getItem("tipoUsuario");
     const [ubicationclinica, setubicationclinica] = React.useState("Clinica1");
-    const [dataPacientes, setDataPacientes] = React.useState(itemData);
+    const [dataPacientes, setDataPacientes] = React.useState([]);
     const dataUser:any = readLocalStorage(KEY_USER_DATA)
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -123,7 +130,16 @@ export const HomeDoctor = (props) => {
         const updateUserLocalStorage = { ...dataUser, user: user }
         saveLocalStorage(KEY_USER_DATA, updateUserLocalStorage);
     };
-
+    console.log(dataUser.user)
+    const getAttentionOpen = async() =>{
+        const area = [1];
+        const doctor = [1];
+        const res = await attentionService.getAttention(MedicalCenterReducer.id_medical_center,area,doctor);
+       if(res.data)
+       {
+        setDataPacientes(res.data)
+       }
+    }
     // const ubication = [
     //     {
     //         value: "Clinica1",
@@ -169,6 +185,10 @@ export const HomeDoctor = (props) => {
         }
         )
     }
+
+    React.useEffect(() => {
+        getAttentionOpen();
+    }, [MedicalCenterReducer.id_medical_center])
     const renderMenu = (
         <Menu
             id="fade-menu"
@@ -184,49 +204,12 @@ export const HomeDoctor = (props) => {
         </Menu>
     );
     return (
-        <>
+        <Protected>
             <Grid container className="containerInvite">
                 <Grid container justifyContent={"center"} mt={2}>
                     <Grid item xs={12} md={10}>
                         <Grid xs={12} mb={2}>
                             <Grid container spacing={1}>
-                                <Grid item xs={10} md={6}
-                                //  align="start"
-                                >
-                                    <Link to={"/login"} className="link__css">
-                                        <Typography
-                                            sx={{ color: "#28c4ac" }}
-                                            variant={"h3"}
-                                            className="title__main"
-                                        >
-                                            ¡Hola Hernan!
-                                        </Typography>
-                                    </Link>
-                                </Grid>
-
-                                <Grid item xs={2} md={6} mt={2}>
-                                    <Grid display="flex" justifyContent={"flex-end"}>
-                                        <IconButton
-                                            sx={{ marginLeft: "5px" }}
-                                            aria-label="delete"
-                                            size="small"
-                                        >
-                                            <Badge badgeContent={4} color="primary">
-                                                <NotificationsIcon sx={{ color: "#28c4ac" }} />
-                                            </Badge>
-                                        </IconButton>
-                                        <IconButton
-                                            sx={{ marginLeft: "5px" }}
-                                            aria-label="delete"
-                                            size="small"
-                                            onClick={(e) => { handleProfileMenuOpen(e) }}
-                                        >
-                                            <SettingsSharpIcon
-
-                                                sx={{ color: "#28c4ac" }} />
-                                        </IconButton>
-                                    </Grid>
-                                </Grid>
                                 {renderMenu}
                                 <Grid
                                     container
@@ -235,7 +218,7 @@ export const HomeDoctor = (props) => {
                                     ml={3}
                                     justifyContent="space-between"
                                 >
-                                    <Grid container item xs={8} md={6}>
+                                 { dataUser?.user?.role ==ROLE_DOCTOR &&  <Grid container item xs={8} md={6}>
                                         <Grid
                                             item
                                             xs={12}
@@ -251,8 +234,8 @@ export const HomeDoctor = (props) => {
                                                 //  align="end" 
                                                 variant={"subtitle1"}>
                                                 <span> Doctor:</span>{" "}
-                                                <span className="title__main">Hernan Acevedo</span>
-                                            </Typography>
+                                                <span className="title__main">Lincoln Moreno</span>
+                                            </Typography>   
                                         </Grid>
                                         <Grid
                                             item
@@ -273,7 +256,8 @@ export const HomeDoctor = (props) => {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={12} md={12} mt={1}></Grid>
-                                    </Grid>
+                                    </Grid>}
+                                    {/*
                                     <Grid item xs={12} md={4}>
                                         <Grid display="flex" mb={3}>
                                             <Icon sx={{ color: "#28c4ac", mr: 1 }}>
@@ -304,6 +288,7 @@ export const HomeDoctor = (props) => {
                                             ))}
                                         </Select>
                                     </Grid>
+                                    */}
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -317,7 +302,7 @@ export const HomeDoctor = (props) => {
                                                 className="title__main"
                                                 sx={{ textAlign: "start", color: "#28c4ac" }}
                                             >
-                                                Mis Pacientes
+                                                {dataUser?.user?.role ==ROLE_DOCTOR ?' Mis Pacientes': 'Mis Atenciones'}
                                             </Typography>
                                         </Grid>
                                     </Grid>
@@ -350,7 +335,7 @@ export const HomeDoctor = (props) => {
 
                             {dataPacientes
                                 .filter((item) =>
-                                    item.title.toLowerCase().includes(search.toLowerCase())
+                                    item.patientsName.toLowerCase().includes(search.toLowerCase())
                                 )
                                 .map((item) => (
                                     <Grid item xs={12} md={4} p={1}>
@@ -358,7 +343,7 @@ export const HomeDoctor = (props) => {
                                             key={item.id}
                                             sx={{
                                                 width: "100%",
-                                                background: item.color,
+                                                background:'#feb4b3',
                                                 borderRadius: "10px",
                                             }}
                                             onClick={() => seleccionarPaciente(item)}
@@ -367,10 +352,10 @@ export const HomeDoctor = (props) => {
                                                 <CardMedia
                                                     component="text"
                                                     height="90"
-                                                    name={item.title}
+                                                    name={item.patientsName}
                                                 />
                                                 <Grid container className="texto-encima">
-                                                    <Grid item xs={10}>
+                                                    <Grid item xs={12}>
                                                         <Typography
                                                             gutterBottom
                                                             variant="h6"
@@ -379,7 +364,7 @@ export const HomeDoctor = (props) => {
                                                             mt={1}
                                                             className="texto-card"
                                                         >
-                                                            {item.title}
+                                                            {item.patientsName}
                                                         </Typography>
                                                         <Typography
                                                             gutterBottom
@@ -389,7 +374,7 @@ export const HomeDoctor = (props) => {
                                                             mt={0}
                                                             className="texto-card2"
                                                         >
-                                                            {item.subtitle}
+                                                            {`ÁREA: ${item.nameArea}`}
                                                         </Typography>
                                                         <Typography
                                                             gutterBottom
@@ -399,7 +384,7 @@ export const HomeDoctor = (props) => {
                                                             mt={0}
                                                             className="texto-card2"
                                                         >
-                                                            {item.subtitle2}
+                                                            {`TIPO ATENCIÓN: ${item.attentionTypeName}`}
                                                         </Typography>
                                                         <Typography
                                                             gutterBottom
@@ -409,7 +394,7 @@ export const HomeDoctor = (props) => {
                                                             mt={0}
                                                             className="texto-card3"
                                                         >
-                                                            {item.subtitle3}
+                                                            {/* {item.statusPatientName} */}
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
@@ -421,6 +406,6 @@ export const HomeDoctor = (props) => {
                     </Grid>
                 </Grid>
             </Grid>
-        </>
+        </Protected>
     );
 };

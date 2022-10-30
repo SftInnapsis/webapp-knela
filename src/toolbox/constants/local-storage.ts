@@ -1,5 +1,8 @@
 export const KEY_LOCAL_STORAGE  = process.env.REACT_APP_KEY_COOKIE || '_';
 export const KEY_USER_DATA      = 'userData';
+export const KEY_OPTIONS_MEDICAL_CENTER = 'optionsMedicalCenter';
+export const KEY_MEDICAL_CENTER = 'medicalCenter';
+export const KEY_RUTA = 'keyRuta';
 export const KEY_ARRAY_MY_MENU  = 'arrayMyMenu';
 export const KEY_OBJECT_MY_MENU = 'objectMyMenu';
 export const KEY_EMPRESA        = 'userEmpresa';

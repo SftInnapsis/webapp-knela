@@ -21,10 +21,13 @@ import ThreePIcon from '@mui/icons-material/ThreeP';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import CampaignIcon from '@mui/icons-material/Campaign';
-import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
-import { KEY_USER_DATA } from '@/toolbox/constants/local-storage';
+import { readLocalStorage, saveLocalStorage } from '@/toolbox/helpers/local-storage-helper';
+import { KEY_RUTA, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
 import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { ROUTE_ATTENTION, ROUTE_ATTENTION_LIST, ROUTE_BUSINESS_AREA, ROUTE_DOCTORS, ROUTE_MEDICAL_CENTER, ROUTE_PATIENT, ROUTE_PATIENT_MASTER, ROUTE_PROFESSIONALS, ROUTE_SPECIALITY } from '@/toolbox/constants/route-map';
 // import { StyledNavItem, StyledNavSubItem,StyledNavItemIcon } from './NavSection-styles';
 // import SvgColor from '../../components/svg';
 // import WidgetsIcon from '@mui/icons-material/Widgets';
@@ -43,27 +46,27 @@ const rutasAdmin = [
     rutas: [
       {
         name_ruta: "Areas",
-        location: "/areas",
+        location: ROUTE_BUSINESS_AREA,
         icon: <GroupIcon/>,
       },
       {
         name_ruta: "Especialidades",
-        location: "/especialidades",
+        location: ROUTE_SPECIALITY,
         icon: <BadgeIcon/>,
       },
       {
         name_ruta: "Doctores",
-        location: "/doctores",
+        location: ROUTE_DOCTORS,
         icon: <AssignmentIndIcon/>,
       },
       {
         name_ruta: "Pacientes",
-        location: "/pacientes",
+        location: ROUTE_PATIENT_MASTER,
         icon: <ContactsIcon/>,
       },
       {
         name_ruta: "Profesionales",
-        location: "/profesionales",
+        location: ROUTE_PROFESSIONALS,
         icon: <PeopleIcon/>,
       }
     ] 
@@ -75,12 +78,12 @@ const rutasAdmin = [
     rutas: [
       {
         name_ruta: "Crear Atenciones",
-        location: "/crear-atenciones",
+        location: ROUTE_ATTENTION,
         icon: <AddCommentIcon/>,
       },
       {
         name_ruta: "Gestión de Atenciones",
-        location: "/gestion-atenciones",
+        location: ROUTE_ATTENTION_LIST,
         icon: <ThreePIcon/>,
       }
     ] 
@@ -113,32 +116,32 @@ const rutasSuperAdmin = [
     rutas: [
       {
         name_ruta: "Centro Medico",
-        location: "/centro-medico",
+        location: ROUTE_MEDICAL_CENTER,
         icon: <LocalHospitalIcon/>,
       },
       {
         name_ruta: "Areas",
-        location: "/areas",
+        location: ROUTE_BUSINESS_AREA,
         icon: <GroupIcon/>,
       },
       {
         name_ruta: "Especialidades",
-        location: "/especialidades",
+        location: ROUTE_SPECIALITY,
         icon: <BadgeIcon/>,
       },
       {
         name_ruta: "Doctores",
-        location: "/doctores",
+        location: ROUTE_DOCTORS,
         icon: <AssignmentIndIcon/>,
       },
       {
         name_ruta: "Pacientes",
-        location: "/pacientes",
+        location: ROUTE_PATIENT_MASTER,
         icon: <ContactsIcon/>,
       },
       {
         name_ruta: "Profesionales",
-        location: "/profesionales",
+        location: ROUTE_PROFESSIONALS,
         icon: <PeopleIcon/>,
       }
     ] 
@@ -177,11 +180,12 @@ const rutasSuperAdmin = [
 
 export default function NavSection() {
   const history = useHistory()
-  const [ruta, setRuta] = React.useState('');
+  const { pathname } = useLocation();
+  const initialRuta = readLocalStorage(KEY_RUTA)
+  const [ruta, setRuta] = React.useState(initialRuta || '');
   const data_user = readLocalStorage(KEY_USER_DATA);
   const type_user = data_user.user.role;
   const [rutasHeader, setRutasHeader] = React.useState([])
-
   const validateType = () => {
     switch (type_user) {
        case ROLE_SUPER_ADMIN:
@@ -199,6 +203,7 @@ export default function NavSection() {
  React.useEffect(()=>{
   validateType();
  },[])
+
   
 
   const renderPrueba =
@@ -213,8 +218,8 @@ export default function NavSection() {
             // component={RouterLink}
             // to={'/'}
             sx={{
-              color: ruta === value.name && 'text.primary',
-              bgcolor: ruta === value.name && 'action.selected',
+              color: ruta === value.name && 'rgb(24, 144, 255)',
+              bgcolor: ruta === value.name && 'rgb(230, 247, 255)',
               fontWeight: ruta === value.name && 'fontWeightBold',
               height: 48,
               position: 'relative',
@@ -226,6 +231,7 @@ export default function NavSection() {
               if (ruta === value.name) {
                 setRuta('')
               } else {
+                saveLocalStorage(KEY_RUTA,value.name)
                 setRuta(value.name)
               }
             }}
@@ -257,11 +263,9 @@ export default function NavSection() {
                   textTransform: 'capitalize',
                   borderRadius: 2,
                   marginLeft: '35px',
-                  '&.active': {
-                    color: 'text.primary',
-                    bgcolor: 'action.selected',
+                    color: pathname === item.location && 'rgb(24, 144, 255)',
+                    bgcolor: pathname === item.location  && 'rgb(230, 247, 255)',
                     fontWeight: 'fontWeightBold',
-                  },
                 }}
               >
                 <ListItemIcon
@@ -291,6 +295,9 @@ export default function NavSection() {
 
 
   return (
-    renderPrueba
+    <>
+     { renderPrueba}
+    </>
+ 
   );
 }

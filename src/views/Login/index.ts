@@ -1,20 +1,22 @@
-import { LoginView as Login} from './Login';
+import { LoginView as Login } from './Login';
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
-import { actionSetListNotification } from '@/redux/actions';
+import { actionSetListNotification, SelectMedicalCenter } from '@/redux/actions';
 
 // const mapStateToProps = (state) => ({...state})
 
-const mapStateToProps = ({ NotificationReducer }) => ({
+const mapStateToProps = ({ NotificationReducer, MedicalCenterReducer }) => ({
    $store: {
       NotificationReducer,
+      MedicalCenterReducer
    },
 });
 const mapDispatchToProps = (dispatch) => ({
    $action: bindActionCreators(
       {
-         actionSetListNotification: actionSetListNotification
+         actionSetListNotification: actionSetListNotification,
+         SelectMedicalCenter: SelectMedicalCenter
       },
       dispatch
    ),

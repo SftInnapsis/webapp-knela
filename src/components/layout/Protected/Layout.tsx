@@ -13,7 +13,7 @@ import { useLocalStorage } from '@hooks/local-storage.hook';
 import { authenticationService } from '@service/services/Authentication.service';
 
 import './Layout.sass';
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Backdrop, CircularProgress, Grid } from '@mui/material';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
 import { styled } from '@mui/material/styles';
 import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
@@ -44,6 +44,7 @@ const Main = styled('div')(({ theme }) => ({
   overflow: 'auto',
   minHeight: '100%',
   paddingTop: APP_BAR_MOBILE + 24,
+  background: 'rgb(250, 250, 251)',
   paddingBottom: theme.spacing(10),
   [theme.breakpoints.up('lg')]: {
     paddingTop: APP_BAR_DESKTOP + 24,
@@ -60,7 +61,6 @@ const Main = styled('div')(({ theme }) => ({
    const modalStatus = useRef<SanckRef>(null);
    const dataUser    = authenticationService.currentUserValue;
    const authUser    = authenticationService.authCookie();
-   console.log(dataUser);
    const history  = useHistory();
    const location = useLocation();
 
@@ -117,20 +117,23 @@ const Main = styled('div')(({ theme }) => ({
 //    useEffect(() => {
 // //   setOpen(true);
 //    },[local]);
-
+console.log(dataUser)
    return (
       <>
        <StyledRoot>
       {/* <Header onOpenNav={() => setOpen(true)} /> */}
 
     {
-      dataUser.user.role === ROLE_ADMIN || dataUser.user.role === ROLE_SUPER_ADMIN &&
-      <Nav openNav={openNew} onCloseNav={() => setOpenNew(false)} />
-
+      dataUser.user.role === ROLE_ADMIN || dataUser.user.role === ROLE_SUPER_ADMIN ?
+      <Nav openNav={openNew} onCloseNav={() => setOpenNew(false)} />: <HeaderView />
+      //entra a nav ahi esta
     }
     
       <Main>
-     { props.children}
+         <Grid sx={{ minHeight:600,background:'#fff', borderRadius:4}}>
+         { props.children}
+         </Grid>
+    
       </Main>
     </StyledRoot>
          {/* <div className = "l-protected"> */}

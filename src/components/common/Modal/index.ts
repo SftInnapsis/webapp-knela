@@ -1,2 +1,1 @@
-export {ModalCambiarContraseña} from './ModalCambiarContraseña'
-
+export { ModalView } from './Modal';

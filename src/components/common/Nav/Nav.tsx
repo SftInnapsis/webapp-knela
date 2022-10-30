@@ -12,9 +12,10 @@ import Scrollbar from '../Scrollbar/Scrollbar';
 import NavSection from '../Header/NavSection';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
 import { KEY_USER_DATA } from '@/toolbox/constants/local-storage';
-import { ROLE_ADMIN, ROLE_SUPERVISOR } from '@/toolbox/constants/role-type';
+import { ROLE_ADMIN } from '@/toolbox/constants/role-type';
 import { ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
-//
+import { HeaderView } from '../Header';
+
 // import navConfig from './config';
 // import navSubConfigdashboard from './sub-config';
 
@@ -27,7 +28,7 @@ const StyledAccount = styled('div')(({ theme }) => ({
   alignItems: 'center',
   padding: theme.spacing(2, 2.5),
   borderRadius: Number(theme.shape.borderRadius) * 1.5,
-  backgroundColor: alpha(theme.palette.grey[500], 0.12),
+  backgroundColor: 'rgb(230, 247, 255)'
 }));
 
 // ----------------------------------------------------------------------
@@ -40,7 +41,7 @@ Nav.propTypes = {
 export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
 
-  const isDesktop = useResponsive('up', 'lg','');
+  const isDesktop = useResponsive('up', 'lg', '');
 
   useEffect(() => {
     if (openNav) {
@@ -52,7 +53,7 @@ export default function Nav({ openNav, onCloseNav }) {
   const data_user = readLocalStorage(KEY_USER_DATA);
   const account = {
     photoURL: '',
-    displayName: data_user.user.name + ' '+ data_user.user.last_name,
+    displayName: data_user.user.name + ' ' + data_user.user.last_name,
     role: data_user.user.role
   }
   const renderContent = (
@@ -62,6 +63,7 @@ export default function Nav({ openNav, onCloseNav }) {
         '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
       }}
     >
+      <HeaderView />
       <Box sx={{ px: 2.5, py: 3, display: 'inline-flex' }}>
         {/* logo de la empresa */}
       </Box>
@@ -69,14 +71,15 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
+
             <Avatar src={account.photoURL} alt="photoURL" />
 
             <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+              <Typography variant="subtitle2" sx={{ color: 'rgb(24, 144, 255)', }}>
                 {account.displayName}
               </Typography>
 
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <Typography variant="body2" sx={{ color: 'rgb(24, 144, 255)', }}>
                 {account.role}
               </Typography>
             </Box>
@@ -84,8 +87,8 @@ export default function Nav({ openNav, onCloseNav }) {
         </Link>
       </Box>
 
-        <NavSection/>
-     
+      <NavSection />
+
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>
   );

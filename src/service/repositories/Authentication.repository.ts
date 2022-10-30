@@ -2,6 +2,8 @@ import { http } from '../http/http';
 import { LoginDTO, LogoutDTO, UserDTO } from '../http/dto/AuthenticationDTO';
 import { Login, Logout, Authentication } from '../models/Authentication';
 import { API_URL_BASE, API_URL_SOFTNET } from '@/toolbox/defaults/app';
+import { saveLocalStorage } from '@/toolbox/helpers/local-storage-helper';
+import { KEY_MEDICAL_CENTER, KEY_OPTIONS_MEDICAL_CENTER } from '@/toolbox/constants/local-storage';
 
 export const authenticationRepository = {
    login: async (rut: string, password: string, perfil :number): Promise<Login> => {
