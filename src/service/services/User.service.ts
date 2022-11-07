@@ -32,6 +32,9 @@ export const userService = {
    updateUser: (id, dataUser) => {
       return userRepository.updateUser(id, dataUser)
    },
+   changePasswordUser: (dataUser) => {
+      return userRepository.changePasswordUser(dataUser)
+   },
    updateStatusUser: (id, dataUser) => {
       return userRepository.updateStatusUser(id, dataUser)
    },

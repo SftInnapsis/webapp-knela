@@ -12,12 +12,13 @@ import EmailIcon from '@mui/icons-material/Email';
 import { VALIDATORS } from '@/toolbox/helpers/validation-rules';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
-import { KEY_USER_DATA } from '@/toolbox/constants/local-storage';
+import { KEY_MEDICAL_CENTER, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
 import { authenticationRepository } from '@/service/repositories/Authentication.repository';
 import { VisibilityIcon, VisibilityOffIcon } from '@toolbox/constants/icons';
 import { professionalService } from '@/service/services/Professional.service';
 import { ubigeoService } from '@/service/services/Ubigeo.service';
 import { areaService } from '@/service/services/Area.service';
+import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
 
 
 type ModalProps = {
@@ -33,6 +34,7 @@ export const ProfessionalModal: React.FC<ModalProps> = (
    props: ModalProps
 ): JSX.Element => {
    const { open, setOpen, actionSelect, recoveryData, saveProfessional, editProfessional } = props
+   const [error, setError] = useState<any>('')
    const [data, setData] = useState({
       name: '',
       last_name: '',
@@ -50,11 +52,15 @@ export const ProfessionalModal: React.FC<ModalProps> = (
 
    const [idArea, setIdArea] = useState(null);
    const [idEspecialidad, setIdEspecialidad] = useState(null);
+
    const [medicalCenter, setMedicalCenter] = useState(null);
    const [idpais, setIdPais] = useState(null);
    const [iddepartamento, setIdDepartamento] = useState(null);
    const [idprovincia, setIdProvincia] = useState(null);
    const [iddistrito, setIdDistrito] = useState(null);
+
+   const user_data = readLocalStorage(KEY_USER_DATA);
+   const role = user_data?.user.role;
 
    const [snackBarConfig, setSnackBarConfig] = useState<any>({
       open: false,
@@ -73,9 +79,36 @@ export const ProfessionalModal: React.FC<ModalProps> = (
             break;
          case 'last_name':
             setData(prev => ({ ...prev, last_name: value, textError: '' }));
-            break;
+         break;
          case 'rut':
-            setData(prev => ({ ...prev, rut: value, textError: '' }));
+            // setData(prev => ({ ...prev, rut: value, textError: '' }));
+            var Fn = {
+               // Valida el rut con su cadena completa "XXXXXXXX-X"
+               validaRut: function (rutCompleto) {
+                  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
+                     return false;
+                  var tmp = rutCompleto.split('-');
+                  var digv = tmp[1];
+                  var rut = tmp[0];
+                  if (digv == 'K') digv = 'k';
+                  return (Fn.dv(rut) == digv);
+               },
+               dv: function (T) {
+                  var M = 0, S = 1;
+                  for (; T; T = Math.floor(T / 10))
+                     S = (S + T % 10 * (9 - M++ % 6)) % 11;
+                  return S ? S - 1 : 'k';
+               }
+            }
+
+            var foo = value.split("-").join("")
+            if (foo.length > 0 && foo.length < 10) {
+               foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
+               setData(prev => ({ ...prev, rut: foo }))
+            } else if (foo.length == 0) {
+               setData(prev => ({ ...prev, rut: "" }))
+            }
+
             break;
          case 'date_birth':
             setData(prev => ({ ...prev, date_birth: value, textError: '' }));
@@ -95,6 +128,18 @@ export const ProfessionalModal: React.FC<ModalProps> = (
       const res: any = await professionalService.getProfessionalDataInitial();
       setDataEspecialidad(res.data.Specialty)
       setDataMedicalCenter(res.data.MedicalCenter)
+      setDataArea(res.data.Area)
+      if(role == ROLE_ADMIN){
+         console.log(res.data.MedicalCenter)
+         const idMedicalCenter = readLocalStorage(KEY_MEDICAL_CENTER)
+         console.log(idMedicalCenter)
+         const objMedicalCenter = res.data.MedicalCenter.find(value=> value.id == idMedicalCenter)
+         setMedicalCenter(objMedicalCenter)
+         const objSpeciality = res.data.Specialty.filter(value => value.idmedical_center == idMedicalCenter)
+         setDataEspecialidad(objSpeciality)
+         const objArea = res.data.Area.filter(value => value.idmedical_center == idMedicalCenter)
+         setDataArea(objArea)
+      }
    }
 
    const onSelectPais = (pais) => {
@@ -177,16 +222,52 @@ export const ProfessionalModal: React.FC<ModalProps> = (
       getAutocomplete(idmedical_center, idspecialty, id_area);
    }
 
+   const ValidateEmail = (mail) =>{
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+      {
+        return (true)
+      }else{
+          return false
+      }
+  }
+
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+   
       const { name, last_name, rut, date_birth, mail, address } = data;
-      const bodyRequest = {
-         ...data,
-         idarea: idArea.id,
-         idspecialty: idEspecialidad.id,
-         iddistrict: iddistrito.id,
-         medical_center: medicalCenter.id
+      if (data.name === '') { return setError('name') }
+      if (data.name.length >= 100) {return setError('name_limit')}
+      if (data.last_name === '') { return setError('last_name') }
+      if (data.last_name.length >= 100) { return setError('last_name_limit') }
+      if (data.rut === '') { return setError('rut') }
+      if (data.date_birth === '') { return setError('date_birth') }
+      if (data.mail === '') { return setError('mail') }
+      let validate = ValidateEmail(data.mail)
+      if(!validate){return setError('mail_invalid') }
+      if (data.address === '') { return setError('address') }
+      if (data.address.length >= 100) { return setError('address_limit') }
+      if (idArea.name === '') { return setError('idArea') }
+      if (idEspecialidad.name === '') { return setError('idEspecialidad') }
+
+      let bodyRequest = {};
+      if(role == ROLE_ADMIN){
+         bodyRequest = {
+            ...data,
+            idarea: idArea.id,
+            idspecialty: idEspecialidad.id,
+            iddistrict: iddistrito.id,
+            medical_center: readLocalStorage(KEY_MEDICAL_CENTER)
+         }
+      }else{
+         bodyRequest = {
+            ...data,
+            idarea: idArea.id,
+            idspecialty: idEspecialidad.id,
+            iddistrict: iddistrito.id,
+            medical_center: medicalCenter.id
+         }
       }
+       
       if (actionSelect == 'edit') {
          editProfessional(bodyRequest)
 
@@ -197,6 +278,7 @@ export const ProfessionalModal: React.FC<ModalProps> = (
    }
 
    useEffect(() => {
+     // console.log(open)
       if (open) {
          dataInitial();
          getPais();
@@ -206,7 +288,7 @@ export const ProfessionalModal: React.FC<ModalProps> = (
             getUbigeo(iddistrict, idprovince, iddepartment, idcountry, idmedical_center, idspecialty, idarea)
          }
       }
-   }, [])
+   }, [open])
 
    const LimpiarFormulario = () => {
       // setIdArea(null)
@@ -224,32 +306,38 @@ export const ProfessionalModal: React.FC<ModalProps> = (
       <div>
          <form onSubmit={handleSubmit} >
             <Grid container direction="row" spacing={2}>
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <TextField
                      fullWidth
                      size="small"
                      id="name"
                      placeholder="Nombre*"
+                     label="Nombre*"
                      sx={{ bgcolor: '#fff' }}
                      name="name"
                      type="text"
                      required
                      value={data.name}
                      onChange={handleInput}
+                     error={error=='name' || error=='name_limit'? true:false}
+                     helperText={error=='name'? 'Campo requerido': error=='name_limit' ? 'Número máximo de caracteres es 100':''}
                   />
                </Grid>
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <TextField
                      fullWidth
                      size="small"
                      id="last_name"
                      placeholder="Apellido*"
+                     label="Apellido*"
                      sx={{ bgcolor: '#fff' }}
                      name="last_name"
                      required
                      type="text"
                      value={data.last_name}
                      onChange={handleInput}
+                     error={error=='last_name' || error=='last_name_limit'? true:false}
+                     helperText={error=='last_name'? 'Campo requerido': error=='last_name_limit' ? 'Número máximo de caracteres es 100':''}
                   />
                </Grid>
                <Grid item xs={12} md={6} >
@@ -258,12 +346,16 @@ export const ProfessionalModal: React.FC<ModalProps> = (
                      size="small"
                      id="rut"
                      placeholder="Rut*"
+                     label="Rut*"
                      sx={{ bgcolor: '#fff' }}
                      name="rut"
                      type="text"
                      required
                      value={data.rut}
                      onChange={handleInput}
+                     error={error=='rut' ? true:false}
+                     helperText={error=='rut'? 'Campo requerido': ''}
+                 
                   />
                </Grid>
                <Grid item xs={12} md={6} >
@@ -278,14 +370,18 @@ export const ProfessionalModal: React.FC<ModalProps> = (
                      required
                      value={data.date_birth}
                      onChange={handleInput}
+                     error={error=='date_birth' ? true:false}
+                     helperText={error=='date_birth'? 'Campo requerido': ''}
                   />
                </Grid>
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <TextField
                      fullWidth
                      size="small"
                      id="mail"
                      placeholder="Correo*"
+                     error={error == 'mail' || error == 'mail_limit'? true : false}
+                     helperText={error == 'mail' ? 'Campo es obligatorio' : error == 'mail_limit'?'Número máximo de caracteres es 100':''}
                      sx={{ bgcolor: '#fff' }}
                      name="mail"
                      type="text"
@@ -295,7 +391,7 @@ export const ProfessionalModal: React.FC<ModalProps> = (
                   />
                </Grid>
 
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <TextField
                      fullWidth
                      size="small"
@@ -309,7 +405,7 @@ export const ProfessionalModal: React.FC<ModalProps> = (
                      onChange={handleInput}
                   />
                </Grid>
-               <Grid item xs={12} md={6} >
+              { role == ROLE_SUPER_ADMIN && <Grid item xs={12} md={6} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
                      size='small'
@@ -324,8 +420,8 @@ export const ProfessionalModal: React.FC<ModalProps> = (
                      getOptionLabel={(option: any) => option.name ? option.name : ""}
                      renderInput={(params) => <TextField {...params} required label="Centro Médico" />}
                   />
-               </Grid>
-               <Grid item xs={12} md={6} >
+               </Grid>}
+               <Grid item xs={12} md={12} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
                      size='small'
@@ -337,10 +433,10 @@ export const ProfessionalModal: React.FC<ModalProps> = (
                      id="idarea"
                      options={dataArea}
                      getOptionLabel={(option: any) => option.name ? option.name : ""}
-                     renderInput={(params) => <TextField {...params} required label="Área" />}
+                     renderInput={(params) => <TextField {...params} error={error=='area'?true:false} helperText={error=='area'?'Campo requerido':''} label="Área" />}
                   />
                </Grid>
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
                      size='small'
@@ -351,7 +447,7 @@ export const ProfessionalModal: React.FC<ModalProps> = (
                      id="idspecialty"
                      options={dataEspecialidad}
                      getOptionLabel={(option: any) => option.name ? option.name : ""}
-                     renderInput={(params) => <TextField {...params} required label="Especialidad" />}
+                     renderInput={(params) => <TextField {...params}  error={error=='area'?true:false} helperText={error=='area'?'Campo requerido':''}  label="Especialidad" />}
                   />
                </Grid>
                <Grid item xs={12} md={6} >
@@ -400,7 +496,7 @@ export const ProfessionalModal: React.FC<ModalProps> = (
                      renderInput={(params) => <TextField {...params} required label="Provincia" />}
                   />
                </Grid>
-               <Grid item xs={12} md={12} >
+               <Grid item xs={12} md={6} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
                      size='small'
@@ -432,7 +528,7 @@ export const ProfessionalModal: React.FC<ModalProps> = (
                      fullWidth
                      startIcon={<SaveIcon />}
                      sx={{ background: '#3D8BD9', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#155172' } }}>
-                     Agregar
+                      {actionSelect == 'edit' ? 'Editar' :'Agregar'}
                   </Button>
                </Grid>
             </Grid>
@@ -447,7 +543,9 @@ export const ProfessionalModal: React.FC<ModalProps> = (
             onClose={() => { setOpen(false) }}>
             <div className='Modal'>
                <div className='Title'>
-                  {actionSelect ? <span >EDITAR PROFESIONAL</span> : <span >NUEVO PROFESIONAL</span>}
+                  <Typography variant='h5' fontWeight={700} >
+                  {actionSelect == 'edit' ?'EDITAR PROFESIONAL' :'NUEVO PROFESIONAL'}
+                  </Typography>
                </div>
                <div className='Body'>
                   {bodyModal}

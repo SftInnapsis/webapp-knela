@@ -51,14 +51,16 @@ export const medicalCenterRepository = {
       };
    },
    updateMedicalCenter: async (id: number, dataMedicalCenter) : Promise<any> => {
-      const resp = await http.patch<any>(`${API_URL_BASE}/v1/medicalCenter/${id}`, {
+      const user_data = readLocalStorage(KEY_USER_DATA)
+      const resp = await http.post<any>(`${API_URL_BASE}/v1/medicalCenter/${id}`, {
         rut: dataMedicalCenter?.rut,
         name: dataMedicalCenter?.name,
         mail: dataMedicalCenter?.mail,
         idattention_type: dataMedicalCenter?.idattention_type,
         address: dataMedicalCenter?.address,
         iddistrict: dataMedicalCenter?.iddistrict,
-        phone: dataMedicalCenter?.phone
+        phone: dataMedicalCenter?.phone,
+        type_user: user_data?.user?.iduser_type
       })
       return {
          status: resp.status,

@@ -158,7 +158,7 @@ export const DoctorView = (props) => {
                 { name: 'specialtyName', label: 'Especialidad', filter: false, Chip: true },
                 { name: 'doctorTypeName', label: 'Tipo ', filter: false, Chip: true },
                 { name: 'areaName', label: 'Area', filter: false, Chip: true },
-                { name: 'districtName', label: 'Distrito', filter: false, Chip: true },
+                { name: 'district', label: 'Distrito', filter: false, Chip: true },
                 { name: 'address', label: 'Direccion', filter: false, Chip: true },
                 { name: 'status', label: 'Estado', filter: false, Chip: true },
             ]}
@@ -178,7 +178,10 @@ export const DoctorView = (props) => {
             {props?.isNOtProtected == true ?
                 bodyView : <Protected>
                     {bodyView}
-                </Protected>
+                </Protected>      
+
+
+
 
             }
         </>

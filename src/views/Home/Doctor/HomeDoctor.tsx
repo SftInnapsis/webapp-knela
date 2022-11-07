@@ -33,69 +33,12 @@ import Menu from '@mui/material/Menu';
 import { authenticationService } from "@/service/services/Authentication.service";
 import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
-import { ROLE_ADMIN } from "@/toolbox/constants/role-type";
+import { ROLE_ADMIN, ROLE_PROFESSIONAL } from "@/toolbox/constants/role-type";
 import { ROLE_SUPER_ADMIN } from "@/toolbox/defaults/static-roles";
 import { ROLE_DOCTOR } from '@/toolbox/defaults/static-roles';
 
 import { Protected } from "@/components/layout/Protected";
 import { attentionService } from '@/service/services/Attention.service';
-
-const itemData = [
-    {
-        id: 1,
-        img: "https://cdn.pixabay.com/photo/2015/10/19/16/47/ash-996321_960_720.jpg",
-        title: "Jorge Aravena G.",
-        subtitle: "Area:Traumatologia",
-        subtitle2: "Edad 56 años",
-        subtitle3: "Habitacion:407A",
-        color: "#feb4b3",
-    },
-    {
-        id: 2,
-        img: "https://cdn.pixabay.com/photo/2015/10/19/16/47/ash-996321_960_720.jpg",
-        title: "Leandro Jara T.",
-        subtitle: "Area:Traumatologia",
-        subtitle2: "Edad 56 años",
-        subtitle3: "Habitacion:407A",
-        color: "#fdf3e7",
-    },
-    {
-        id: 3,
-        img: "https://cdn.pixabay.com/photo/2015/10/19/16/47/ash-996321_960_720.jpg",
-        title: "Kiara Medina V.",
-        subtitle: "Area:Traumatologia",
-        subtitle2: "Edad 56 años",
-        subtitle3: "Habitacion:407A",
-        color: "#c3e6ce",
-    },
-    {
-        id: 4,
-        img: "https://cdn.pixabay.com/photo/2015/10/19/16/47/ash-996321_960_720.jpg",
-        title: "Anderson Espinoza J.",
-        subtitle: "Area:Traumatologia",
-        subtitle2: "Edad 56 años",
-        subtitle3: "Habitacion:407A",
-        color: "#c3e6ce",
-    },
-    {
-        id: 5,
-        img: "https://cdn.pixabay.com/photo/2015/10/19/16/47/ash-996321_960_720.jpg",
-        title: "Tomas Cadena R.",
-        subtitle: "Area:Traumatologia",
-        subtitle2: "Edad 56 años",
-        subtitle3: "Habitacion:407A",
-        color: "#feb4b3",
-    },
-    {
-        id: 6,
-        img: "https://cdn.pixabay.com/photo/2015/10/19/16/47/ash-996321_960_720.jpg",
-        title: "Pedro Aquino V.",
-        subtitle: "Area:Traumatologia",
-        subtitle2: "Edad 56 años",
-        subtitle3: "Habitacion:407A",
-        color: "#c3e6ce",
-    },
-];
 
 
 export const HomeDoctorView = (props) => {
@@ -130,35 +73,25 @@ export const HomeDoctorView = (props) => {
         const updateUserLocalStorage = { ...dataUser, user: user }
         saveLocalStorage(KEY_USER_DATA, updateUserLocalStorage);
     };
-    console.log(dataUser.user)
+
     const getAttentionOpen = async() =>{
         const area = [1];
-        const doctor = [1];
-        const res = await attentionService.getAttention(MedicalCenterReducer.id_medical_center,area,doctor);
-       if(res.data)
+        const userData = readLocalStorage(KEY_USER_DATA);
+        const doctor = [userData?.user?.id_doctor];
+        const role = userData.user.role;
+        let res:any;
+        if(role == ROLE_PROFESSIONAL){
+            res = await attentionService.getAttentionByProfessional(userData?.user?.id_professional)
+        }else{
+            res = await attentionService.getAttention(MedicalCenterReducer.id_medical_center,area,doctor);
+        }
+        
+        if(res && res.data)
        {
         setDataPacientes(res.data)
        }
     }
-    // const ubication = [
-    //     {
-    //         value: "Clinica1",
-    //         label: "San Pedro",
-    //     },
-    //     {
-    //         value: "Clinica2",
-    //         label: "San Bartolome",
-    //     },
-    //     {
-    //         value: "Clinica3",
-    //         label: "San Juan Bautista",
-    //     },
-    //     {
-    //         value: "Clinica4",
-    //         label: "Los Angeles",
-    //     },
-    // ];
-    // console.log(dataUser.user.role);
+
     const logout = () => {
         handleMenuClose();
         authenticationService.logout().then(res => {
@@ -257,38 +190,6 @@ export const HomeDoctorView = (props) => {
                                         </Grid>
                                         <Grid item xs={12} md={12} mt={1}></Grid>
                                     </Grid>}
-                                    {/*
-                                    <Grid item xs={12} md={4}>
-                                        <Grid display="flex" mb={3}>
-                                            <Icon sx={{ color: "#28c4ac", mr: 1 }}>
-                                                <AccountBoxIcon />
-                                            </Icon>
-                                            <Typography>
-                                                <span
-                                                // variant={"subtitle"}
-                                                >
-                                                    Centro Medico:</span>{" "}
-                                            </Typography>
-                                        </Grid>
-
-                                        <Select
-                                            id="outlined-select-ubicationclinica"
-                                            // sx={{ width: "200px" }}
-                                            fullWidth
-                                            value={ubicationclinica}
-                                            onChange={handleChanges}
-                                            variant="standard"
-                                        >
-                                            {dataUser.user.medical_center.map((option,key) => (
-                                                <MenuItem
-                                                    sx={{ textAlign: 'center' }}
-                                                    key={key} value={option.id}>
-                                                    {option.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </Grid>
-                                    */}
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -302,7 +203,7 @@ export const HomeDoctorView = (props) => {
                                                 className="title__main"
                                                 sx={{ textAlign: "start", color: "#28c4ac" }}
                                             >
-                                                {dataUser?.user?.role ==ROLE_DOCTOR ?' Mis Pacientes': 'Mis Atenciones'}
+                                                 Mis Pacientes
                                             </Typography>
                                         </Grid>
                                     </Grid>
@@ -333,7 +234,7 @@ export const HomeDoctorView = (props) => {
                                 </Grid>
                             </Grid>
 
-                            {dataPacientes
+                            {dataPacientes && dataPacientes.length>0 && dataPacientes
                                 .filter((item) =>
                                     item.patientsName.toLowerCase().includes(search.toLowerCase())
                                 )

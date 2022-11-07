@@ -4,7 +4,7 @@ import { UserDetails, Users } from '../models/User';
 import { API_URL_BASE } from '@toolbox/defaults/app';
 import { User } from '../models/User';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
-import { KEY_USER_DATA } from '@/toolbox/constants/local-storage';
+import { KEY_MEDICAL_CENTER, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
 
 
 export const userRepository = {
@@ -95,6 +95,22 @@ export const userRepository = {
          idarea: dataUser.idarea,
          idempresacliente: dataUser.idempresacliente,
          participacion: dataUser.participacion
+      })
+      return {
+         status: resp.status,
+         message: resp.message,
+         data: resp.data
+      };
+   },
+   changePasswordUser: async (dataUser) : Promise<any> => {
+      const userData = readLocalStorage(KEY_USER_DATA);
+      const medicalCenter = readLocalStorage(KEY_MEDICAL_CENTER)
+      const resp= await http.post<any>(`${API_URL_BASE}/v1/user/updatePass/${userData?.user?.iduser}`, {
+         medical_center: medicalCenter,
+         type_user  : userData?.user?.iduser_type,
+         old_password : dataUser.old_password,
+         new_password: dataUser.new_password,
+         confirm_password: dataUser.confirm_password,
       })
       return {
          status: resp.status,

@@ -7,7 +7,17 @@ import { KEY_MEDICAL_CENTER } from '@/toolbox/constants/local-storage';
 export const patientRepository = {
 
    getPatientPage: async (perPage=null, page=null, idarea=null, medical_center=null): Promise<any> => {
-      const patient = await http.get<any>(`${API_URL_BASE}/v1/patients?medical_center=${medical_center}` )
+      const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
+      const patient = await http.get<any>(`${API_URL_BASE}/v1/patients?medical_center=${medical_centerr}` )
+      const {data,error,message} = patient
+      return {
+         data,
+         error,
+         message
+      };
+   },
+   getPatientPageAll: async (): Promise<any> => {
+      const patient = await http.get<any>(`${API_URL_BASE}/v1/patients` )
       const {data,error,message} = patient
       return {
          data,
@@ -17,6 +27,15 @@ export const patientRepository = {
    },
    getPatientSearch: async (perPage=null, page=null, idarea=null, medical_center=null, term): Promise<any> => {
       const patient = await http.get<any>(`${API_URL_BASE}/v1/patients?medical_center=${medical_center}&term=${term}` )
+      const {data,error,message} = patient
+      return {
+         data,
+         error,
+         message
+      };
+   },
+   getPatientSearchAll: async (term): Promise<any> => {
+      const patient = await http.get<any>(`${API_URL_BASE}/v1/patients?term=${term}` )
       const {data,error,message} = patient
       return {
          data,

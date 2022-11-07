@@ -17,6 +17,7 @@ export const atenttionRepository = {
    },
    getAttentionAdmin: async ( ): Promise<any> => {
       const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
+      console.log(medical_center)
       const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_center}` )
       const {data,error,message} = family
       return {
@@ -26,12 +27,50 @@ export const atenttionRepository = {
       };
    },
 
-   getAttention: async (medical_center, idarea, iddoctor ): Promise<any> => {
+   getAttention: async (medical_center, idarea, iddoctor): Promise<any> => {
+      const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
+      const user_data = readLocalStorage(KEY_USER_DATA)
+      const idareaa =  user_data?.user?.idarea
+      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idarea=${idareaa?JSON.stringify([idareaa]):[]}&iddoctor=${JSON.stringify(iddoctor)}` )
+      const {data,error,message} = family
+      return {
+         data,
+         error,
+         message
+      };
+   },
+
+   getAttentionByProfessional: async(idprofessional):Promise<any> => {
+      const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
+      console.log(medical_centerr)
+      const attention = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idprofessional=${idprofessional}` )
+      const {data,error,message} = attention
+      return {
+         data,
+         error,
+         message
+      };
+   },
+
+   getAttentionPatienByTutor: async (medical_center, idtutor): Promise<any> => {
+      // const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
+      // const user_data = readLocalStorage(KEY_USER_DATA)
+      // const idareaa =  user_data?.user?.idarea
+      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_center}&idtutor=${idtutor}` )
+      const {data,error,message} = family
+      return {
+         data,
+         error,
+         message
+      };
+   },
+
+   getAttentionPatient: async (medical_center, idtutor): Promise<any> => {
       const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
       const user_data = readLocalStorage(KEY_USER_DATA)
       console.log(user_data)
       const idareaa =  user_data?.user?.idarea
-      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idarea=${JSON.stringify([idareaa])}&iddoctor=${JSON.stringify(iddoctor)}` )
+      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idtutor=${idtutor}` )
       const {data,error,message} = family
       return {
          data,
@@ -49,9 +88,9 @@ export const atenttionRepository = {
          message
       };
    },
-   getStatusUpdatePatient: async (id, medical_center ): Promise<any> => {
-      const family = await http.get<any>(`${API_URL_BASE}/v1/updatePatient/${id}?medical_center=${medical_center}` )
-      const {data,error,message} = family
+   getStatusUpdatePatient: async (idpatients, medical_center,typePublication): Promise<any> => {
+      const family = await http.get<any>(`${API_URL_BASE}/v1/updatePatient?medical_center=${medical_center}&idpatients=${JSON.stringify(idpatients)}&typePublication=${typePublication}`)
+      const { data, error, message } = family
       //oeeoeoeo te lo tumbaste xd
       return {
          data,
@@ -65,7 +104,9 @@ export const atenttionRepository = {
         idattention: data?.idattention,
         idstatus_patient: data?.idstatus_patient,
         iddoctor: data?.iddoctor,
+        idprofessional: data?.idprofessional,
         publication: data?.publication,
+        idpublication_type: data?.typePublication
       })
       return {
          status: resp.status,
@@ -135,8 +176,11 @@ export const atenttionRepository = {
          idarea: data.idarea, // me falta
          idpatients: data.idpatients,
          iddoctor: data.iddoctor, 
+         idtutor: data.idtutor,
          room: 1,//mefalta
-         idattention_type: data.idattention_type,
+         idattention_type: 1,//data.idattention_type,
+         idtypeSeguro: data.idtypeSeguro,
+         observation: data.observations,
          idstatus_patient: data.idstatus_patient// me falta
       })
    },

@@ -24,9 +24,11 @@ import { moneyFormatInt } from '@/toolbox/helpers/money.helper';
 import logokyte from "@assets/img/vacio.png";
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import { HomeDoctor } from './Doctor';
-import { ROLE_DOCTOR, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
+import { HomeTutor } from './Tutor' ;
+import { HomePatient } from './Paciente'; 
+import { ROLE_DOCTOR, ROLE_SUPER_ADMIN, ROLE_TUTOR, ROLE_PACIENTE } from '@/toolbox/defaults/static-roles';
 import { MedicalCenter } from '../MedicalCenter';
-import { ROLE_ADMIN } from '@/toolbox/constants/role-type';
+import { ROLE_ADMIN, ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 import { Doctor } from '../Doctors';
 import { PatientMaster } from '../PatientMaster';
 import { DoctorView } from '../Doctors/Doctors';
@@ -65,9 +67,18 @@ export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
          case ROLE_DOCTOR:
             console.log('doctor')
             return <HomeDoctor/>
-         default:
-            console.log('default')
+         case ROLE_PROFESSIONAL:
+            console.log('profesional')
             return <HomeDoctor/>
+         case ROLE_TUTOR:
+            console.log('tutor')
+            return <HomeTutor/>
+         case ROLE_PACIENTE:
+            console.log('paciente')
+            return<HomePatient/>
+            default:
+               console.log('default')
+               return <HomeDoctor/>
       }
    }
    return (

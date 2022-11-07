@@ -24,13 +24,18 @@ import "./Patient.css";
 import { ROLE_DOCTOR,ROLE_TUTOR } from '@/toolbox/defaults/static-roles';
 import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
+import {ListSolicitudModal} from "@views/PatientTutor/ListSolicitudModal";
+import { RequestService } from '@/service/services/Request.service';
+import { ROLE_PROFESSIONAL } from "@/toolbox/constants/role-type";
 
 export const PatientView = (props) => {
     const item = props.location.state.dataPaciente;
+    console.log(item)
     const { MedicalCenterReducer = '' } = props;
     const [showModalEquipo, setModalEquipo] = React.useState(false);
     const [showModalTutor, setModalTutor] = React.useState(false);
     const [showChatEquipo, setshowChatEquipo] = useState(false);
+
     const [showModalIngresoPaciente, setModalIngresoPaciente] = React.useState(false);
 
     const [mensajePaciente, setmensajePaciente] = React.useState([]);
@@ -38,16 +43,19 @@ export const PatientView = (props) => {
     const [statusName,setStatusName] = useState(null)
     const [estado, setEstado] = React.useState([])
     const [recoveryData, setRecoveryData] = React.useState({})
+    const [printRequest, setPrintRequest] = React.useState([]);
     const dataUser:any = readLocalStorage(KEY_USER_DATA)
-
+    const userData = readLocalStorage(KEY_USER_DATA);
     const savePublication = async (data) => {
         const publication = {
             medical_center: MedicalCenterReducer.id_medical_center,
             idattention: item?.id,
             idstatus_patient: data?.statusPatient,
-            iddoctor: item?.iddoctor,
+            iddoctor: userData?.user?.role == ROLE_PROFESSIONAL ? null: item?.iddoctor,
+            idprofessional: userData?.user?.role == ROLE_PROFESSIONAL ? userData?.user?.id_professional: null,
             publication: data.publication,
             doctorName: item?.doctorName,
+            typePublication: userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ? 2:1 
         }
         console.log(publication)
         const res = await attentionService.createStatusUpdatePatient(publication);
@@ -78,7 +86,12 @@ export const PatientView = (props) => {
 
     const getStatusPatient = async () => {
         console.log(MedicalCenterReducer.id_medical_center)
-        const res = await attentionService.getStatusUpdatePatient(item?.id, MedicalCenterReducer.id_medical_center);
+        let res:any;
+        if(userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ){
+            res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center,2);
+        }else{
+            res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center,1);
+        }
         if (res.data && res.data.status !== false) {
             console.log(res.data.length);
             setstatusDefault(res.data[res.data.length - 1].idstatus_patient)
@@ -96,6 +109,14 @@ export const PatientView = (props) => {
             setEstado([])
         }
     }
+
+    const getSendRequest = async() =>{
+        const res = await RequestService.getRequest(item.id, MedicalCenterReducer.id_medical_center)
+        if(res.data)
+        {
+         setPrintRequest(res.data)
+        }
+    }
     const handleChange = (event) => {
     //     console.log(event.target.value);
     //     const filname:any = estado.find((valuee) => valuee.id == event.target.value)
@@ -110,6 +131,7 @@ export const PatientView = (props) => {
     React.useEffect(() => {
         dataInitialStatusPatient()
         getStatusPatient()
+        getSendRequest()
     }, [MedicalCenterReducer.id_medical_center])
     return (
         <>
@@ -168,7 +190,7 @@ export const PatientView = (props) => {
                                 </Grid>
                             </Grid>
                             <Grid container direction={'row'} justifyContent={'space-between'} alignItems={'center'} >
-                                <Grid item xs={12} md={8} mt={1}>
+                                <Grid item xs={12} md={8} mt={2} container direction={'row'} spacing={2}>
                                     <Grid item xs={6}>
                                         <Card
                                             key={item.id}
@@ -199,22 +221,54 @@ export const PatientView = (props) => {
                                                             {`TIPO ATENCIÓN: ${item.attentionTypeName}`}
                                                         </Typography>
                                                         <Typography
-                                                            gutterBottom
-                                                            variant="h6"
-                                                            component="div"
-                                                            p={'3px'}
-                                                            className="texto-card3"
-                                                            sx={{ textTransform: 'uppercase' }}>
-                                                            
+                                                             gutterBottom
+                                                             variant="body2"
+                                                             component="div"
+                                                             p={'3px'}
+                                                             className="texto-card2"
+                                                             sx={{ textTransform: 'uppercase' }}>
+                                                              {`TIPO SEGURO: ${item.nameTypeSeguro}`}
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
                                             </CardActionArea>
+                                            
                                         </Card>
                                     </Grid>
+                                    {item?.observation && <Grid item xs={4}>
+                                        <Card
+                                            key={item.id}
+                                            sx={{
+                                                width: "100%",
+                                                background: '#feb4b3',
+                                                borderRadius: "10px"
+                                            }}>
+                                            <CardActionArea className="contenedor">
+                                                <Grid container className="texto-encima">
+                                                    <Grid item xs={12} sx={{ p: 1 }}>
+                                                        <Typography
+                                                            gutterBottom
+                                                            variant="body2"
+                                                            component="div"
+                                                            p={'3px'}
+                                                            className="texto-card2"
+                                                            sx={{ textTransform: 'uppercase' }}>
+                                                            {`OBSERVACIÓN:`}
+                                                        </Typography>
+
+                                                        <Typography gutterBottom >
+                                                            {item?.observation}
+                                                        </Typography>
+                                                       
+                                                    </Grid>
+                                                </Grid>
+                                            </CardActionArea>
+                                            
+                                        </Card>
+                                    </Grid>}
                                 </Grid>
                                 <Grid item container xs={12} md={4} direction={'row'} justifyContent={'flex-end'} spacing={1}>
-                                 { dataUser?.user?.role ==ROLE_DOCTOR &&  <Grid item xs={4} md={2} mt={1}>
+                                 { dataUser?.user?.role ==ROLE_DOCTOR &&  <Grid item xs={4} md={2} mt={2}>
                                         <Card
                                             key={item.id}
                                             sx={{
@@ -245,7 +299,7 @@ export const PatientView = (props) => {
                                         </Typography>
                                     </Grid>
 }
-                                    {dataUser?.user?.role == ROLE_TUTOR || ROLE_DOCTOR  && <Grid item xs={4} md={2} mt={1}>
+                                    {<Grid item xs={4} md={2} mt={2}>
                                         <Card
                                             key={item.id}
                                             sx={{
@@ -272,10 +326,10 @@ export const PatientView = (props) => {
                                             color="#28c4ac"
                                             mt={1}
                                             className="texto-card2">
-                                            Tutor
+                                            Solicitud Recibida
                                         </Typography>
                                     </Grid>}
-                                    <Grid item xs={4} md={2} mt={1}>
+                                    <Grid item xs={4} md={2} mt={2}>
                                         <Card
                                             key={item.id}
                                             sx={{
@@ -330,7 +384,7 @@ export const PatientView = (props) => {
                                         Ultimas Actualizaciones
                                     </Typography>
                                 </Grid>
-                             {dataUser?.user?.role ==ROLE_DOCTOR ? <Grid
+                             {dataUser?.user?.role ==ROLE_DOCTOR || dataUser?.user?.role == ROLE_PROFESSIONAL? <Grid
                                     item
                                     xs={6}
                                     md={6}
@@ -429,9 +483,14 @@ export const PatientView = (props) => {
                 open={showModalEquipo}
                 setOpen={setModalEquipo}
             />
-            <TutorModal
+            {/* <TutorModal
                 open={showModalTutor}
                 setOpen={setModalTutor}
+            /> */}
+            <ListSolicitudModal
+             open={showModalTutor}
+             setOpen={setModalTutor}
+             recoveryData={printRequest}
             />
         </>
     );

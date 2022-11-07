@@ -223,10 +223,9 @@ export const TableDataV2: React.FC<TableProps> = (
                   {props.title}
                </Typography>
                
-              {
-               !props.disabled_action_save &&
+             
                <Box sx={{ m: 1 }}>
-               <Button
+               {/* <Button
                   startIcon={(<UploadIcon fontSize="small" />)}
                   sx={{ mr: 1 }}
                >
@@ -238,15 +237,17 @@ export const TableDataV2: React.FC<TableProps> = (
                >
                   Export
                </Button>
+                */}
+               {
+               !props.disabled_action_save &&
                <Button
                   color="primary"
                   variant="contained"
                   onClick={()=>{props.setModalSave(true); props.actionSelect('save')}}
                >
                 Agregar
-               </Button>
+               </Button>   }
             </Box>
-              }
             </Box>
 
             <Paper

@@ -2,6 +2,8 @@ import { patientRepository } from "../repositories/Patient.respository";
 export const patientService = {
  
    getPatientPage,
+   getPatientPageAll,
+   getPatientSearchAll,
    createPatient,
    updatepatient,
    getStatusPatient,
@@ -13,8 +15,16 @@ async function getPatientPage (medical_center) {
    const area= await patientRepository.getPatientPage(null, null, null, medical_center);
    return area
 }
+async function getPatientPageAll() {
+   const area= await patientRepository.getPatientPageAll();
+   return area
+}
 async function getPatientSearch (medical_center, term) {
    const area= await patientRepository.getPatientSearch(null, null, null, medical_center, term);
+   return area
+}
+async function getPatientSearchAll(term) {
+   const area= await patientRepository.getPatientSearchAll(term);
    return area
 }
 async function createPatient (dataArea) {

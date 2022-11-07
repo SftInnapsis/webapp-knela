@@ -10,6 +10,8 @@ import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
 import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from "@/toolbox/defaults/static-roles";
 import { ModalMedicalCenter } from "../MedicalCenter/Modal";
+import { SpecialityService } from "@/service/services/Speciality.service";
+import { ModalSpecility } from "./Modal";
 // import { ModalBusinessArea } from "./Modal";
 
 
@@ -18,7 +20,7 @@ export const SpecialtyView: React.FC<any> = (props: any): JSX.Element => {
     const user_data = readLocalStorage(KEY_USER_DATA);
     const type_user = user_data.user.role;
 
-    const [dataArea, setDataArea] = useState<any>([]);
+    const [dataSpeciality, setDataSpeciality] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [data, setData] = useState<any>({});
     const [actionSelect,setActionSelect] = useState<any>('')
@@ -37,18 +39,18 @@ export const SpecialtyView: React.FC<any> = (props: any): JSX.Element => {
      })
 
    
-    const getDataArea = async () => {
-        const resp: any = await areaService.getAreaPage();
+    const getDataSpeciality = async () => {
+        const resp: any = await SpecialityService.getSpecialtyPage();
         console.log(resp)
         if (resp.data) {
-            setDataArea(resp.data);
+            setDataSpeciality(resp.data);
         }
     }
-    const getDataAreaByMedicalCenter = async (id_medical_center) => {
-        const resp: any = await areaService.getDataAreaByMedicalCenter(id_medical_center);
+    const getDataSpecialityByMedicalCenter = async (id_medical_center) => {
+        const resp: any = await SpecialityService.getDataSpecialityByMedicalCenter(id_medical_center);
         console.log(resp)
         if (resp.data) {
-            setDataArea(resp.data);
+            setDataSpeciality(resp.data);
         }
     }
 
@@ -97,12 +99,12 @@ export const SpecialtyView: React.FC<any> = (props: any): JSX.Element => {
 
     const getDataInitial = () => {
         if(type_user == ROLE_SUPER_ADMIN){
-            getDataArea();
+            getDataSpeciality();
         }
 
         if(type_user == ROLE_ADMIN){
             const medicalCenterID = MedicalCenterReducer.id_medical_center;
-            getDataAreaByMedicalCenter(medicalCenterID);
+            getDataSpecialityByMedicalCenter(medicalCenterID);
         }
     }
     // useEffect(() => {
@@ -137,16 +139,16 @@ export const SpecialtyView: React.FC<any> = (props: any): JSX.Element => {
                   {snackBarConfig.message}
                </Alert>
             </Snackbar>
-            {/* <ModalBusinessArea
+            <ModalSpecility
               open = {open}
               setOpen = {setOpen}
               actionSelect = {actionSelect}
               getDataInitial = {getDataInitial}
               data = {data}
-            /> */}
+            />
            
             <TableDataV2
-                data={dataArea}
+                data={dataSpeciality}
                 header={[
                     { name: 'name', label: 'Nombre', filter: false, Chip: false, avatar: false },
                     { name: 'name_medical_center', label: 'Centro Médico', filter: false, Chip: false, avatar: false },

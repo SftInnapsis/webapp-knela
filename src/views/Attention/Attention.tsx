@@ -1,17 +1,22 @@
 import { Protected } from "@/components/layout/Protected";
 import { attentionService } from "@/service/services/Attention.service";
 import { patientService } from "@/service/services/Patient.service";
-import { Alert, Box, Button, Card, CardActionArea, CardMedia, Chip, Grid, MenuItem, Paper, Select, Snackbar, Stack, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
+import { Alert, Box, Button, Card, CardActionArea, CardMedia, Chip, Grid, MenuItem, Paper, Select, Snackbar, Stack, Step, StepContent, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { StepSearchDoctor, StepSearchPatient, StepSearchTutor } from "./Steps";
+import { StepConfirmation } from "./Steps/StepConfirmation";
+import { StepSearchTeamMedical } from "./Steps/StepSearchTeamMedical";
 
 export const AttentionView = (props) => {
     const [dataInitial, setDataInitial] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [dataStatusPatient,setDataStatusPatient] = useState<any>([]);
-    const [idStatus, setIdStatus] = useState<any>()
-    const [type_attention,setTypeAttention] = useState<any>([])
-    const [idType,setIdType] = useState<any>({id:0, name:''})
+    const [idStatus, setIdStatus] = useState<any>(3)
+    const [typeSeguro,setTypeSeguro] = useState<any>([
+        { id:1, name: 'ISAPRE'},
+        { id:2, name: 'FONASA'}
+    ])
+    const [idType,setIdType] = useState<any>(1)
     const [snackBarConfig, setSnackBarConfig] = useState<any>({
         open: false,
         severity: 'error',
@@ -19,6 +24,18 @@ export const AttentionView = (props) => {
         autoHideDuration: 3000,
     })
 
+    const [observations, setObservations] = useState<any>({text:''})
+    const handleInput = (event: any) => {
+        const name_input = event.target.name;
+        const value = event.target.value;
+        switch (name_input) {
+           case 'observations':
+              setObservations(prev => ({ ...prev, text: value, textError: '' }));
+              break;
+           default:
+              break;
+        }
+     };
     const getDataInitial = async () => {
         console.log('dsfjjdkf');
     }
@@ -42,6 +59,8 @@ export const AttentionView = (props) => {
        const [dataDoctor, setDataDoctor] = useState<any>({
         idarea: 0, id:0
        });
+        const [dataMedicalTeam, setDataMedicalTeam] = useState<any>([]);
+
 
        const handleReset = () => {
         setActiveStep(0);
@@ -56,40 +75,72 @@ export const AttentionView = (props) => {
            })
     };
 
+    
+    const handleChanges = (e) => {
+        setIdStatus(e.target.value)
+    } 
 
-       const steps = [
-        {
-            label: 'Seleccione  el Paciente',
-            description: <StepSearchPatient activeStep={activeStep} setDataPatient={setDataPatient} handleNext={handleNext}/>
-        },
-        {
-            label: 'Asigna un tutor',
-            description: <StepSearchTutor dataPatient={dataPatient} handleNext={handleNext} handleBack={handleBack} setDataTutor={setDataTutor}/>,
-        },
-        {
-            label: 'Asigna el doctor',
-            description: <StepSearchDoctor setDataDoctor={setDataDoctor} handleNext={handleNext}/>,
-        },
-    ];
-
-    const GenerateAttention = async() => {
+    const handleChanges2 = (e) => {
+        setIdType(e.target.value)
+    }
+    
+    const GenerateAttention = async(dataObservation) => {
         console.log(dataPatient)
         console.log(dataTutor)
         console.log(dataDoctor)
         console.log(activeStep)
+
+        //validar que cierto campos esten rellenados
         const dta = {
             idarea: dataDoctor?.idarea, // me falta
             idpatients:dataPatient?.id,
             iddoctor: dataDoctor?.id, 
+            idtutor: dataTutor?.id,
             idstatus_patient: idStatus,
-            idattention_type: idType
+            idtypeSeguro: idType,
+            observations: dataObservation.text,
+            
         }
+        console.log(dta)
         const resp_attention = await attentionService.createAttention(dta);
         // if(resp_attention){
             setSnackBarConfig({...snackBarConfig, open:true, severity:'success', message:'La atención médica ha sido registrada con éxito'})
             handleReset()
         // }
     }
+
+    const steps = [
+        {
+            label: 'Seleccione  el Paciente',
+            description: <StepSearchPatient activeStep={activeStep} setDataPatient={setDataPatient} handleNext={handleNext}/>
+        },
+        {
+            label: 'Asigna un tutor (Opcional)',
+            description: <StepSearchTutor dataPatient={dataPatient} handleNext={handleNext} handleBack={handleBack} setDataTutor={setDataTutor}/>,
+        },
+        {
+            label: 'Asigna el doctor',
+            description: <StepSearchDoctor setDataDoctor={setDataDoctor} handleNext={handleNext}/>,
+        },
+        {
+            label: 'Confirmción de datos',
+            description: <StepConfirmation dataDoctor={dataDoctor} dataTutor={dataTutor} 
+            dataPatient={dataPatient} 
+            dataStatusPatient={dataStatusPatient}
+            idStatus={idStatus}
+            handleChanges={handleChanges}
+            typeSeguro={typeSeguro}
+            idType={idType}
+            handleChanges2={handleChanges2}
+            GenerateAttention={GenerateAttention}
+            handleReset={handleReset}
+            handleBack={handleBack}
+            handleInput={handleInput}
+            observations={observations}/>,
+        },
+    ];
+
+    
     const createAttetion = () => {
         console.log(dataPatient)
         console.log(dataTutor)
@@ -102,22 +153,15 @@ export const AttentionView = (props) => {
         setDataStatusPatient(resp_status.data)
     }
 
-    const getTypeAttention = async() => {
-        const type_attention = await attentionService.getTypeAttention();
-        setTypeAttention(type_attention.data)
-    }
+    // const getTypeAttention = async() => {
+    //     const type_attention = await attentionService.getTypeAttention();
+    //     setTypeAttention(type_attention.data)
+    // }
 
-    const handleChanges = (e) => {
-        setIdStatus(e.target.value)
-    } 
-
-    const handleChanges2 = (e) => {
-        setIdType(e.target.value)
-    }
         useEffect(() => {
             getDataInitial();
             getStatusAttention();
-            getTypeAttention()
+            // getTypeAttention()
         }, [])
 
         return (
@@ -141,92 +185,28 @@ export const AttentionView = (props) => {
 
                                     <Box sx={{ mb: 2 }}>
                                         <div>
-                                            {/* <Button
-                                                variant="contained"
-                                                onClick={handleNext}
-                                                sx={{ mt: 1, mr: 1 }}
-                                            >
-                                                {index === steps.length - 1 ? 'Finish' : 'Continue'}
-                                            </Button> */}
-                                            <Button
+                                           {index != 3 && <Button
                                                 disabled={index === 0}
                                                 onClick={handleBack}
                                                 variant='contained'
                                                 sx={{  mr: 1 , background: '#FFBB34', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#bf6c00' } }}
                                             >
                                                 REGRESAR
-                                            </Button>
+                                            </Button>}
+                                            { index == 1 && <Button
+                                                variant="contained"
+                                                onClick={handleNext}
+                                                sx={{  mr: 1 , background: '#FFBB34', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#bf6c00' } }}
+                                            >
+                                                {'OMITIR'}
+                                            </Button>}
                                         </div>
                                     </Box>
                                 </StepContent>
                             </Step>
                         ))}
                     </Stepper>
-                    {activeStep === steps.length && (
-                        <Paper square elevation={0} sx={{ p: 3 }}>
-                            {/* <Typography>Hemos finalizado todos los pasos,indique el estado del paciente y verifique si los datos son correctos</Typography> */}
-                            <Grid container  direction="row" spacing={2} >
-                                <Grid item xs={4}>
-                                        <Typography>Seleccione el estado del paciente</Typography>
-                                        <Select
-                                            id="outlined-select-ubicationclinica"
-                                            sx={{ width: "200px" }}
-                                            // fullWidth
-                                            value={idStatus}
-                                            onChange={handleChanges}
-                                            variant="standard"
-                                        >
-                                            {dataStatusPatient.map((option, key) => (
-                                                <MenuItem
-                                                    sx={{ textAlign: 'center' }}
-                                                    key={key} value={option.id}>
-                                                    {option.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                        
-                                </Grid>
-                                <Grid item md={6}>
-                                <Typography>Seleccione tipo de atención</Typography>
-                                        <Select
-                                            id="outlined-select-ubicationclinica"
-                                            sx={{ width: "200px" }}
-                                            // fullWidth
-                                            value={idType}
-                                            onChange={handleChanges2}
-                                            variant="standard"
-                                        >
-                                            {type_attention.map((option, key) => (
-                                                <MenuItem
-                                                    sx={{ textAlign: 'center' }}
-                                                    key={key} value={option.id}>
-                                                    {option.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                </Grid>
-                                <Grid item md={12}>
-                                        <Stack direction="row" spacing={1}>
-                                            <Chip label={`Paciente: ${dataPatient?.name} - ${dataPatient?.rut}`} />
-                                            <Chip label={`Tutor: ${dataTutor?.name} - ${dataTutor?.rut}`}  />
-                                            <Chip label={`Doctor: ${dataDoctor?.name} - ${dataDoctor?.rut}`}  />
-                                        </Stack>
-                                </Grid>
-                                <Grid item md={8}>
-                                <Button onClick={()=>{handleBack()}} variant='contained'  sx={{ background: '#FFBB34', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#bf6c00' } }}>Volver</Button>
-                            <Button onClick={()=>{handleReset()}} variant='contained'  sx={{ background: '#FFBB34',ml:2, color: '#fff', mt: '10px', '&:hover': { bgcolor: '#bf6c00' } }}>Restablecer</Button>
-                            
-                                </Grid>
-                                <Grid item md={4}>
-                                <Button onClick={()=>{GenerateAttention()}} variant='contained' sx={{ background: '#3D8BD9', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#155172' } }}>Confirmar</Button>
-                           
-                                </Grid>
-
-                            </Grid>
-                            
-                            
-                        </Paper>
-                    )}
+                   
                 </Box>
                 <Snackbar
                 open={snackBarConfig.open}

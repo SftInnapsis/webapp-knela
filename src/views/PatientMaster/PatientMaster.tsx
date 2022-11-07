@@ -6,9 +6,14 @@ import { ConfirmDialog } from '@components/common/DialogConfirm';
 import { PatientMasterModal } from "./PatientMasterModal";
 import { SaveIcon, CancelIcon } from "@toolbox/constants/icons";
 import { Button, InputAdornment,Autocomplete, TextField, Grid, CircularProgress, Snackbar, Alert, FormControl, OutlinedInput, InputLabel, MenuItem, Select } from '@mui/material';
+import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
+import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
+import { ROLE_SUPER_ADMIN } from "@/toolbox/defaults/static-roles";
 
 export const PatientMasterView = (props) => {
     console.log(props)
+    const user_data = readLocalStorage(KEY_USER_DATA)
+    const role = user_data.user.role
     const { MedicalCenterReducer ='' } = props;
     const [dataPatient, setDataPatient] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
@@ -20,7 +25,7 @@ export const PatientMasterView = (props) => {
         confirm: false,
         id: null,
         medical_center: null,
-        message: `¿Desea eliminar al contacto --- con Rut ----?`
+        message: ``
     })
 
     const [snackBarConfig, setSnackBarConfig] = useState<any>({
@@ -31,20 +36,39 @@ export const PatientMasterView = (props) => {
     })
 
     const getDataPatient = async()=>{
-        const resp:any = await patientService.getPatientPage(MedicalCenterReducer.id_medical_center);
-        console.log(resp)
-        if(resp.data){
-            setDataPatient(resp.data);
+        if(role == ROLE_SUPER_ADMIN){
+            const resp:any = await patientService.getPatientPageAll();
+            console.log(resp)
+            if(resp.data){
+                setDataPatient(resp.data);
+            }
+        }else{
+            const resp:any = await patientService.getPatientPage(MedicalCenterReducer.id_medical_center);
+            console.log(resp)
+            if(resp.data){
+                setDataPatient(resp.data);
+            }
         }
+       
     }
 
 
     const getPatientSearch = async(term)=>{
-        const resp:any = await patientService.getPatientSearch(MedicalCenterReducer.id_medical_center, term);
-        console.log(resp)
-        if(resp.data){
-            setDataPatient(resp.data);
+        if(role == ROLE_SUPER_ADMIN){
+            const resp:any = await patientService.getPatientSearchAll( term);
+            console.log(resp)
+            if(resp.data){
+                setDataPatient(resp.data);
+            }
+
+        }else{
+            const resp:any = await patientService.getPatientSearch(MedicalCenterReducer.id_medical_center, term);
+            console.log(resp)
+            if(resp.data){
+                setDataPatient(resp.data);
+            }
         }
+       
     }
     
     const RecuperarData = async (data) => {
@@ -128,6 +152,25 @@ export const PatientMasterView = (props) => {
         getDataPatient();
     },[MedicalCenterReducer.id_medical_center])
 
+    const headerAdmin = [
+        { name: 'rut', label: 'RUT', filter: false, Chip: false },
+        { name: 'name', label: 'Nombre', filter: false, Chip: false },
+        { name: 'last_name', label: 'Apellido', filter: false, Chip: false },
+        { name: 'mail', label: 'Correo', filter: false, Chip: false },
+        { name: 'date_birth', label: 'Fecha de Nacimiento', filter: false, Chip: false },
+        { name: 'status', label: 'Estado', filter: false, Chip: true }
+    ]
+
+    const headerSuperAdmin = [
+        { name: 'rut', label: 'RUT', filter: false, Chip: false },
+        { name: 'name', label: 'Nombre', filter: false, Chip: false },
+        { name: 'last_name', label: 'Apellido', filter: false, Chip: false },
+        { name: 'mail', label: 'Correo', filter: false, Chip: false },
+        { name: 'date_birth', label: 'Fecha de Nacimiento', filter: false, Chip: false },
+        { name: 'medicalCenter_name', label: 'Centro Medico', filter: false, Chip: false },
+        { name: 'status', label: 'Estado', filter: false, Chip: true }
+    ]
+
     const bodyView = <>
          <ConfirmDialog
                 open={Dialog.open}
@@ -160,13 +203,7 @@ export const PatientMasterView = (props) => {
             />
             <TableDataV2
                 data={dataPatient}
-                header={[
-                    { name: 'rut', label: 'RUT', filter: false, Chip: false },
-                    { name: 'name', label: 'Nombre', filter: false, Chip: false },
-                    { name: 'last_name', label: 'Apellido', filter: false, Chip: false },
-                    { name: 'mail', label: 'Correo', filter: false, Chip: false },
-                    { name: 'status', label: 'Estado', filter: false, Chip: true }
-                ]}
+                header={role === ROLE_SUPER_ADMIN? headerSuperAdmin: headerAdmin}
                 status_action
                 checkbox
                 select_button= {props?.select_button ?true:false}

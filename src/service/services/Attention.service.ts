@@ -3,6 +3,7 @@ export const attentionService = {
 
    getAreaPage,
    getAttention,
+   getAttentionPatient,
    createStatusUpdatePatient,
    getStatusUpdatePatient,
    createAttention,
@@ -10,7 +11,9 @@ export const attentionService = {
    getAttentionAdmin,
    getStatusPatient,
    updateStatusUpdatePatient,
-   deleteStatusUpdatePatient
+   deleteStatusUpdatePatient,
+   getAttentionPatienByTutor,
+   getAttentionByProfessional
    //    createArea,
    //    updateArea,
    //    deleteArea
@@ -25,12 +28,26 @@ async function getAttention(medical_center, idarea, iddoctor) {
    const user = await atenttionRepository.getAttention(medical_center, idarea, iddoctor);
    return user
 }
+async function getAttentionByProfessional(idprofessional) {
+   const user = await atenttionRepository.getAttentionByProfessional(idprofessional);
+   return user
+}
+
+async function getAttentionPatienByTutor(medical_center, idtutor) {
+   const user = await atenttionRepository.getAttentionPatienByTutor(medical_center,idtutor);
+   return user
+}
+
 async function getAttentionAdmin() {
    const user = await atenttionRepository.getAttentionAdmin();
    return user
 }
-async function getStatusUpdatePatient(id, medical_center) {
-   const user = await atenttionRepository.getStatusUpdatePatient(id, medical_center);
+async function getAttentionPatient(medical_center, idtutor) {
+   const user = await atenttionRepository.getAttentionPatient(medical_center, idtutor);
+   return user
+}
+async function getStatusUpdatePatient(id, medical_center,typePublication) {
+   const user = await atenttionRepository.getStatusUpdatePatient(id, medical_center,typePublication);
    return user
 }
 async function getStatusPatient(medical_center) {

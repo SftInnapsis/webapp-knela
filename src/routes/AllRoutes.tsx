@@ -7,12 +7,15 @@ import {
    ROLE_ADMIN,
    ROLE_PACIENTE,
    ROLE_SUPER_ADMIN,
+   ROLE_TUTOR,
 } from '@/toolbox/defaults/static-roles';
 import Unauthorized from '@views/_unautorized';
 import { PrivateRoute, AuthRoute } from './PrivateRoute';
 import { HomeView } from '@/views/Home';
 import { LoginView } from '@/views/Login';
+import { RegisterView } from '@/views/Register';
 import { Patient } from '@/views/Patient';
+import { PatientTutor } from '@/views/PatientTutor';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
 import { BusinessArea } from '@/views/BusinessArea';
 import { Doctor } from '@/views/Doctors';
@@ -21,6 +24,8 @@ import { PatientMaster } from '@/views/PatientMaster';
 import { Professional } from '@/views/Professional';
 import { Specialty } from '@/views/Speciality';
 import { AttentionList, AttentionView } from '@/views/Attention';
+import { DoctorIndependiente } from '@/views/DoctorIndependiente';
+import { ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 
 const AllRoutes: React.FC = () => {
 
@@ -34,6 +39,10 @@ const AllRoutes: React.FC = () => {
 
    const modulePatient = [
       <PrivateRoute key={5} exact path={Routes.ROUTE_PATIENT} component={Patient} />,
+   ];
+
+   const modulePatientTutor = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_PATIENT_TUTOR} component={PatientTutor} />,
    ];
 
    const modulePatientMaster = [
@@ -61,12 +70,19 @@ const AllRoutes: React.FC = () => {
    ];
 
    const moduleAttention = [
-      <PrivateRoute key={5} exact path={Routes.ROUTE_ATTENTION} component={AttentionView}/>
+      <PrivateRoute key={5} exact path={Routes.ROUTE_ATTENTION} component={AttentionView} />
    ]
 
    const moduleAttentionList = [
-      <PrivateRoute key={5} exact path={Routes.ROUTE_ATTENTION_LIST} component={AttentionList}/>
+      <PrivateRoute key={5} exact path={Routes.ROUTE_ATTENTION_LIST} component={AttentionList} />
    ]
+   const moduleDoctorIndependiente = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_DOCTORES_INDEPENDIENTES} component={DoctorIndependiente} />
+   ]
+
+
+   
+
 
    const routes = useMemo(() => {
       let role: string = 'prueba';
@@ -92,6 +108,9 @@ const AllRoutes: React.FC = () => {
                      {modulePatientMaster}
                      {moduleProfessional}
                      {moduleSpeciality}
+                     {moduleDoctorIndependiente}
+                     {modulePatientTutor}
+
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_HOME} />
                      }} />}
@@ -113,6 +132,7 @@ const AllRoutes: React.FC = () => {
                      {moduleSpeciality}
                      {moduleAttention}
                      {moduleAttentionList}
+                     {modulePatientTutor}
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_HOME} />
                      }} />}
@@ -127,18 +147,50 @@ const AllRoutes: React.FC = () => {
                      {moduleHome}
                      {modulePatient}
                      {moduleBusinessArea}
+                     {modulePatientTutor}
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_HOME} />
                      }} />}
                   </Switch>
                </Router>
             );
+         case ROLE_PROFESSIONAL:
+            return (
+               <Router>
+                  <Switch>
+                     <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
+                     {moduleHome}
+                     {modulePatient}
+                     {moduleBusinessArea}
+                     {modulePatientTutor}
+                     {<Route path='*' exact={true} component={() => {
+                        return <Redirect to={Routes.ROUTE_HOME} />
+                     }} />}
+                  </Switch>
+               </Router>
+            );
+            case ROLE_TUTOR:
+               return (
+                  <Router>
+                     <Switch>
+                        <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
+                        {moduleHome}
+                        {modulePatient}
+                        {moduleBusinessArea}
+                        {modulePatientTutor}
+                        {<Route path='*' exact={true} component={() => {
+                           return <Redirect to={Routes.ROUTE_HOME} />
+                        }} />}
+                     </Switch>
+                  </Router>
+               );
+   
 
          default:
             return (
                <Router>
                   <Switch>
-                    {moduleHome}
+                     {moduleHome}
                      {moduleBusinessArea}
                      {moduleDoctors}
                      {moduleMedicalCenter}
@@ -148,11 +200,15 @@ const AllRoutes: React.FC = () => {
                      {moduleSpeciality}
                      {moduleAttention}
                      {moduleAttentionList}
+                     {moduleDoctorIndependiente}
+                     {modulePatientTutor}
+                     <Route key={5} exact path={Routes.ROUTE_REGISTER} component={RegisterView} />
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_LOGIN} />
                      }} />}
                   </Switch>
+
                </Router>
             )
       }

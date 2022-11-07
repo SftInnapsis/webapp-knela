@@ -2,8 +2,9 @@ import { http } from '../http/http';
 import { LoginDTO, LogoutDTO, UserDTO } from '../http/dto/AuthenticationDTO';
 import { Login, Logout, Authentication } from '../models/Authentication';
 import { API_URL_BASE, API_URL_SOFTNET } from '@/toolbox/defaults/app';
-import { saveLocalStorage } from '@/toolbox/helpers/local-storage-helper';
-import { KEY_MEDICAL_CENTER, KEY_OPTIONS_MEDICAL_CENTER } from '@/toolbox/constants/local-storage';
+import { readLocalStorage, saveLocalStorage } from '@/toolbox/helpers/local-storage-helper';
+import { KEY_MEDICAL_CENTER, KEY_OPTIONS_MEDICAL_CENTER, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
+import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
 
 export const authenticationRepository = {
    login: async (rut: string, password: string, perfil :number): Promise<Login> => {
@@ -42,6 +43,14 @@ export const authenticationRepository = {
    },
    profile: async (access_token: string, resp: any) => {
       console.log(resp)
+      // const userData = readLocalStorage(KEY_USER_DATA)
+      saveLocalStorage(KEY_OPTIONS_MEDICAL_CENTER,resp?.medical_center )
+      console.log(resp)
+      // console.log(userData)
+      if( resp.information_user?.role != ROLE_SUPER_ADMIN){
+         saveLocalStorage(KEY_MEDICAL_CENTER, resp?.medical_center[0].idmedical_center)
+      }
+     
       return {
          user: {
             iduser: resp.information_user?.iduser,
@@ -53,6 +62,10 @@ export const authenticationRepository = {
             date_birth:resp.information_user?.date_birth,
             mail: resp.information_user?.mail,
             idarea: resp.information_user?.idarea,
+            name_area: resp.information_user?.name_area,
+            id_professional: resp.information_user?.id_professional,
+            id_doctor: resp.information_user?.id_doctor,
+            id_tutor: resp.information_user?.id_tutor,
             idspecialty: resp.information_user?.idspecialty,
             address: resp.information_user?.address,
             iddistrict: resp.information_user?.iddistrict,

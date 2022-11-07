@@ -2,6 +2,7 @@ import { tutorRepository } from "../repositories/Tutor.repository";
 export const tutorService = {
  
    geTutorPage,
+   geTutorSearch,
    geTutorByPatient,
    createTutor,
    updateTutor,
@@ -10,6 +11,10 @@ export const tutorService = {
 
 async function geTutorPage () {
    const tutor= await tutorRepository.geTutorPage();
+   return tutor
+}
+async function geTutorSearch (term) {
+   const tutor= await tutorRepository.geTutorSearch(term);
    return tutor
 }
 async function geTutorByPatient (id) {

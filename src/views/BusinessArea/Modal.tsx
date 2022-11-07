@@ -4,7 +4,7 @@ import { ubigeoService } from "@/service/services/Ubigeo.service";
 import { KEY_OPTIONS_MEDICAL_CENTER, KEY_USER_DATA } from "@/toolbox/constants/local-storage";
 import { ROLE_SUPER_ADMIN } from "@/toolbox/defaults/static-roles";
 import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
-import { Alert, Autocomplete, Button, Grid, Modal, Snackbar, TextField } from "@mui/material";
+import { Alert, Autocomplete, Button, Grid, Modal, Snackbar, TextField, Typography } from "@mui/material";
 import { SaveIcon, CancelIcon } from "@toolbox/constants/icons";
 import { useEffect, useState } from "react";
 
@@ -14,7 +14,7 @@ export const ModalBusinessArea = (props) =>{
     const initialArea = { id: 0, name: '', idmedical_center:''}
     const [areaSelected, setAreaSelected] = useState<any>(initialArea)
     const [medicalCenterOptions, setMedicalCenterOptions] = useState<any>([])
-    const [medicalCenter, setMedicalCenter] = useState<any>(initialArea)
+    const [medicalCenter, setMedicalCenter] = useState<any>(null)
     const user_data = readLocalStorage(KEY_USER_DATA)
     const [error, setError] = useState<any>('');
     
@@ -56,6 +56,7 @@ export const ModalBusinessArea = (props) =>{
      },[])
 
     const handleInputChange = (e) => {
+        setError('')
         const changedFormValues = {
             ...areaSelected,
             [e.target.name]: e.target.value
@@ -68,6 +69,7 @@ export const ModalBusinessArea = (props) =>{
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         // if(medicalCenterSelected.rut === ''){return setError('rut')}
+        if(ROLE_SUPER_ADMIN == user_data.user.role && !medicalCenter){return setError('medicalCenter')}
         if(areaSelected.name === ''){return setError('name')}
         // if(medicalCenter.idmedical_center === ''){return setError('idMedicalCenter')}
         // if(medicalCenterSelected.address === ''){return setError('address')}
@@ -120,22 +122,23 @@ export const ModalBusinessArea = (props) =>{
                             sx={{ bgcolor: '#fff' }}
                             size='small'
                             onChange={(e, data: any) => { 
-                                data && setMedicalCenter(data)
+                                data && setError('')
+                                data ? setMedicalCenter(data): setMedicalCenter(null)
                                 data && setAreaSelected({...areaSelected,idmedical_center:data.id })
                             }}
                             id="medical_center"
                             options={medicalCenterOptions}
-                            getOptionLabel={(option: any) => option.name ? option.name : ""}
+                            getOptionLabel={(option: any) => option?.name ? option?.name : ""}
                             renderInput={(params) => <TextField {...params} 
                                                         label="Centro Médico"
-                                                        error={error=='idMedicalCenter'? true:false}
-                                                        helperText={error=='idMedicalCenter'?'Seleccion del campo obligatorio': ''}/>}
+                                                        error={error=='medicalCenter'? true:false}
+                                                        helperText={error=='medicalCenter'?'Campo obligatorio': ''}/>}
                         />
                     </Grid>
                     }
                     <Grid item xs={12} md={12} >
                         <TextField
-                            value={areaSelected.name}
+                            value={areaSelected?.name}
                             fullWidth
                             size="small"
                             id="name"
@@ -197,7 +200,7 @@ export const ModalBusinessArea = (props) =>{
               onClose={() => { setOpen(false) }}>
               <div className='Modal'>
                  <div className='Title'>
-                    <span > {actionSelect == 'edit' ? 'Actualizar Area' :'Crear Area'}</span>
+                    <Typography variant='h5' fontWeight={700}> {actionSelect == 'edit' ? 'Actualizar Area' :'Crear Area'}</Typography>
                  </div>
                  <div className='Body'>
                    {bodyModal}

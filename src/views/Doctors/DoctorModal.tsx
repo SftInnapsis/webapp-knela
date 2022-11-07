@@ -12,13 +12,16 @@ import EmailIcon from '@mui/icons-material/Email';
 import { VALIDATORS } from '@/toolbox/helpers/validation-rules';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
-import { KEY_MEDICAL_CENTER, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
+import { KEY_MEDICAL_CENTER, KEY_OPTIONS_MEDICAL_CENTER, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
 import { authenticationRepository } from '@/service/repositories/Authentication.repository';
 import { VisibilityIcon, VisibilityOffIcon } from '@toolbox/constants/icons';
 import { doctorService } from '@/service/services/Doctor.service';
 import { ubigeoService } from '@/service/services/Ubigeo.service';
 import { areaService } from '@/service/services/Area.service';
 import { ROLE_SUPER_ADMIN } from '@/toolbox/constants/role-type';
+import { ROLE_ADMIN } from '@/toolbox/defaults/static-roles';
+import { SpecialityRepository } from '@/service/repositories/Speciality.repository';
+import { SpecialityService } from '@/service/services/Speciality.service';
 
 
 type ModalProps = {
@@ -70,6 +73,7 @@ export const DoctorModal: React.FC<ModalProps> = (
    const [error, setError] = useState<any>('');
 
    const handleInput = (event: any) => {
+      setError('')
       const name_input = event.target.name;
       const value = event.target.value;
       switch (name_input) {
@@ -80,7 +84,34 @@ export const DoctorModal: React.FC<ModalProps> = (
             setData(prev => ({ ...prev, last_name: value, textError: '' }));
             break;
          case 'rut':
-            setData(prev => ({ ...prev, rut: value, textError: '' }));
+            // setData(prev => ({ ...prev, rut: value, textError: '' }));
+            var Fn = {
+               // Valida el rut con su cadena completa "XXXXXXXX-X"
+               validaRut: function (rutCompleto) {
+                  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
+                     return false;
+                  var tmp = rutCompleto.split('-');
+                  var digv = tmp[1];
+                  var rut = tmp[0];
+                  if (digv == 'K') digv = 'k';
+                  return (Fn.dv(rut) == digv);
+               },
+               dv: function (T) {
+                  var M = 0, S = 1;
+                  for (; T; T = Math.floor(T / 10))
+                     S = (S + T % 10 * (9 - M++ % 6)) % 11;
+                  return S ? S - 1 : 'k';
+               }
+            }
+
+            var foo = value.split("-").join("")
+            if (foo.length > 0 && foo.length < 10) {
+               foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
+               setData(prev => ({ ...prev, rut: foo }))
+            } else if (foo.length == 0) {
+               setData(prev => ({ ...prev, rut: "" }))
+            }
+
             break;
          case 'date_birth':
             setData(prev => ({ ...prev, date_birth: value, textError: '' }));
@@ -98,13 +129,31 @@ export const DoctorModal: React.FC<ModalProps> = (
 
    const dataInitial = async () => {
       try {
-         const res: any = await doctorService.getDoctorDataInitial();
-         const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
-         const resp = await areaService.getDataAreaByMedicalCenter(medical_center);
-         setDataArea(resp.data);
-         setDataEspecialidad(res.data.Specialty)
-         setDataMedicalCenter(res.data.MedicalCenter)
-         setDataDoctorType(res.data.DoctorType)
+         console.log('hsdfh')
+         const userData = readLocalStorage(KEY_USER_DATA);
+         const role = userData.user.role
+         const optionsMedicalCenter = readLocalStorage(KEY_OPTIONS_MEDICAL_CENTER);
+         console.log(optionsMedicalCenter)
+         setDataMedicalCenter(optionsMedicalCenter)
+         if(role === ROLE_ADMIN){
+            const idMedicalCenter = readLocalStorage(KEY_MEDICAL_CENTER);
+            const objMedicalCenter = optionsMedicalCenter.find((value => value.id == idMedicalCenter))
+            
+            setMedicalCenter(objMedicalCenter)
+
+            const resp = await areaService.getDataAreaByMedicalCenter(objMedicalCenter.id);
+            setDataArea(resp.data);
+
+            const respSpecialty = await SpecialityService.getDataSpecialityByMedicalCenter(objMedicalCenter.id)
+            setDataEspecialidad(respSpecialty.data)
+         }
+         // const res: any = await doctorService.getDoctorDataInitial();
+         // const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
+         // const resp = await areaService.getDataAreaByMedicalCenter(medical_center);
+         // setDataArea(resp.data);
+         // setDataEspecialidad(res.data.Specialty)
+         // setDataMedicalCenter(res.data.MedicalCenter)
+         // setDataDoctorType(res.data.DoctorType)
       }
       catch(e){
         console.log(e)
@@ -193,17 +242,29 @@ export const DoctorModal: React.FC<ModalProps> = (
       getAutocomplete(idmedical_center, idspecialty, id_doctor_type, id_area,);
    }
 
+   const ValidateEmail = (mail) =>{
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+      {
+        return (true)
+      }else{
+          return false
+      }
+  }
 
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       if (data.name === '') { return setError('name') }
+      if (data.name.length >= 100) {return setError('name_limit')}
       if (data.last_name === '') { return setError('last_name') }
+      if (data.last_name.length >= 100) { return setError('last_name_limit') }
       if (data.rut === '') { return setError('rut') }
       if (data.date_birth === '') { return setError('date_birth') }
       if (data.mail === '') { return setError('mail') }
+      let validate = ValidateEmail(data.mail)
+      if(!validate){return setError('mail_invalid') }
       if (data.address === '') { return setError('address') }
-
+      if (data.address.length >= 100) { return setError('address_limit') }
       if (idArea.name === '') { return setError('idArea') }
       if (idEspecialidad.name === '') { return setError('idEspecialidad') }
 
@@ -229,7 +290,7 @@ export const DoctorModal: React.FC<ModalProps> = (
    }
 
    useEffect(() => {
-      // if (open) {
+      if (open) {
       dataInitial();
       getPais();
       if (actionSelect == 'edit') {
@@ -238,8 +299,8 @@ export const DoctorModal: React.FC<ModalProps> = (
          setData(recoveryData);
          getUbigeo(iddistrict, idprovince, iddepartment, idcountry, idmedical_center, idspecialty, iddoctor_type, idarea)
       }
-      // }
-   }, [])
+      }
+   }, [open])
 
    const LimpiarFormulario = () => {
       // setIdArea(null)
@@ -258,34 +319,37 @@ export const DoctorModal: React.FC<ModalProps> = (
       <div>
          <form onSubmit={handleSubmit} >
             <Grid container direction="row" spacing={2}>
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <TextField
                      fullWidth
                      size="small"
                      id="name"
                      placeholder="Nombre*"
+                     label="Nombre*"
                      sx={{ bgcolor: '#fff' }}
                      name="name"
-                     error={error == 'name' ? true : false}
+                     error={error == 'name' || error == 'name_limit'? true : false}
                      type="text"
                      value={data.name}
                      onChange={handleInput}
-                     helperText={error == 'name' ? 'Campo es obligatorio' : ''}
+                     helperText={error == 'name' ? 'Campo es obligatorio' : error == 'name_limit'? 'Máximo 100 caracteres':''}
+
                   />
                </Grid>
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <TextField
                      fullWidth
                      size="small"
                      id="last_name"
                      placeholder="Apellido*"
+                     label="Apellido*"
                      sx={{ bgcolor: '#fff' }}
                      name="last_name"
-                     error={error == 'last_name' ? true : false}
+                     error={error == 'last_name' || error ==  'last_name_limit' ? true : false}
                      type="text"
                      value={data.last_name}
                      onChange={handleInput}
-                     helperText={error == 'name' ? 'Campo es obligatorio' : ''}
+                     helperText={error == 'name' ? 'Campo es obligatorio' : error == 'name_limit'? 'Máximo 100 caracteres':''}
                   />
                </Grid>
                <Grid item xs={12} md={6} >
@@ -294,6 +358,7 @@ export const DoctorModal: React.FC<ModalProps> = (
                      size="small"
                      id="rut"
                      placeholder="Rut*"
+                     label="Rut*"
                      sx={{ bgcolor: '#fff' }}
                      name="rut"
                      error={error == 'rut' ? true : false}
@@ -309,6 +374,7 @@ export const DoctorModal: React.FC<ModalProps> = (
                      size="small"
                      id="date_birth"
                      placeholder="Fecha Nacimiento*"
+                     // label="Fecha Nacimiento*"
                      sx={{ bgcolor: '#fff' }}
                      name="date_birth"
                      error={error == 'date_birth' ? true : false}
@@ -324,32 +390,34 @@ export const DoctorModal: React.FC<ModalProps> = (
                      size="small"
                      id="mail"
                      placeholder="Correo*"
-                     error={error == 'mail' ? true : false}
+                     label="Correo*"
+                     error={error == 'mail' || error == 'mail_limit'? true : false}
                      sx={{ bgcolor: '#fff' }}
                      name="mail"
                      type="text"
                      value={data.mail}
                      onChange={handleInput}
-                     helperText={error == 'mail' ? 'Campo es obligatorio' : ''}
+                     helperText={error == 'mail' ? 'Campo es obligatorio' : error == 'mail_limit'?'Número máximo de caracteres es 100':''}
                   />
                </Grid>
 
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <TextField
                      fullWidth
                      size="small"
                      id="address"
                      placeholder="Direccion*"
+                     label="Direccion*"
                      sx={{ bgcolor: '#fff' }}
                      name="address"
                      type="text"
                      value={data.address}
                      onChange={handleInput}
-                     error={error == 'address' ? true : false}
-                     helperText={error == 'address' ? 'Campo es obligatorio' : ''}
+                     error={error == 'address' || error == 'address_limit' ? true : false}
+                     helperText={error == 'address' ? 'Campo es obligatorio' : error == 'address'? 'Número máximo de caracteres es 100':''}
                   />
                </Grid>
-               <Grid item xs={12} md={6} >
+               {/* <Grid item xs={12} md={12} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
                      size='small'
@@ -362,8 +430,8 @@ export const DoctorModal: React.FC<ModalProps> = (
                      getOptionLabel={(option: any) => option.name ? option.name : ""}
                      renderInput={(params) => <TextField {...params} label="Tipo Doctor" />}
                   />
-               </Grid>
-               {user_data.user.role == ROLE_SUPER_ADMIN && <Grid item xs={12} md={6} >
+               </Grid> */}
+               {user_data.user.role == ROLE_SUPER_ADMIN && <Grid item xs={12} md={12} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
                      size='small'
@@ -372,6 +440,10 @@ export const DoctorModal: React.FC<ModalProps> = (
                         console.log(data);
                         data && getArea(data.id);
                         setMedicalCenter(data)
+                        /*setIdDoctorType( {
+                           id: 1,
+                           name: "test"
+                       })*/
                      }}
                      id="medical_center"
                      options={dataMedicalCenter}
@@ -379,7 +451,7 @@ export const DoctorModal: React.FC<ModalProps> = (
                      renderInput={(params) => <TextField {...params} label="Centro Médico" />}
                   />
                </Grid>}
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
                      size='small'
@@ -393,11 +465,12 @@ export const DoctorModal: React.FC<ModalProps> = (
                      renderInput={(params) => <TextField
                         {...params}
                         placeholder="Area"
+                        label="Area"
                         error={error == "idArea" ? true : false}
                         helperText={error == "idArea" ? "Campo requerido" : ""} />}
                   />
                </Grid>
-               <Grid item xs={12} md={6} >
+               <Grid item xs={12} md={12} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
                      size='small'
@@ -410,6 +483,7 @@ export const DoctorModal: React.FC<ModalProps> = (
                      getOptionLabel={(option: any) => option.name ? option.name : ""}
                      renderInput={(params) => <TextField {...params}
                         placeholder="Especialidad"
+                        label="Especialidad"
                         error={error == "idEspecialidad" ? true : false}
                         helperText={error == "idEspecialidad" ? "Campo requerido" : ""} />}
                   />
@@ -507,7 +581,9 @@ export const DoctorModal: React.FC<ModalProps> = (
             onClose={() => { setOpen(false) }}>
             <div className='Modal'>
                <div className='Title'>
-                  {actionSelect == 'edit' ? <span >EDITAR DOCTOR</span> : <span >NUEVO DOCTOR</span>}
+                  <Typography variant='h5' fontWeight={700}>
+                  {actionSelect == 'edit' ? 'EDITAR DOCTOR' : 'NUEVO DOCTOR'}
+                  </Typography>
                </div>
                <div className='Body'>
                   {bodyModal}

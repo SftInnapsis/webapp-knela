@@ -27,7 +27,7 @@ import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ROUTE_ATTENTION, ROUTE_ATTENTION_LIST, ROUTE_BUSINESS_AREA, ROUTE_DOCTORS, ROUTE_MEDICAL_CENTER, ROUTE_PATIENT, ROUTE_PATIENT_MASTER, ROUTE_PROFESSIONALS, ROUTE_SPECIALITY } from '@/toolbox/constants/route-map';
+import { ROUTE_ATTENTION, ROUTE_ATTENTION_LIST, ROUTE_BUSINESS_AREA, ROUTE_DOCTORES_INDEPENDIENTES, ROUTE_DOCTORS, ROUTE_MEDICAL_CENTER, ROUTE_PATIENT, ROUTE_PATIENT_MASTER, ROUTE_PROFESSIONALS, ROUTE_SPECIALITY } from '@/toolbox/constants/route-map';
 // import { StyledNavItem, StyledNavSubItem,StyledNavItemIcon } from './NavSection-styles';
 // import SvgColor from '../../components/svg';
 // import WidgetsIcon from '@mui/icons-material/Widgets';
@@ -153,7 +153,7 @@ const rutasSuperAdmin = [
     rutas: [
       {
         name_ruta: "Solicitudes",
-        location: "/doc-ind-solicitudes",
+        location: ROUTE_DOCTORES_INDEPENDIENTES,
         icon: <AddCommentIcon/>,
       },
       {

@@ -7,7 +7,18 @@ import { KEY_MEDICAL_CENTER } from '@/toolbox/constants/local-storage';
 export const tutorRepository = {
 
    geTutorPage: async (perPage=null, page=null): Promise<any> => {
-      const tutor = await http.get<any>(`${API_URL_BASE}/v1/tutor` )
+      const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
+      const tutor = await http.get<any>(`${API_URL_BASE}/v1/tutor?medical_center=${medical_center}` )
+      const {data,error,message} = tutor
+      return {
+         data,
+         error,
+         message
+      };
+   },
+   geTutorSearch: async (term): Promise<any> => {
+      const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
+      const tutor = await http.get<any>(`${API_URL_BASE}/v1/tutor?medical_center=${medical_center}&term=${term}` )
       const {data,error,message} = tutor
       return {
          data,

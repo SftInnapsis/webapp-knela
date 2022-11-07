@@ -16,7 +16,7 @@ import logoLogin from "@assets/img/logo-login.jpg";
 import { VisibilityIcon, VisibilityOffIcon } from '@toolbox/constants/icons';
 import * as qs from 'qs'
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { ROUTE_ENTITY, ROUTE_HOME, ROUTE_LOGIN } from "@/toolbox/constants/route-map";
+import { ROUTE_ENTITY, ROUTE_HOME, ROUTE_LOGIN, ROUTE_REGISTER } from "@/toolbox/constants/route-map";
 // import  logo from "@assets/svg/s-c-g-logo.svg";
 import { authenticationService } from '@service/services/Authentication.service';
 import { Link, Redirect, useHistory } from 'react-router-dom'
@@ -29,7 +29,7 @@ import { authenticationSoftnetService } from "@/service/api/services/Authentific
 // import { bypassService } from "@/service/services/Bypass.service";
 import { KEY_BYPASS, KEY_RUTA, KEY_TOKEN_KYTE, KEY_USER_DATA } from "@/toolbox/constants/local-storage";
 import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-storage-helper";
-import { ROLE_ADMIN, ROLE_ADMIN_PROYECCION,  ROLE_DOCTOR,  ROLE_DOCTOR_IND,  ROLE_FAMILIAR,  ROLE_PACIENTE,  ROLE_SUPER_ADMIN, ROLE_TRABAJADOR, ROLE_TUTOR } from "@/toolbox/defaults/static-roles";
+import { ROLE_ADMIN, ROLE_ADMIN_PROYECCION, ROLE_DOCTOR, ROLE_DOCTOR_IND, ROLE_FAMILIAR, ROLE_PACIENTE, ROLE_SUPER_ADMIN, ROLE_TRABAJADOR, ROLE_TUTOR } from "@/toolbox/defaults/static-roles";
 // import firebase from '@/config/firebase';
 import Pusher from "pusher-js"
 import Echo from 'laravel-echo'
@@ -102,6 +102,12 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
          case 'tutor':
             setData(prev => ({ ...prev, perfil: 6 }));
             break;
+         case 'equipo-medico':
+            setData(prev => ({ ...prev, perfil: 8 }));
+            break;
+         case 'profesional-admistrativo':
+            setData(prev => ({ ...prev, perfil: 8 }));
+            break;
          default:
             //revisar
             setData(prev => ({ ...prev, perfil: 4 }));
@@ -109,7 +115,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
       }
    }
    useEffect(() => {
-   validateType()
+      validateType()
       // if (rut && usuario && password) {
       //    var decodeRut;
       //    var decodeUser;
@@ -223,7 +229,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
 
    const authSubmit = async (rut, password, perfil) => {
       setLoading(true);
-      const response:any = await authenticationService.login(rut, password, perfil);
+      const response: any = await authenticationService.login(rut, password, perfil);
       // console.log(response.user.medical_center[0].id)
       if (response.data?.token == '') {
          setSnackBarConfig(prev => ({
@@ -254,9 +260,11 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
          }
          if (data.user.role == ROLE_TUTOR) {
             history.push(ROUTE_HOME)
+         }else{
+            history.push(ROUTE_HOME)
          }
 
-         
+
 
          // props.$action.actionSetListNotification(2)
          // if (data) {
@@ -424,6 +432,20 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
                                  </Grid>
                               </Grid>
                            </form>
+
+                           <Grid container spacing={1} >
+                              <Grid item xs={12} md={12}>
+                                 <Button
+                                    fullWidth
+                                    variant="contained"
+                                    className='btn-login'
+                                    onClick={() => { history.push(ROUTE_REGISTER) }}
+                                 >
+                                    Registrarse
+                                 </Button>
+                              </Grid>
+                           </Grid>
+
                         </Grid>
                      </Grid>
                   </Grid>

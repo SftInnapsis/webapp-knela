@@ -8,11 +8,15 @@ import { ModalView } from '@components/common/Modal';
 import { SaveIcon, CancelIcon } from "@toolbox/constants/icons";
 import { Button, InputAdornment, Autocomplete, TextField, Grid, CircularProgress, Snackbar, Alert, FormControl, OutlinedInput, InputLabel, MenuItem, Select } from '@mui/material';
 import { ProfessionalModal } from "./ProfessionalModal";
+import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
+import { KEY_MEDICAL_CENTER, KEY_USER_DATA } from "@/toolbox/constants/local-storage";
+import { ROLE_ADMIN } from "@/toolbox/defaults/static-roles";
 
 
 export const ProfessionalView = (props) => {
     const { MedicalCenterReducer ='' } = props;
     const [dataProfessional, setDataProfessional] = useState<any>([]);
+    const [medicalTeamSelected, setMedicalTeamSelected] = useState<any>([])
     const [open, setOpen] = useState<boolean>(false);
     const [actionSelect, setActionSelect] = useState<any>('')
     const [recoveryData, setRecoveryData] = useState<any>({})
@@ -33,11 +37,21 @@ export const ProfessionalView = (props) => {
     })
 
     const getDataProfessional = async () => {
-        const resp: any = await professionalService.getProfessionalPage( MedicalCenterReducer.id_medical_center);
-        console.log(resp)
-        if (resp.data) {
-            setDataProfessional(resp.data);
+        const user_data = readLocalStorage(KEY_USER_DATA);
+        if(user_data.user.role == ROLE_ADMIN){
+            const id_medical = MedicalCenterReducer.id_medical_center || readLocalStorage(KEY_MEDICAL_CENTER)
+            const resp: any = await professionalService.getProfessionalPage( id_medical);
+            console.log(resp)
+            if (resp.data) {
+                setDataProfessional(resp.data);
+            }
+        }else{
+            const resp:any = await professionalService.getProfessionalAll();
+            if(resp.data){
+                setDataProfessional(resp.data)
+            }
         }
+        
     }
 
     const RecuperarData = async (data) => {
@@ -50,6 +64,11 @@ export const ProfessionalView = (props) => {
                 break;
             case 'delete':
                 setDialog(prev => ({ ...prev, message: `Seguro que quiere eliminar a ${name} ${last_name}`, id: id, medical_center: idmedical_center, open: true, confirm: true }));
+                break;
+            case 'seleccionar':
+                console.log(data);
+                let injectData = medicalTeamSelected;
+                injectData.push(data);
                 break;
             default:
                 break;
@@ -80,7 +99,7 @@ export const ProfessionalView = (props) => {
         console.log(data);
         if (data) {
             const res: any = await professionalService.createProfessional(data)
-            if (res.data.detail) {
+            if (res?.data?.detail) {
                 //res.data.message
                 setSnackBarConfig(prev => ({
                     ...prev,
@@ -111,15 +130,20 @@ export const ProfessionalView = (props) => {
     }
 
     // useEffect(() => {
-    //     getDataProfessional();
+    //     const user_data = readLocalStorage(KEY_USER_DATA)
+    //     if(user_data?.user?.role === ROLE_ADMIN){
+    //         getDataProfessionalAll();
+    //     }
+       
     // }, [])
 
     useEffect(() => {
-        getDataProfessional();
+            getDataProfessional();
+       
     }, [ MedicalCenterReducer.id_medical_center])
 
-    return (
-        <Protected>
+    const bodyView = 
+    <>
             <ConfirmDialog
                 open={Dialog.open}
                 title={Dialog.title}
@@ -167,7 +191,17 @@ export const ProfessionalView = (props) => {
                 RecuperarData={RecuperarData}
                 setModalSave={setOpen}
                 actionSelect={setActionSelect}
+                select_button= {props?.select_button ?true:false}
             />
+        </>
+
+    return (
+        <>
+        { props?.isNOtProtected == true ?
+            bodyView :<Protected>
+            {bodyView}
         </Protected>
+       }
+       </>
     );
 };

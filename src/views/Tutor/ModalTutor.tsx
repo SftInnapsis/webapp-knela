@@ -67,9 +67,37 @@ export const ModalTutor: React.FC<ModalProps> = (
          case 'last_name':
             setData(prev => ({ ...prev, last_name: value, textError: '' }));
             break;
-         case 'rut':
-            setData(prev => ({ ...prev, rut: value, textError: '' }));
-            break;
+            case 'rut':
+               // setData(prev => ({ ...prev, rut: value, textError: '' }));
+               var Fn = {
+                  // Valida el rut con su cadena completa "XXXXXXXX-X"
+                  validaRut: function (rutCompleto) {
+                     if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
+                        return false;
+                     var tmp = rutCompleto.split('-');
+                     var digv = tmp[1];
+                     var rut = tmp[0];
+                     if (digv == 'K') digv = 'k';
+                     return (Fn.dv(rut) == digv);
+                  },
+                  dv: function (T) {
+                     var M = 0, S = 1;
+                     for (; T; T = Math.floor(T / 10))
+                        S = (S + T % 10 * (9 - M++ % 6)) % 11;
+                     return S ? S - 1 : 'k';
+                  }
+               }
+   
+               var foo = value.split("-").join("")
+               if (foo.length > 0 && foo.length < 10) {
+                  foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
+                  setData(prev => ({ ...prev, rut: foo }))
+               } else if (foo.length == 0) {
+                  setData(prev => ({ ...prev, rut: "" }))
+               }
+   
+               break;
+           
          case 'date_birth':
             setData(prev => ({ ...prev, date_birth: value, textError: '' }));
             break;
@@ -92,14 +120,27 @@ export const ModalTutor: React.FC<ModalProps> = (
       setMedicalCenter(res.data.MedicalCenter.find((value) => value.id == id_centro_medico));
    }
 
+   const ValidateEmail = (mail) =>{
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+      {
+        return (true)
+      }else{
+          return false
+      }
+  }
+
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
      try{ e.preventDefault();
 
-      if(data.name === ''){return setError('name')}
-      if(data.last_name === ''){return setError('last_name')}
-      if(data.rut === ''){return setError('rut')}
-      if(data.date_birth === ''){return setError('date_birth')}
-      if(data.mail === ''){return setError('mail')}
+      if (data.name === '') { return setError('name') }
+      if (data.name.length >= 100) {return setError('name_limit')}
+      if (data.last_name === '') { return setError('last_name') }
+      if (data.last_name.length >= 100) { return setError('last_name_limit') }
+      if (data.rut === '') { return setError('rut') }
+      if (data.date_birth === '') { return setError('date_birth') }
+      if (data.mail === '') { return setError('mail') }
+      let validate = ValidateEmail(data.mail)
+      if(!validate){return setError('mail_invalid') }
 
       const { name, last_name, rut, date_birth, mail } = data;
       const medicalStorage = readLocalStorage(KEY_MEDICAL_CENTER)
@@ -156,13 +197,14 @@ export const ModalTutor: React.FC<ModalProps> = (
                      placeholder="Nombre*"
                      sx={{ bgcolor: '#fff' }}
                      name="name"
-                     
+                     label="Nombre*"
                      type="text"
                      value={data.name}
                      onChange={handleInput}
-                     error={error=='name'? true:false}
-                     helperText={error=='name'?'Campo obligatorio': ''}
-                  />
+                     error={error == 'name' || error == 'name_limit'? true : false}
+                     helperText={error == 'name' ? 'Campo es obligatorio' : error == 'name_limit'? 'Máximo 100 caracteres':''}
+                    
+                     />
                </Grid>
                <Grid item xs={12} md={12} >
                   <TextField
@@ -172,12 +214,12 @@ export const ModalTutor: React.FC<ModalProps> = (
                      placeholder="Apellido*"
                      sx={{ bgcolor: '#fff' }}
                      name="last_name"
-                     
+                     label="Apellido*"
                      type="text"
                      value={data.last_name}
                      onChange={handleInput}
-                     error={error=='last_name'? true:false}
-                     helperText={error=='last_name'?'Campo obligatorio': ''}
+                     error={error == 'last_name' || error ==  'last_name_limit' ? true : false}
+                     helperText={error == 'name' ? 'Campo es obligatorio' : error == 'name_limit'? 'Máximo 100 caracteres':''}
                   />
                </Grid>
                <Grid item xs={12} md={6} >
@@ -188,7 +230,7 @@ export const ModalTutor: React.FC<ModalProps> = (
                      placeholder="Rut*"
                      sx={{ bgcolor: '#fff' }}
                      name="rut"
-                     
+                     label="Rut*"
                      type="text"
                      value={data.rut}
                      onChange={handleInput}
@@ -220,12 +262,13 @@ export const ModalTutor: React.FC<ModalProps> = (
                      placeholder="Correo*"
                      sx={{ bgcolor: '#fff' }}
                      name="mail"
-                     
+                     label="Correo*"
                      type="text"
                      value={data.mail}
                      onChange={handleInput}
-                     error={error=='mail'? true:false}
-                     helperText={error=='mail'?'Campo obligatorio': ''}
+                     error={error == 'mail' || error == 'mail_limit'? true : false}
+                     helperText={error == 'mail' ? 'Campo es obligatorio' : error == 'mail_limit'?'Número máximo de caracteres es 100':''}
+
                   />
                </Grid>
 
@@ -279,7 +322,9 @@ export const ModalTutor: React.FC<ModalProps> = (
             onClose={() => { setOpen(false) }}>
             <div className='Modal'>
                <div className='Title'>
-                  {actionSelect == 'edit' ? <span >EDITAR TUTOR</span> : <span >NUEVO TUTOR</span>}
+                  <Typography variant='h5' fontWeight={700}>
+                  {actionSelect == 'edit' ? 'EDITAR TUTOR' : 'NUEVO TUTOR'}
+                  </Typography>
                </div>
                <div className='Body'>
                   {bodyModal}

@@ -12,13 +12,14 @@ import EmailIcon from '@mui/icons-material/Email';
 import { VALIDATORS } from '@/toolbox/helpers/validation-rules';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
-import { KEY_MEDICAL_CENTER, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
+import { KEY_MEDICAL_CENTER, KEY_OPTIONS_MEDICAL_CENTER, KEY_USER_DATA } from '@/toolbox/constants/local-storage';
 import { authenticationRepository } from '@/service/repositories/Authentication.repository';
 import { VisibilityIcon, VisibilityOffIcon } from '@toolbox/constants/icons';
 import { professionalService } from '@/service/services/Professional.service';
 import { ubigeoService } from '@/service/services/Ubigeo.service';
 import { areaService } from '@/service/services/Area.service';
 import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
+import { medicalCenterService } from '@/service/services/MedicalCenter.service';
 
 
 type ModalProps = {
@@ -58,6 +59,7 @@ export const PatientMasterModal: React.FC<ModalProps> = (
    })
 
    const handleInput = (event: any) => {
+      setError('')
       const name_input = event.target.name;
       const value = event.target.value;
       switch (name_input) {
@@ -68,7 +70,33 @@ export const PatientMasterModal: React.FC<ModalProps> = (
             setData(prev => ({ ...prev, last_name: value, textError: '' }));
             break;
          case 'rut':
-            setData(prev => ({ ...prev, rut: value, textError: '' }));
+           
+            var Fn = {
+               // Valida el rut con su cadena completa "XXXXXXXX-X"
+               validaRut: function (rutCompleto) {
+                  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
+                     return false;
+                  var tmp = rutCompleto.split('-');
+                  var digv = tmp[1];
+                  var rut = tmp[0];
+                  if (digv == 'K') digv = 'k';
+                  return (Fn.dv(rut) == digv);
+               },
+               dv: function (T) {
+                  var M = 0, S = 1;
+                  for (; T; T = Math.floor(T / 10))
+                     S = (S + T % 10 * (9 - M++ % 6)) % 11;
+                  return S ? S - 1 : 'k';
+               }
+            }
+
+            var foo =value.split("-").join("")
+            if (foo.length > 0 && foo.length < 10) {
+               foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
+               setData(prev => ({ ...prev, rut: foo }))
+            } else if (foo.length == 0) {
+               setData(prev => ({ ...prev, rut: "" }))
+            }
             break;
          case 'date_birth':
             setData(prev => ({ ...prev, date_birth: value, textError: '' }));
@@ -81,10 +109,17 @@ export const PatientMasterModal: React.FC<ModalProps> = (
       }
    };
 
-   const dataInitial =  () => {
-      const res: any = readLocalStorage(KEY_USER_DATA)
-      console.log(res.user.medical_center)
-      setDataMedicalCenter(res.user.medical_center)
+   const dataInitial =  async() => {
+      const resp:any = await medicalCenterService.getMedicalCenterPage();
+        if(resp){
+            console.log(resp)
+            setDataMedicalCenter(resp.data)
+        }
+      // const res: any = readLocalStorage(KEY_USER_DATA)
+      // const resp = readLocalStorage(KEY_OPTIONS_MEDICAL_CENTER);
+      // console.log(resp)
+      // console.log(res.user.medical_center)
+      // setDataMedicalCenter(res.data)
    }
 
    async function getAutocomplete(id_centro_medico: number) {
@@ -92,14 +127,29 @@ export const PatientMasterModal: React.FC<ModalProps> = (
       setMedicalCenter(res.data.MedicalCenter.find((value) => value.id == id_centro_medico));
    }
 
+   const ValidateEmail = (mail) =>{
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+      {
+        return (true)
+      }else{
+          return false
+      }
+  }
+
    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
      try{ e.preventDefault();
 
       if(data.name === ''){return setError('name')}
+      if(data.name.length >=100){return setError('name_limit')}
       if(data.last_name === ''){return setError('last_name')}
+      if(data.last_name.length >= 150){return setError('last_name_limit')}
       if(data.rut === ''){return setError('rut')}
       if(data.date_birth === ''){return setError('date_birth')}
       if(data.mail === ''){return setError('mail')}
+      let validate = ValidateEmail(data.mail)
+      if(!validate){return setError('mail_invalid') }
+      
+      
 
       const { name, last_name, rut, date_birth, mail } = data;
       const medicalStorage = readLocalStorage(KEY_MEDICAL_CENTER)
@@ -130,7 +180,7 @@ export const PatientMasterModal: React.FC<ModalProps> = (
             getAutocomplete(idmedical_center)
          }
       }
-   }, [])
+   }, [open])
 
    const LimpiarFormulario = () => {
       // setIdArea(null)
@@ -154,14 +204,15 @@ export const PatientMasterModal: React.FC<ModalProps> = (
                      size="small"
                      id="name"
                      placeholder="Nombre*"
+                     label="Nombre*"
                      sx={{ bgcolor: '#fff' }}
                      name="name"
                      
                      type="text"
                      value={data.name}
                      onChange={handleInput}
-                     error={error=='name'? true:false}
-                     helperText={error=='name'?'Campo obligatorio': ''}
+                     error={error=='name' || error=='name_limit'? true:false}
+                     helperText={error=='name'?'Campo obligatorio': error=='name_limit'? 'Números máximo de caracteres es 100':''}
                   />
                </Grid>
                <Grid item xs={12} md={12} >
@@ -170,14 +221,15 @@ export const PatientMasterModal: React.FC<ModalProps> = (
                      size="small"
                      id="last_name"
                      placeholder="Apellido*"
+                     label="Apellido*"
                      sx={{ bgcolor: '#fff' }}
                      name="last_name"
                      
                      type="text"
                      value={data.last_name}
                      onChange={handleInput}
-                     error={error=='last_name'? true:false}
-                     helperText={error=='last_name'?'Campo obligatorio': ''}
+                     error={error=='last_name' || error=='last_name_limit'? true:false}
+                     helperText={error=='last_name'?'Campo obligatorio':error=='last_name_limit'? 'Número máximo de caracteres es 150': ''}
                   />
                </Grid>
                <Grid item xs={12} md={6} >
@@ -186,6 +238,7 @@ export const PatientMasterModal: React.FC<ModalProps> = (
                      size="small"
                      id="rut"
                      placeholder="Rut*"
+                     label="Rut*"
                      sx={{ bgcolor: '#fff' }}
                      name="rut"
                      
@@ -204,7 +257,6 @@ export const PatientMasterModal: React.FC<ModalProps> = (
                      placeholder="Fecha Nacimiento*"
                      sx={{ bgcolor: '#fff' }}
                      name="date_birth"
-                     
                      type="date"
                      value={data.date_birth}
                      onChange={handleInput}
@@ -220,12 +272,12 @@ export const PatientMasterModal: React.FC<ModalProps> = (
                      placeholder="Correo*"
                      sx={{ bgcolor: '#fff' }}
                      name="mail"
-                     
+                     label="Correo*"
                      type="text"
                      value={data.mail}
                      onChange={handleInput}
-                     error={error=='mail'? true:false}
-                     helperText={error=='mail'?'Campo obligatorio': ''}
+                     error={error=='mail' || error == 'mail_invalid'? true:false}
+                     helperText={error=='mail'?'Campo obligatorio': error == 'mail_invalid'?'Correo es inválido': ''}
                   />
                </Grid>
 
@@ -279,7 +331,9 @@ export const PatientMasterModal: React.FC<ModalProps> = (
             onClose={() => { setOpen(false) }}>
             <div className='Modal'>
                <div className='Title'>
-                  {actionSelect == 'edit' ? <span >EDITAR PACIENTE</span> : <span >NUEVO PACIENTE</span>}
+                  <Typography variant='h5' fontWeight={700}>
+                  {actionSelect == 'edit' ?'EDITAR PACIENTE' :'NUEVO PACIENTE'}
+                  </Typography>
                </div>
                <div className='Body'>
                   {bodyModal}

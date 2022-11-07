@@ -23,13 +23,13 @@
 .grid__form{
     background: rgba(255, 255, 255, 0.4) !important;
     border-radius: 10px;
-    margin: 5px;
+    margin: 5px 5px 0 5px;
 }
 .btn-login {
     background-color: #fa8474 !important;
     color: white;
     padding: 6px 0px !important;
-    margin: 20px 0 15px 0;
+    margin: 20px 0 0 0 !important;
     border-radius: 6px !important;
     border: none;
     cursor: pointer;

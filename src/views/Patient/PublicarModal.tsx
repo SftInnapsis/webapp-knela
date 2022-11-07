@@ -146,15 +146,16 @@ export const PublicarModal: React.FC<ModalProps> = (
                                     />
                                 </FormControl>
                             </Grid>
+                            
 
                         </Grid>
                     </CardActionArea>
+                    
                 </Card>
             </Grid>
+           
             <Grid container mt={1}>
                 <Grid item xs={12} mb={2} >
-
-
                 </Grid>
                 <Grid container spacing={2} >
                     <Grid item xs={12} md={6}>
@@ -182,7 +183,6 @@ export const PublicarModal: React.FC<ModalProps> = (
                             Cancelar
                         </Button>
                     </Grid>
-
                 </Grid>
             </Grid>
         </Box>

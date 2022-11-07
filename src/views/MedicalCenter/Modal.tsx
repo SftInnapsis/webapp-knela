@@ -1,6 +1,6 @@
 import { medicalCenterService } from "@/service/services/MedicalCenter.service";
 import { ubigeoService } from "@/service/services/Ubigeo.service";
-import { Alert, Autocomplete, Button, Grid, Modal, Snackbar, TextField } from "@mui/material";
+import { Alert, Autocomplete, Button, Grid, Modal, Snackbar, TextField, Typography } from "@mui/material";
 import { SaveIcon, CancelIcon } from "@toolbox/constants/icons";
 import { useEffect, useState } from "react";
 
@@ -85,22 +85,67 @@ export const ModalMedicalCenter = (props) => {
     }, [])
 
     const handleInputChange = (e) => {
-        const changedFormValues = {
-            ...medicalCenterSelected,
-            [e.target.name]: e.target.value
+        setError('')
+        if(e.target.name == 'rut'){
+            // setVerify(false)
+            var Fn = {
+               // Valida el rut con su cadena completa "XXXXXXXX-X"
+               validaRut: function (rutCompleto) {
+                  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
+                     return false;
+                  var tmp = rutCompleto.split('-');
+                  var digv = tmp[1];
+                  var rut = tmp[0];
+                  if (digv == 'K') digv = 'k';
+                  return (Fn.dv(rut) == digv);
+               },
+               dv: function (T) {
+                  var M = 0, S = 1;
+                  for (; T; T = Math.floor(T / 10))
+                     S = (S + T % 10 * (9 - M++ % 6)) % 11;
+                  return S ? S - 1 : 'k';
+               }
+            }
+
+            var foo = e.target.value.split("-").join("")
+            if (foo.length > 0 && foo.length < 10) {
+               foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
+               setMedicalCenterSelected(prev => ({ ...prev, rut: foo }))
+            } else if (foo.length == 0) {
+               setMedicalCenterSelected(prev => ({ ...prev, rut: "" }))
+            }
+        }else{
+            const changedFormValues = {
+                ...medicalCenterSelected,
+                [e.target.name]: e.target.value
+            }
+            setMedicalCenterSelected(changedFormValues);
+    
         }
-        setMedicalCenterSelected(changedFormValues);
     }
 
-
+    const ValidateEmail = (mail) =>{
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+        {
+          return (true)
+        }else{
+            return false
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (medicalCenterSelected.rut === '') { return setError('rut') }
         if (medicalCenterSelected.name === '') { return setError('name') }
-        if (medicalCenterSelected.mail === '') { return setError('mail') }
-        if (medicalCenterSelected.address === '') { return setError('address') }
+        if (medicalCenterSelected.name.length >= 150) {return setError('name_limit')}
+        if (medicalCenterSelected.rut === '') { return setError('rut') }
         if (medicalCenterSelected.phone === '') { return setError('phone') }
+        if (medicalCenterSelected.phone.length >= 15) { return setError('phone_limit') }
+        if (medicalCenterSelected.mail === '') { return setError('mail') }
+        let validate = ValidateEmail(medicalCenterSelected.mail)
+        if(!validate){return setError('mail_invalid') }
+        if (medicalCenterSelected.mail.length >= 100) { return setError('mail_limit') }
+        if (medicalCenterSelected.address === '') { return setError('address') }
+        if (medicalCenterSelected.address.length >= 150) { return setError('address_limit') }
         if (typeAttention.name === '') { return setError('idTypeAttention') }
         if (country.name === '') { return setError('country') }
         if (departament.name === '') { return setError('departament') }
@@ -144,6 +189,22 @@ export const ModalMedicalCenter = (props) => {
         <div>
             <form onSubmit={handleSubmit} >
                 <Grid container direction="row" spacing={2}>
+                <Grid item xs={12} md={12} >
+                        <TextField
+                            fullWidth
+                            size="small"
+                            id="name"
+                            placeholder="Razon Social*"
+                            sx={{ bgcolor: '#fff' }}
+                            name="name"
+
+                            type="text"
+                            value={medicalCenterSelected.name}
+                            onChange={handleInputChange}
+                            error={error == 'name' ? true : false}
+                            helperText={error == 'name' ? 'Campo es obligatorio' : ''}
+                        />
+                    </Grid>
                     <Grid item xs={12} md={6} >
                         <TextField
                             fullWidth
@@ -166,19 +227,19 @@ export const ModalMedicalCenter = (props) => {
                         <TextField
                             fullWidth
                             size="small"
-                            id="name"
-                            placeholder="Nombre*"
+                            id="phone"
+                            placeholder="Telefono*"
                             sx={{ bgcolor: '#fff' }}
-                            name="name"
+                            name="phone"
 
                             type="text"
-                            value={medicalCenterSelected.name}
+                            value={medicalCenterSelected.phone}
                             onChange={handleInputChange}
-                            error={error == 'name' ? true : false}
-                            helperText={error == 'name' ? 'Campo es obligatorio' : ''}
+                            error={error == 'phone' ? true : false}
+                            helperText={error == 'phone' ? 'Campo es obligatorio' : ''}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} >
+                    <Grid item xs={12} md={12} >
                         <TextField
                             fullWidth
                             size="small"
@@ -195,7 +256,7 @@ export const ModalMedicalCenter = (props) => {
                         />
                     </Grid>
 
-                    <Grid item xs={12} md={6} >
+                    <Grid item xs={12} md={12} >
                         <TextField
                             fullWidth
                             size="small"
@@ -209,23 +270,6 @@ export const ModalMedicalCenter = (props) => {
                             onChange={handleInputChange}
                             error={error == 'address' ? true : false}
                             helperText={error == 'address' ? 'Campo es obligatorio' : ''}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} md={6} >
-                        <TextField
-                            fullWidth
-                            size="small"
-                            id="phone"
-                            placeholder="Telefono*"
-                            sx={{ bgcolor: '#fff' }}
-                            name="phone"
-
-                            type="text"
-                            value={medicalCenterSelected.phone}
-                            onChange={handleInputChange}
-                            error={error == 'phone' ? true : false}
-                            helperText={error == 'phone' ? 'Campo es obligatorio' : ''}
                         />
                     </Grid>
 
@@ -248,15 +292,22 @@ export const ModalMedicalCenter = (props) => {
                                 helperText={error=="idTypeAttention"? "Campo requerido" : ""} />}
                         />
                     </Grid>
-                    <Grid item xs={12} >
+                    <Grid item xs={6} >
                         <Autocomplete
                             value={country}
                             sx={{ bgcolor: '#fff' }}
                             size='small'
                             onChange={(e, data: any) => {
-                                getDepartament(data.id);
-                                setUbigeo({ ...ubigeo, country: data, departament: [], province: [], district: [] })
-                                setCountry(data)
+                                
+                                if(data) {
+                                 getDepartament(data.id)
+                                }else{
+                                    setDepartament({id: 0, name: ''});
+                                    setProvince({id: 0, name: ''});
+                                    setDistrict({id: 0, name: ''});
+                                }
+                              
+                                setCountry(data || [])
                             }}
                             id="idcountry"
                             options={ubigeo.country}
@@ -268,15 +319,19 @@ export const ModalMedicalCenter = (props) => {
                                 helperText={error=="country"? "Campo requerido" : ""} />}
                         />
                     </Grid>
-                    <Grid item xs={12} >
+                    <Grid item xs={6} >
                         <Autocomplete
                             value={departament}
                             sx={{ bgcolor: '#fff' }}
                             size='small'
                             onChange={(e, data: any) => {
-                                getProvince(data.id);
-                                setUbigeo({ ...ubigeo, departament: data, province: [], district: [] })
-                                setDepartament(data)
+                                if(data) {
+                                    getProvince(data.id)
+                                   }else{
+                                       setProvince({id: 0, name: ''});
+                                       setDistrict({id: 0, name: ''});
+                                   }
+                                   setDepartament(data || [])
                             }}
                             id="iddepartment"
                             options={ubigeo.departament}
@@ -288,15 +343,18 @@ export const ModalMedicalCenter = (props) => {
                                 helperText={error=="departament"? "Campo requerido" : ""} />}
                         />
                     </Grid>
-                    <Grid item xs={12} >
+                    <Grid item xs={6} >
                         <Autocomplete
                             value={province}
                             sx={{ bgcolor: '#fff' }}
                             size='small'
                             onChange={(e, data: any) => {
-                                getDistrict(data.id);
-                                setUbigeo({ ...ubigeo, province: data, district: [] })
-                                setProvince(data)
+                                if(data) {
+                                    getDistrict(data.id)
+                                   }else{
+                                       setDistrict({id: 0, name: ''});
+                                   }
+                                   setProvince(data || [])
                             }}
                             id="idprovince"
                             options={ubigeo.province}
@@ -308,14 +366,13 @@ export const ModalMedicalCenter = (props) => {
                                 helperText={error=="province"? "Campo requerido" : ""} />}
                         />
                     </Grid>
-                    <Grid item xs={12} >
+                    <Grid item xs={6} >
                         <Autocomplete
                             value={district}
                             sx={{ bgcolor: '#fff' }}
                             size='small'
                             onChange={(e, data: any) => {
-                                setUbigeo({ ...ubigeo, district: data })
-                                setDistrict(data)
+                               data && setDistrict(data)
                             }}
                             id="iddistrict"
                             options={ubigeo.district}
@@ -327,27 +384,32 @@ export const ModalMedicalCenter = (props) => {
                                 helperText={error=="district"? "Campo requerido" : ""} />}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} >
+                    <Grid item xs={12} md={12} container flexDirection='row'>
+                        <Grid xs={6}>
                         <Button
                             onClick={() => { setOpen(false) }}
                             variant="contained"
                             fullWidth
                             color="error"
                             startIcon={<CancelIcon />}
-                            sx={{ background: '#FFBB34', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#bf6c00' } }}>
+                            sx={{ background: '#FFBB34', color: '#fff', mt: '10px', mr:1, '&:hover': { bgcolor: '#bf6c00' } }}>
                             Cancelar
                         </Button>
-                    </Grid>
-                    <Grid item xs={12} md={6} >
+                        </Grid>
+                        <Grid xs={6}>
                         <Button
                             type="submit"
                             variant="contained"
                             fullWidth
                             startIcon={<SaveIcon />}
-                            sx={{ background: '#3D8BD9', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#155172' } }}>
+                            sx={{ background: '#3D8BD9', color: '#fff', mt: '10px',ml:1, '&:hover': { bgcolor: '#155172' } }}>
                             {actionSelect == 'edit' ? 'Actualizar' : 'Agregar'}
                         </Button>
+                        </Grid>
                     </Grid>
+                    {/* <Grid item xs={12} md={6} >
+                       
+                    </Grid> */}
                 </Grid>
             </form>
         </div>
@@ -375,7 +437,9 @@ export const ModalMedicalCenter = (props) => {
                 onClose={() => { setOpen(false) }}>
                 <div className='Modal'>
                     <div className='Title'>
-                        <span > {actionSelect == 'edit' ? 'Actualizar Centro Médico' : 'Crear Centro Médico'}</span>
+                        <Typography variant='h5' align='center' fontWeight={700}>
+                        {actionSelect == 'edit' ? 'Actualizar Centro Médico' : 'Crear Centro Médico'}
+                        </Typography>
                     </div>
                     <div className='Body'>
                         {bodyModal}

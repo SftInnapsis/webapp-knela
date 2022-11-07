@@ -28,7 +28,10 @@ export const TutorView = (props) => {
     })
 
     const getDataTutores = async() => {
-        const resp_tutores = await tutorService.geTutorByPatient(props.dataPatient.id)
+        // const resp_tutores = await tutorService.geTutorByPatient(props.dataPatient.id)
+
+        const resp_tutores = await tutorService.geTutorPage()
+
         if(resp_tutores){
             setOptionsTutores(resp_tutores.data)
         }
@@ -36,7 +39,7 @@ export const TutorView = (props) => {
 
     
     const getDataTutoresSearch = async(term) => {
-        const resp_tutores = await tutorService.geTutorByPatientSearch(props.dataPatient.id, term)
+        const resp_tutores = await tutorService.geTutorSearch( term)
         if(resp_tutores){
             setOptionsTutores(resp_tutores.data)
         }

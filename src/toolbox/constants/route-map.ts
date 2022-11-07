@@ -1,5 +1,6 @@
 export const ROUTE_HOME            = '/';
 export const ROUTE_LOGIN           = '/login/:type';
+export const ROUTE_REGISTER        = '/registro';
 export const ROUTE_ACCOUNT         = "/cuenta";
 export const ROUTE_NOTIFY          = "/notificaciones";
 export const ROUTE_ENTITY          = "/empresas";
@@ -20,5 +21,7 @@ export const ROUTE_DOCTORS         = "/doctors";
 export const ROUTE_PATIENT_MASTER = "/patient-master";
 
 export const ROUTE_PATIENT         = "/patient";
+export const ROUTE_PATIENT_TUTOR   = "/patient-tutor";
 export const ROUTE_ATTENTION        = "/attention";
 export const ROUTE_ATTENTION_LIST = "/attenttion-list"
+export const ROUTE_DOCTORES_INDEPENDIENTES = "/doc-ind-solicitudes"

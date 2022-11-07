@@ -1,4 +1,6 @@
 
+import { useState } from "react";
+import { NotificacionModal } from "./NotificationModal";
 import { styled } from '@mui/material/styles';
 import { Box, Stack, AppBar, Toolbar, IconButton, Typography, Grid, Badge } from '@mui/material';
 import { alpha } from '@mui/material/styles';
@@ -17,105 +19,117 @@ import { ROUTES_FOR_ADMIN, ROUTES_FOR_SUPER_ADMIN } from '@/toolbox/defaults/sta
 
 
 
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 
-  // HeaderView.propTypes = {
-  //   onOpenNav: PropTypes.func,
-  // };
-  export const HeaderView = (props: any): JSX.Element => {
+// HeaderView.propTypes = {
+//   onOpenNav: PropTypes.func,
+// };
+export const HeaderView = (props: any): JSX.Element => {
 
-    const data_user = readLocalStorage(KEY_USER_DATA);
-const NAV_WIDTH = data_user.user.role == ROLE_SUPER_ADMIN || data_user.user.role == ROLE_ADMIN ?  350 : 0;
+  const [modalNotification, setModalNotification] = useState(false);
 
-const HEADER_MOBILE = 64;
+  const data_user = readLocalStorage(KEY_USER_DATA);
+  const NAV_WIDTH = data_user.user.role == ROLE_SUPER_ADMIN || data_user.user.role == ROLE_ADMIN ? 350 : 0;
 
-const HEADER_DESKTOP = 92;
+  const HEADER_MOBILE = 64;
 
-const StyledRoot = styled(AppBar)(({ theme }) => ({
-  //...bgBlur({ color: theme.palette.background.default }),
-  backdropFilter: `blur(6px)`,
-  WebkitBackdropFilter: `blur(6px)`,
-  backgroundColor: '#fff',
-  //  alpha('#fff', 0.8),
-  paddingTop: 15,
-  boxShadow: 'none',
-  [theme.breakpoints.up('lg')]: {
-    width: `calc(100% - ${NAV_WIDTH + 1}px)`,
-  },
-}));
+  const HEADER_DESKTOP = 92;
 
-const Item = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  //color: theme.palette.text.secondary,
-}));
-
-
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  minHeight: HEADER_MOBILE,
-  [theme.breakpoints.up('lg')]: {
-    minHeight: HEADER_DESKTOP,
-    padding: theme.spacing(0, 5),
-  },
-}));
-
-    return (
-      <header>
-        <StyledRoot>
-          <StyledToolbar>
-
-            <IconButton
-              //  onClick={}
-              sx={{
-                mr: 1,
-                color: 'text.primary',
-                display: { lg: 'none' },
-              }}
-            >
-              {/* <Iconify icon="eva:menu-2-fill" /> */}
-              <MenuIcon />
-            </IconButton>
-
-            <Typography
-              sx={{ color: "#28c4ac", fontWeight: 700 }}
-              variant={"h3"}
-            >
-              {/* ¡Hola Hernan! */}
-            </Typography>
-            {<Box sx={{ flexGrow: 1 }} />}
-
-            <Grid item xs={2} md={6} mt={2} >
-              <Grid display="flex" justifyContent="flex-end" alignItems="center" container spacing={1} direction="row">
-                <Box>
-                  {console.log(ROLE_SUPER_ADMIN)}
-                 { data_user?.user?.role !== ROLE_SUPER_ADMIN && <ComboBox />}
-                </Box>
-                {/* {mostrarCombo()} */}
-                {/*Icono Notificacion*/}
-                <IconButton
-                  sx={{ marginLeft: "5px" }}
-                  aria-label="delete"
-                  size="large"
-                >
-                  <Badge badgeContent={0} color="primary">
-                    <NotificationsIcon sx={{ color: "#28c4ac" }} fontSize="inherit" />
-                  </Badge>
-                </IconButton>
-
-                {/*Icono User*/}
-                <IconButton>
-                  <AccountPopover />
-                </IconButton>
+  const StyledRoot = styled(AppBar)(({ theme }) => ({
+    //...bgBlur({ color: theme.palette.background.default }),
+    backdropFilter: `blur(6px)`,
+    WebkitBackdropFilter: `blur(6px)`,
+    backgroundColor: '#fff',
+    //  alpha('#fff', 0.8),
+    paddingTop: 15,
+    boxShadow: 'none',
+    [theme.breakpoints.up('lg')]: {
+      width: `calc(100% - ${NAV_WIDTH + 1}px)`,
+    },
+  }));
 
 
 
-              </Grid>
+  const Item = styled(Paper)(({ theme }) => ({
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    //color: theme.palette.text.secondary,
+  }));
 
 
-              {/*Combo Box*/}
+  const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+    minHeight: HEADER_MOBILE,
+    [theme.breakpoints.up('lg')]: {
+      minHeight: HEADER_DESKTOP,
+      padding: theme.spacing(0, 5),
+    },
+  }));
+
+  return (
+    <header>
+      <StyledRoot>
+        <StyledToolbar>
+
+          <IconButton
+            //  onClick={}
+            sx={{
+              mr: 1,
+              color: 'text.primary',
+              display: { lg: 'none' },
+            }}
+          >
+            {/* <Iconify icon="eva:menu-2-fill" /> */}
+            <MenuIcon />
+          </IconButton>
+
+          <Typography
+            sx={{ color: "#28c4ac", fontWeight: 700 }}
+            variant={"h3"}
+          >
+            {/* ¡Hola Hernan! */}
+          </Typography>
+          {<Box sx={{ flexGrow: 1 }} />}
+
+          <Grid item xs={2} md={6} mt={2} >
+            <Grid display="flex" justifyContent="flex-end" alignItems="center" container spacing={1} direction="row">
+              <Box>
+                {console.log(ROLE_SUPER_ADMIN)}
+                {data_user?.user?.role !== ROLE_SUPER_ADMIN && <ComboBox />}
+              </Box>
+              {/* {mostrarCombo()} */}
+              {/*Icono Notificacion*/}
+              <IconButton
+                sx={{ marginLeft: "5px" }}
+                aria-label="delete"
+                size="large"
+              >
+                <Badge badgeContent={0} color="primary">
+                  <NotificationsIcon
+                    sx={{ color: "#28c4ac" }}
+                    fontSize="inherit"
+                    onClick={() => setModalNotification(true)}
+                  />
+
+                </Badge>
+              </IconButton>
+
+              {/*Icono User*/}
+              <IconButton>
+                <AccountPopover />
+              </IconButton>
+
+              <NotificacionModal
+                open={modalNotification}
+                setOpen={setModalNotification}
+              />
 
             </Grid>
-            {/*<Stack
+
+
+            {/*Combo Box*/}
+
+          </Grid>
+          {/*<Stack
             direction="row"
             alignItems="center"
             spacing={0.5}
@@ -124,10 +138,10 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
               <Item><AccountPopover/></Item>
           </Stack>*/}
 
-            {/* <LanguagePopover /> */}
-            {/* <NotificationsPopover /> */}
-          </StyledToolbar>
-        </StyledRoot>
-      </header>
-    );
-  }
+          {/* <LanguagePopover /> */}
+          {/* <NotificationsPopover /> */}
+        </StyledToolbar>
+      </StyledRoot>
+    </header>
+  );
+}
