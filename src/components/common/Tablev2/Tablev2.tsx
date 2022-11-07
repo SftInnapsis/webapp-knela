@@ -282,7 +282,8 @@ export const TableDataV2: React.FC<TableProps> = (
                         onRequestSort={handleRequestSort}
                         onSelectAllClick={handleSelectAllClick}
                         status_action={props.status_action}
-                        checkbox={props.checkbox}
+                        // checkbox={props.checkbox}
+                        checkbox={false}
                      />
                      <TableBody>
                         {
@@ -291,9 +292,9 @@ export const TableDataV2: React.FC<TableProps> = (
                               const selectedUser = selected.indexOf(name) !== -1;
                               return (
                                  <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                                    {props.checkbox && <TableCell padding="checkbox">
+                                    {/* {props.checkbox && <TableCell padding="checkbox">
                                        <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                                    </TableCell>}
+                                    </TableCell>} */}
                                     {props.header.map((cabecera, id) => {
                                        const value = data[cabecera.name];
                                        return (

@@ -179,7 +179,7 @@ export const PatientTutorView = (props) => {
                                                 value={statusDefault}
                                                 onChange={handleChange}
                                             >
-                                                {estado.map((option) => (
+                                                {estado.map((option:any) => (
                                                     <MenuItem key={option.id} value={option.id}>
                                                         {option.name}
                                                     </MenuItem>

@@ -167,7 +167,7 @@ export const HomeDoctorView = (props) => {
                                                 //  align="end" 
                                                 variant={"subtitle1"}>
                                                 <span> Doctor:</span>{" "}
-                                                <span className="title__main">Lincoln Moreno</span>
+                                                <span className="title__main">{dataUser?.user?.name+' '+dataUser?.user?.last_name}</span>
                                             </Typography>   
                                         </Grid>
                                         <Grid
@@ -181,12 +181,12 @@ export const HomeDoctorView = (props) => {
                                             <Icon sx={{ color: "#28c4ac", mr: 1 }}>
                                                 <FmdGoodIcon />
                                             </Icon>
-                                            <Typography
+                                            {/* <Typography
                                                 // align="end"
                                                 variant={"subtitle1"}>
                                                 <span> Comuna:</span>{" "}
                                                 <span className="title__main">Recoleta</span>
-                                            </Typography>
+                                            </Typography> */}
                                         </Grid>
                                         <Grid item xs={12} md={12} mt={1}></Grid>
                                     </Grid>}
