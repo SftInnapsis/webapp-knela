@@ -34,16 +34,16 @@ export const NotificacionModal: React.FC<ModalProps> = (
                 onClose={() => { setOpen(false) }}
             >
                 <Box sx={{
-                    position: 'absolute', 
-                    top: '50%', 
-                    right: '-10%', 
-                    transform: 'translate(-50%, -50%)', 
-                    width: 350, height: 500,
+                    position: 'fixed',
+                    top: 100,
+                    right: 50,
+                    width: 350, 
+                    height: 500,
                     bgcolor: 'background.paper', 
                     border: '2px solid #000', 
-                    borderRadius: '10px', boxShadow: 24, p: 4
+                    borderRadius: '10px', boxShadow: 24, p: 4,
                 }}>
-                    <BodyModal />
+                    <BodyModal/>
                 </Box>
 
             </Modal>

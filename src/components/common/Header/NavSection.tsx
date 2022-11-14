@@ -27,7 +27,7 @@ import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ROUTE_ATTENTION, ROUTE_ATTENTION_LIST, ROUTE_BUSINESS_AREA, ROUTE_DOCTORES_INDEPENDIENTES, ROUTE_DOCTORS, ROUTE_MEDICAL_CENTER, ROUTE_PATIENT, ROUTE_PATIENT_MASTER, ROUTE_PROFESSIONALS, ROUTE_SPECIALITY } from '@/toolbox/constants/route-map';
+import { ROUTE_ATTENTION, ROUTE_ATTENTION_KNELA, ROUTE_ATTENTION_LIST, ROUTE_BUSINESS_AREA, ROUTE_DOCTORES_INDEPENDIENTES, ROUTE_DOCTORS, ROUTE_MEDICAL_CENTER, ROUTE_PATIENT, ROUTE_PATIENT_MASTER, ROUTE_PROFESSIONALS, ROUTE_SPECIALITY } from '@/toolbox/constants/route-map';
 // import { StyledNavItem, StyledNavSubItem,StyledNavItemIcon } from './NavSection-styles';
 // import SvgColor from '../../components/svg';
 // import WidgetsIcon from '@mui/icons-material/Widgets';
@@ -38,152 +38,155 @@ import { ROUTE_ATTENTION, ROUTE_ATTENTION_LIST, ROUTE_BUSINESS_AREA, ROUTE_DOCTO
 // const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
 
-const rutasAdmin = [
-  {
-    id:1,
-    name: "Maestros",
-    icon: <HandymanIcon />,
-    rutas: [
-      {
-        name_ruta: "Areas",
-        location: ROUTE_BUSINESS_AREA,
-        icon: <GroupIcon/>,
-      },
-      {
-        name_ruta: "Especialidades",
-        location: ROUTE_SPECIALITY,
-        icon: <BadgeIcon/>,
-      },
-      {
-        name_ruta: "Doctores",
-        location: ROUTE_DOCTORS,
-        icon: <AssignmentIndIcon/>,
-      },
-      {
-        name_ruta: "Pacientes",
-        location: ROUTE_PATIENT_MASTER,
-        icon: <ContactsIcon/>,
-      },
-      {
-        name_ruta: "Profesionales",
-        location: ROUTE_PROFESSIONALS,
-        icon: <PeopleIcon/>,
-      }
-    ] 
-  },
-  {
-    id:2,
-    name: "Atenciones",
-    icon: <AddToQueueIcon/>,
-    rutas: [
-      {
-        name_ruta: "Crear Atenciones",
-        location: ROUTE_ATTENTION,
-        icon: <AddCommentIcon/>,
-      },
-      {
-        name_ruta: "Gestión de Atenciones",
-        location: ROUTE_ATTENTION_LIST,
-        icon: <ThreePIcon/>,
-      }
-    ] 
-  },
-  {
-    id:2,
-    name: "Reporte",
-    icon: <DashboardIcon/>,
-    rutas: [
-      {
-        name_ruta: "Atenciones",
-        location: "/reporte-atenciones",
-        icon: <AddToQueueIcon/>,
-      },
-      {
-        name_ruta: "Chats Cerrados",
-        location: "/chats-cerrados",
-        icon: <ChatIcon/>,
-      }
-    ] 
-  }
-]
 
-
-const rutasSuperAdmin = [
-  {
-    id:1,
-    name: "Maestros",
-    icon: <HandymanIcon />,
-    rutas: [
-      {
-        name_ruta: "Centro Medico",
-        location: ROUTE_MEDICAL_CENTER,
-        icon: <LocalHospitalIcon/>,
-      },
-      {
-        name_ruta: "Areas",
-        location: ROUTE_BUSINESS_AREA,
-        icon: <GroupIcon/>,
-      },
-      {
-        name_ruta: "Especialidades",
-        location: ROUTE_SPECIALITY,
-        icon: <BadgeIcon/>,
-      },
-      {
-        name_ruta: "Doctores",
-        location: ROUTE_DOCTORS,
-        icon: <AssignmentIndIcon/>,
-      },
-      {
-        name_ruta: "Pacientes",
-        location: ROUTE_PATIENT_MASTER,
-        icon: <ContactsIcon/>,
-      },
-      {
-        name_ruta: "Profesionales",
-        location: ROUTE_PROFESSIONALS,
-        icon: <PeopleIcon/>,
-      }
-    ] 
-  },
-  {
-    id:2,
-    name: "Doctores Independientes",
-    icon: <PermContactCalendarIcon/>,
-    rutas: [
-      {
-        name_ruta: "Solicitudes",
-        location: ROUTE_DOCTORES_INDEPENDIENTES,
-        icon: <AddCommentIcon/>,
-      },
-      {
-        name_ruta: "Control",
-        location: "/membresias",
-        icon: <ThreePIcon/>,
-      }
-    ] 
-  },
-  {
-    id:2,
-    name: "Alertas",
-    icon: <CampaignIcon/>,
-    rutas: [
-      {
-        name_ruta: "Gestión de Alertas",
-        location: "/gestion-alertas",
-        icon: <TipsAndUpdatesIcon/>,
-      }
-    ] 
-  }
-]
 
 
 export default function NavSection() {
   const history = useHistory()
+  const data_user = readLocalStorage(KEY_USER_DATA);
+  const rutasAdmin = [
+    {
+      id:1,
+      name: "Maestros",
+      icon: <HandymanIcon />,
+      rutas: [
+        {
+          name_ruta: "Areas",
+          location: ROUTE_BUSINESS_AREA,
+          icon: <GroupIcon/>,
+        },
+        {
+          name_ruta: "Especialidades",
+          location: ROUTE_SPECIALITY,
+          icon: <BadgeIcon/>,
+        },
+        {
+          name_ruta: "Equipo Médico",
+          location: ROUTE_DOCTORS,
+          icon: <AssignmentIndIcon/>,
+        },
+        {
+          name_ruta: "Pacientes",
+          location: ROUTE_PATIENT_MASTER,
+          icon: <ContactsIcon/>,
+        },
+        {
+          name_ruta: "Administrativo",
+          location: ROUTE_PROFESSIONALS,
+          icon: <PeopleIcon/>,
+        }
+      ] 
+    },
+    {
+      id:2,
+      name: "Atenciones",
+      icon: <AddToQueueIcon/>,
+      rutas: [
+        {
+          name_ruta: "Crear Atenciones",
+          location: data_user?.user?.medical_center[0]?.type_flow == 1? ROUTE_ATTENTION: ROUTE_ATTENTION_KNELA,
+          icon: <AddCommentIcon/>,
+        },
+        {
+          name_ruta: "Gestión de Atenciones",
+          location: ROUTE_ATTENTION_LIST,
+          icon: <ThreePIcon/>,
+        }
+      ] 
+    },
+    {
+      id:2,
+      name: "Reporte",
+      icon: <DashboardIcon/>,
+      rutas: [
+        {
+          name_ruta: "Atenciones",
+          location: "/reporte-atenciones",
+          icon: <AddToQueueIcon/>,
+        },
+        {
+          name_ruta: "Chats Cerrados",
+          location: "/chats-cerrados",
+          icon: <ChatIcon/>,
+        }
+      ] 
+    }
+  ]
+  
+  
+  const rutasSuperAdmin = [
+    {
+      id:1,
+      name: "Maestros",
+      icon: <HandymanIcon />,
+      rutas: [
+        {
+          name_ruta: "Centro Medico",
+          location: ROUTE_MEDICAL_CENTER,
+          icon: <LocalHospitalIcon/>,
+        },
+        {
+          name_ruta: "Areas",
+          location: ROUTE_BUSINESS_AREA,
+          icon: <GroupIcon/>,
+        },
+        {
+          name_ruta: "Especialidades",
+          location: ROUTE_SPECIALITY,
+          icon: <BadgeIcon/>,
+        },
+        {
+          name_ruta: "Equipo Médico",
+          location: ROUTE_DOCTORS,
+          icon: <AssignmentIndIcon/>,
+        },
+        {
+          name_ruta: "Pacientes",
+          location: ROUTE_PATIENT_MASTER,
+          icon: <ContactsIcon/>,
+        },
+        {
+          name_ruta: "Profesionales",
+          location: ROUTE_PROFESSIONALS,
+          icon: <PeopleIcon/>,
+        }
+      ] 
+    },
+    {
+      id:2,
+      name: "Doctores Independientes",
+      icon: <PermContactCalendarIcon/>,
+      rutas: [
+        {
+          name_ruta: "Solicitudes",
+          location: ROUTE_DOCTORES_INDEPENDIENTES,
+          icon: <AddCommentIcon/>,
+        },
+        {
+          name_ruta: "Control",
+          location: "/membresias",
+          icon: <ThreePIcon/>,
+        }
+      ] 
+    },
+    {
+      id:2,
+      name: "Alertas",
+      icon: <CampaignIcon/>,
+      rutas: [
+        {
+          name_ruta: "Gestión de Alertas",
+          location: "/gestion-alertas",
+          icon: <TipsAndUpdatesIcon/>,
+        }
+      ] 
+    }
+  ]
+
   const { pathname } = useLocation();
   const initialRuta = readLocalStorage(KEY_RUTA)
   const [ruta, setRuta] = React.useState(initialRuta || '');
-  const data_user = readLocalStorage(KEY_USER_DATA);
+  console.log(data_user)
   const type_user = data_user.user.role;
   const [rutasHeader, setRutasHeader] = React.useState([])
   const validateType = () => {

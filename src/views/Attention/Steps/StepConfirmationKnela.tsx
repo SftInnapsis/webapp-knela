@@ -1,15 +1,21 @@
 import { TableDataV2 } from "@/components/common/Tablev2";
+import { areaService } from "@/service/services/Area.service";
 import { patientService } from "@/service/services/Patient.service";
+import { KEY_MEDICAL_CENTER } from "@/toolbox/constants/local-storage";
+import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { PatientMaster } from "@/views/PatientMaster";
-import { Alert, Button, Chip, Grid, MenuItem, Paper, Select, Snackbar, Stack, TextField, Typography } from "@mui/material"
+import { Alert, Autocomplete, Button, Chip, Grid, MenuItem, Paper, Select, Snackbar, Stack, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 
-export const StepConfirmation = (props) => {
+export const StepConfirmationKnela = (props) => {
 
     const { dataDoctor, dataTutor, dataPatient, dataStatusPatient,
         idStatus, handleChanges, typeSeguro, idType, handleChanges2,
         GenerateAttention, handleReset, handleBack } = props
-
+    const [dataArea, setDataArea] = useState<any>([]);
+    const [idArea, setIdArea] = useState(null);
+    const [error, setError] = useState('')
+  
     const [observations, setObservations] = useState<any>({ text: '' })
     const handleInput = (event: any) => {
         const name_input = event.target.name;
@@ -22,6 +28,21 @@ export const StepConfirmation = (props) => {
                 break;
         }
     };
+    
+    const getAreasByMedicalCenter = async() => {
+        const medicalCenter = readLocalStorage(KEY_MEDICAL_CENTER)
+        const resp = await areaService.getDataAreaByMedicalCenter(medicalCenter);
+        setDataArea(resp.data);
+    }
+
+    const handleGenerateAttention = () => {
+        if(!idArea){return setError('idArea')}
+        GenerateAttention(observations, idArea)
+    }
+
+    useEffect(()=>{
+        getAreasByMedicalCenter();
+    },[])
 
     return (
         <Paper square elevation={0} sx={{ p: 3 }}>
@@ -31,7 +52,7 @@ export const StepConfirmation = (props) => {
                     <Stack direction="row" spacing={1}>
                         <Chip label={`Paciente: ${dataPatient?.name} - ${dataPatient?.rut}`} />
                         {dataTutor?.name && <Chip label={`Tutor: ${dataTutor?.name} - ${dataTutor?.rut}`} />}
-                        <Chip label={`Doctor: ${dataDoctor?.name} - ${dataDoctor?.rut}`} />
+                        {/* <Chip label={`Doctor: ${dataDoctor?.name} - ${dataDoctor?.rut}`} /> */}
                     </Stack>
                 </Grid>
                 <Grid container ml={2}>
@@ -56,23 +77,24 @@ export const StepConfirmation = (props) => {
 
                 </Grid>
                 <Grid item md={4} >
-                    {/* <Typography>Seleccione tipo de seguro de salud</Typography>
-                    <Select
-                        id="outlined-select-ubicationclinica"
-                        sx={{ width: "200px" }}
-                        fullWidth
-                        value={idType}
-                        onChange={handleChanges2}
-                        variant="standard"
-                    >
-                        {typeSeguro.map((option, key) => (
-                            <MenuItem
-                                sx={{ textAlign: 'center' }}
-                                key={key} value={option.id}>
-                                {option.name}
-                            </MenuItem>
-                        ))}
-                    </Select> */}
+                    <Typography>Seleccione el Área de atención médica</Typography>
+                    <Autocomplete
+                     sx={{ bgcolor: '#fff' }}
+                     size='small'
+                     value={idArea}
+                     onChange={(e, data: any) => {
+                        data && setIdArea(data)
+                     }}
+                     id="idarea"
+                     options={dataArea}
+                     getOptionLabel={(option: any) => option.name ? option.name : ""}
+                     renderInput={(params) => <TextField
+                        {...params}
+                        placeholder="Area"
+                        label="Area"
+                        error={error == "idArea" ? true : false}
+                        helperText={error == "idArea" ? "Campo requerido" : ""} />}
+                  />
                 </Grid>
                 </Grid>
                 <Grid item md={8}>
@@ -104,7 +126,7 @@ export const StepConfirmation = (props) => {
                     </Grid>
 
                     <Grid item md={6} >
-                        <Button onClick={() => { GenerateAttention(observations) }} variant='contained' sx={{ background: '#3D8BD9', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#155172' } }}>Confirmar</Button>
+                        <Button onClick={() => {handleGenerateAttention() }} variant='contained' sx={{ background: '#3D8BD9', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#155172' } }}>Confirmar</Button>
 
                     </Grid>
                 </Grid>

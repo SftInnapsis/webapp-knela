@@ -116,7 +116,6 @@ export const TableDataV2: React.FC<TableProps> = (
 
       setPage(0);
    };
-   console.log(props.select_button)
    //////////////////////////////////////////
    const [open, setOpen] = useState(null);
    const [order, setOrder] = useState('asc');
@@ -125,7 +124,7 @@ export const TableDataV2: React.FC<TableProps> = (
    const [filterName, setFilterName] = useState('');
 
    const handleOpenMenu = (event, data) => {
-      console.log(data);
+    
       setOpen(event.currentTarget);
       setDataSelected(data);
    };
@@ -150,12 +149,12 @@ export const TableDataV2: React.FC<TableProps> = (
 
    const handleClick = (event, name) => {
       const selectedIndex = selected.indexOf(name);
-      console.log(selectedIndex);
+      // console.log(selectedIndex);
       let newSelected = [];
       if (selectedIndex === -1) {
-         console.log(selected)
+         // console.log(selected)
          newSelected = newSelected.concat(selected, name);
-         console.log(newSelected)
+         // console.log(newSelected)
       } else if (selectedIndex === 0) {
          newSelected = newSelected.concat(selected.slice(1));
       } else if (selectedIndex === selected.length - 1) {
@@ -170,7 +169,7 @@ export const TableDataV2: React.FC<TableProps> = (
       try{   const name = event.target.name;
          
          const value = event.target.value;
-         console.log(value)
+         // console.log(value)
            if(value.length>3)
                {
                   props?.dataSearch &&  props?.dataSearch(value)
@@ -183,7 +182,7 @@ export const TableDataV2: React.FC<TableProps> = (
 
              
       }catch(e){
-         console.log(e)
+         // console.log(e)
       }
       };
 

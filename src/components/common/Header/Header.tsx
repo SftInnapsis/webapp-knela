@@ -64,7 +64,7 @@ export const HeaderView = (props: any): JSX.Element => {
       padding: theme.spacing(0, 5),
     },
   }));
-
+  
   return (
     <header>
       <StyledRoot>
@@ -93,7 +93,7 @@ export const HeaderView = (props: any): JSX.Element => {
           <Grid item xs={2} md={6} mt={2} >
             <Grid display="flex" justifyContent="flex-end" alignItems="center" container spacing={1} direction="row">
               <Box>
-                {console.log(ROLE_SUPER_ADMIN)}
+                {/* {console.log(ROLE_SUPER_ADMIN)} */}
                 {data_user?.user?.role !== ROLE_SUPER_ADMIN && <ComboBox />}
               </Box>
               {/* {mostrarCombo()} */}

@@ -67,6 +67,8 @@ export const doctorRepository = {
         iddoctor_type: 1,
         address: datadoctor?.address,
         iddistrict: datadoctor?.iddistrict,
+        type_rol: datadoctor?.type_rol,
+        name_rol: datadoctor?.name_rol,
         medical_center: readLocalStorage(KEY_MEDICAL_CENTER)
       })
       return {
@@ -116,7 +118,9 @@ export const doctorRepository = {
         iddoctor_type: datadoctor?.iddoctor_type,
         address: datadoctor?.address,
         iddistrict: datadoctor?.iddistrict,
-        medical_center: datadoctor?.medical_center
+        medical_center: datadoctor?.medical_center,
+        type_rol: datadoctor?.type_rol,
+        name_rol: datadoctor?.name_rol,
       })
       return {
          status: resp.status,

@@ -48,7 +48,7 @@ export const KyteApp: React.FC<Props> = (props: any): JSX.Element => {
 
       // }
       //  console.log(data.user.idmedical_center);
-      //  console.log(data);
+      //   console.log(data);
       if (data && data.user && !data.user.idmedical_center) {
          data.user.medical_center.length > 0 && props.$action.SelectMedicalCenter(data && data.user && data.user.medical_center[0].idmedical_center);
       } else {

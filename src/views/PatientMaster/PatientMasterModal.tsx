@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Grid, TextField, Divider, Autocomplete, Dialog, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material';
+import { Grid, TextField, Divider, Autocomplete, Dialog, InputAdornment, IconButton, Snackbar, Alert, Select, MenuItem } from '@mui/material';
 import { Icon } from '@components/common/Icon';
 import { Paper, Box, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Table, createTheme, ThemeProvider, Button } from '@mui/material';
 import { CancelIcon, SaveIcon } from "@toolbox/constants/icons";
@@ -44,8 +44,14 @@ export const PatientMasterModal: React.FC<ModalProps> = (
       date_birth: '',
       mail: '',
       textError: '',
+      observation: ''
    });
 
+   const [typeSeguro,setTypeSeguro] = useState<any>([
+      { id:1, name: 'ISAPRE'},
+      { id:2, name: 'FONASA'}
+  ])
+  const [idType,setIdType] = useState<any>(1)
    const [dataMedicalCenter, setDataMedicalCenter] = useState<any>([]);
    const [medicalCenter, setMedicalCenter] = useState(null);
 
@@ -104,6 +110,9 @@ export const PatientMasterModal: React.FC<ModalProps> = (
          case 'mail':
             setData(prev => ({ ...prev, mail: value, textError: '' }));
             break;
+         case 'observations':
+            setData(prev => ({ ...prev, observation: value, textError: '' }));
+            break;
          default:
             break;
       }
@@ -145,6 +154,7 @@ export const PatientMasterModal: React.FC<ModalProps> = (
       if(data.last_name.length >= 150){return setError('last_name_limit')}
       if(data.rut === ''){return setError('rut')}
       if(data.date_birth === ''){return setError('date_birth')}
+      if(data.observation === ''){return setError('observations')}
       if(data.mail === ''){return setError('mail')}
       let validate = ValidateEmail(data.mail)
       if(!validate){return setError('mail_invalid') }
@@ -154,9 +164,12 @@ export const PatientMasterModal: React.FC<ModalProps> = (
       const { name, last_name, rut, date_birth, mail } = data;
       const medicalStorage = readLocalStorage(KEY_MEDICAL_CENTER)
       console.log(medicalStorage)
+      const valueTypeSeguro = idType && typeSeguro.find(value => value.id === idType)
       const bodyRequest = {
          ...data,
-         medical_center: user_data?.user?.role == ROLE_SUPER_ADMIN ? medicalCenter.id : medicalStorage
+         medical_center: user_data?.user?.role == ROLE_SUPER_ADMIN ? medicalCenter.id : medicalStorage,
+         idTypeSeguro: idType,
+         nameTypeSeguro: valueTypeSeguro?.name
       }
       if (actionSelect == 'edit') {
          editPatientMaster(bodyRequest)
@@ -169,6 +182,10 @@ export const PatientMasterModal: React.FC<ModalProps> = (
       }
    }
 
+   const handleChanges2 = (e) => {
+      setIdType(e.target.value)
+  }
+  
    useEffect(() => {
       console.log(open)
       if (open) {
@@ -280,6 +297,45 @@ export const PatientMasterModal: React.FC<ModalProps> = (
                      helperText={error=='mail'?'Campo obligatorio': error == 'mail_invalid'?'Correo es inválido': ''}
                   />
                </Grid>
+               { actionSelect == 'save' &&  <Grid item xs={12} md={12} >
+                  <TextField
+                     fullWidth
+                     multiline
+                     size="small"
+                     id="observations"
+                     placeholder="Observaciones*"
+                     label="observations*"
+                     sx={{ bgcolor: '#fff' }}
+                     name="observations"
+                     rows={3}
+                     type="text"
+                     value={data?.observation}
+                     onChange={handleInput}
+                     error={error=='observations'? true:false}
+                     helperText={error=='observations'?'Campo obligatorio': ''}
+                  />
+               </Grid>}
+             { actionSelect == 'save' && < Grid item md={12} >
+                    <Typography>Seleccione tipo de seguro de salud</Typography>
+                    <Select
+                        id="outlined-select-ubicationclinica"
+                        sx={{ width: "200px" }}
+                        fullWidth
+                        value={idType}
+                        onChange={handleChanges2}
+                        variant="standard"
+                    >
+                        {typeSeguro.map((option, key) => (
+                            <MenuItem
+                                sx={{ textAlign: 'center' }}
+                                key={key} value={option.id}>
+                                {option.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </Grid>}
+                
+                
 
             { user_data?.user?.role == ROLE_SUPER_ADMIN && 
                <Grid item xs={12} md={12} >

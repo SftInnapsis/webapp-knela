@@ -49,6 +49,12 @@ export const DoctorModal: React.FC<ModalProps> = (
    });
 
    const [dataArea, setDataArea] = useState<any>([]);
+   const [dataTypeRol, setDataTypeRol ] = useState<any>([
+      {id:1, name:'Doctor'},
+      {id:2, name:'Enfermero(a)'},
+      {id:3, name:'Asistente'}
+   ])
+   const [typeRol, setTypeRol] = useState<any>(null)
    const [dataEspecialidad, setDataEspecialidad] = useState<any>([]);
    const [dataMedicalCenter, setDataMedicalCenter] = useState<any>([]);
    const [dataDoctorType, setDataDoctorType] = useState<any>([]);
@@ -263,8 +269,9 @@ export const DoctorModal: React.FC<ModalProps> = (
       if (data.mail === '') { return setError('mail') }
       let validate = ValidateEmail(data.mail)
       if(!validate){return setError('mail_invalid') }
-      if (data.address === '') { return setError('address') }
-      if (data.address.length >= 100) { return setError('address_limit') }
+      // if (data.address === '') { return setError('address') }
+      // if (data.address.length >= 100) { return setError('address_limit') }
+      if(!typeRol){return setError('idTypeRol')};
       if (idArea.name === '') { return setError('idArea') }
       if (idEspecialidad.name === '') { return setError('idEspecialidad') }
 
@@ -276,7 +283,9 @@ export const DoctorModal: React.FC<ModalProps> = (
          ...data,
          idarea: idArea.id,
          idspecialty: idEspecialidad.id,
-         iddistrict: iddistrito.id,
+         // iddistrict: iddistrito.id,
+         type_rol: typeRol.id,
+         name_rol: typeRol.name,
          medical_center: medicalCenter.id,
          iddoctor_type: idDoctorType.id
       }
@@ -295,6 +304,7 @@ export const DoctorModal: React.FC<ModalProps> = (
       getPais();
       if (actionSelect == 'edit') {
          console.log(recoveryData)
+         setTypeRol(dataTypeRol.find((value)=> value.id == recoveryData.type_rol))
          const { iddistrict, idprovince, iddepartment, idcountry, idmedical_center, idspecialty, iddoctor_type, idarea } = recoveryData;
          setData(recoveryData);
          getUbigeo(iddistrict, idprovince, iddepartment, idcountry, idmedical_center, idspecialty, iddoctor_type, idarea)
@@ -401,7 +411,7 @@ export const DoctorModal: React.FC<ModalProps> = (
                   />
                </Grid>
 
-               <Grid item xs={12} md={12} >
+               {/* <Grid item xs={12} md={12} >
                   <TextField
                      fullWidth
                      size="small"
@@ -416,7 +426,7 @@ export const DoctorModal: React.FC<ModalProps> = (
                      error={error == 'address' || error == 'address_limit' ? true : false}
                      helperText={error == 'address' ? 'Campo es obligatorio' : error == 'address'? 'Número máximo de caracteres es 100':''}
                   />
-               </Grid>
+               </Grid> */}
                {/* <Grid item xs={12} md={12} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
@@ -451,6 +461,25 @@ export const DoctorModal: React.FC<ModalProps> = (
                      renderInput={(params) => <TextField {...params} label="Centro Médico" />}
                   />
                </Grid>}
+               <Grid item xs={12} md={12} >
+                        <Autocomplete
+                            value={typeRol}
+                            sx={{ bgcolor: '#fff' }}
+                            size='small'
+                            onChange={(e, data: any) => {
+                                setTypeRol(data)
+                            }}
+                            id="idTypeRol"
+                            options={dataTypeRol}
+                            getOptionLabel={(option: any) => option.name ? option.name : ""}
+                            renderInput={(params) => <TextField 
+                                {...params} 
+                                placeholder="Rol*" 
+                                label="Rol*"
+                                error={error=="idTypeRol" ? true : false} 
+                                helperText={error=="idTypeRol"? "Campo requerido" : ""} />}
+                        />
+                    </Grid>
                <Grid item xs={12} md={12} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
@@ -488,7 +517,7 @@ export const DoctorModal: React.FC<ModalProps> = (
                         helperText={error == "idEspecialidad" ? "Campo requerido" : ""} />}
                   />
                </Grid>
-               <Grid item xs={12} md={6} >
+               {/* <Grid item xs={12} md={6} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}
                      size='small'
@@ -547,7 +576,7 @@ export const DoctorModal: React.FC<ModalProps> = (
                      getOptionLabel={(option: any) => option.name ? option.name : ""}
                      renderInput={(params) => <TextField {...params} label="Distrito" />}
                   />
-               </Grid>
+               </Grid> */}
                <Grid item xs={12} md={6} >
                   <Button
                      onClick={() => { setOpen(false) }}

@@ -128,8 +128,9 @@ export const MedicalCenter = (props) => {
                     { name: 'rut', label: 'Rut', filter: false, Chip: false },
                     { name: 'phone', label: 'Celular', filter: false, Chip: false },
                     { name: 'attention_type', label: 'Tipo de Atención', filter: false, Chip: true },
+                    { name: 'name_flow', label: 'Tipo de Flujo', filter: false, Chip: true },
                     { name: 'address', label: 'Dirección', filter: false, Chip: true },
-                    { name: 'district', label: 'Distrito', filter: false, Chip: true },
+                    { name: 'district', label: 'Comuna', filter: false, Chip: true },
                     { name: 'status', label: 'Estado', filter: false, Chip: true },
                 ]}
                 status_action

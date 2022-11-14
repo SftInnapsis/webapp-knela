@@ -34,6 +34,7 @@ import { PatientMaster } from '../PatientMaster';
 import { DoctorView } from '../Doctors/Doctors';
 import { useHistory } from 'react-router-dom';
 import { AttentionView } from '../Attention';
+import { AttentionKnelaView } from '../Attention/AttentionKnela';
 
 export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
    const { MessageReducer='' ,MedicalCenterReducer} = props;
@@ -63,7 +64,13 @@ export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
             return <MedicalCenter/>
          case ROLE_ADMIN:
              saveLocalStorage(KEY_RUTA,'Atenciones')
-             return <AttentionView/>
+             const data_user = readLocalStorage(KEY_USER_DATA)
+             if(data_user?.user?.medical_center[0]?.type_flow == 1){
+               return <AttentionView/>
+            }else{
+               return <AttentionKnelaView/>
+            }
+            
          case ROLE_DOCTOR:
             console.log('doctor')
             return <HomeDoctor/>

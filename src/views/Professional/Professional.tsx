@@ -187,7 +187,7 @@ export const ProfessionalView = (props) => {
                 ]}
                 status_action
                 checkbox
-                title={'Profesionales'}
+                title={'Administrativos'}
                 RecuperarData={RecuperarData}
                 setModalSave={setOpen}
                 actionSelect={setActionSelect}

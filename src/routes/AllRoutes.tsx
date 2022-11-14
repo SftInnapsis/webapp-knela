@@ -26,6 +26,7 @@ import { Specialty } from '@/views/Speciality';
 import { AttentionList, AttentionView } from '@/views/Attention';
 import { DoctorIndependiente } from '@/views/DoctorIndependiente';
 import { ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
+import { AttentionKnelaView } from '@/views/Attention/AttentionKnela';
 
 const AllRoutes: React.FC = () => {
 
@@ -71,6 +72,9 @@ const AllRoutes: React.FC = () => {
 
    const moduleAttention = [
       <PrivateRoute key={5} exact path={Routes.ROUTE_ATTENTION} component={AttentionView} />
+   ]
+   const moduleAttentionKnela = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_ATTENTION_KNELA} component={AttentionKnelaView} />
    ]
 
    const moduleAttentionList = [
@@ -131,6 +135,7 @@ const AllRoutes: React.FC = () => {
                      {moduleProfessional}
                      {moduleSpeciality}
                      {moduleAttention}
+                     {moduleAttentionKnela}
                      {moduleAttentionList}
                      {modulePatientTutor}
                      {<Route path='*' exact={true} component={() => {
@@ -202,6 +207,7 @@ const AllRoutes: React.FC = () => {
                      {moduleAttentionList}
                      {moduleDoctorIndependiente}
                      {modulePatientTutor}
+                     {moduleAttentionKnela}
                      <Route key={5} exact path={Routes.ROUTE_REGISTER} component={RegisterView} />
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {<Route path='*' exact={true} component={() => {

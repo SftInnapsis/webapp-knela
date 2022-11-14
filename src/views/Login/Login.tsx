@@ -77,8 +77,8 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
    })
    const [verify, setVerify] = useState(false);
 
-   // const ruta = props.location.search + '.';
-   // const { rut, usuario, password } = props.location && qs.parse(ruta.slice(1, -1));
+   const ruta = props.location.search + '.';
+   const { rut, password, idtype } = props.location && qs.parse(ruta.slice(1, -1));
    const validateType = () => {
       // console.log(name)
       // estos son los logins de cada perfil
@@ -116,19 +116,19 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
    }
    useEffect(() => {
       validateType()
-      // if (rut && usuario && password) {
-      //    var decodeRut;
-      //    var decodeUser;
-      //    var decodePassword;
+      if (rut && idtype && password) {
+         var decodeRut;
+         var decodeIdType;
+         var decodePassword;
 
-      //    try {
-      //       decodeRut = atob(rut);
-      //       decodeUser = atob(usuario);
-      //       decodePassword = atob(password);
-      //       authSubmit(decodeRut, decodePassword);
-      //    } catch (error) {
-      //    }
-      // } 
+         try {
+            decodeRut = atob(rut);
+            decodeIdType = atob(idtype);
+            decodePassword = atob(password);
+            authSubmit(decodeRut, decodePassword,decodeIdType);
+         } catch (error) {
+         }
+      } 
    }, []);
 
    const rules = useMemo(() => ({
@@ -239,26 +239,27 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
          }));
       } else {
          response && response.user && props.$action.SelectMedicalCenter(response.user.medical_center[0].id);
+         // saveLocalStorage(KEY_VALIDATE_CHANGE_PASSWORD, 'normal');
          const data = readLocalStorage(KEY_USER_DATA)
-         if (data.user.role == ROLE_SUPER_ADMIN) {
+         if (data?.user?.role == ROLE_SUPER_ADMIN) {
             history.push(ROUTE_HOME);
          }
-         if (data.user.role == ROLE_ADMIN) {
+         if (data?.user?.role == ROLE_ADMIN) {
             history.push(ROUTE_HOME)
          }
-         if (data.user.role == ROLE_DOCTOR_IND) {
+         if (data?.user?.role == ROLE_DOCTOR_IND) {
             history.push(ROUTE_HOME)
          }
-         if (data.user.role == ROLE_DOCTOR) {
+         if (data?.user?.role == ROLE_DOCTOR) {
             history.push(ROUTE_HOME)
          }
-         if (data.user.role == ROLE_PACIENTE) {
+         if (data?.user?.role == ROLE_PACIENTE) {
             history.push(ROUTE_HOME)
          }
-         if (data.user.role == ROLE_FAMILIAR) {
+         if (data?.user?.role == ROLE_FAMILIAR) {
             history.push(ROUTE_HOME)
          }
-         if (data.user.role == ROLE_TUTOR) {
+         if (data?.user?.role == ROLE_TUTOR) {
             history.push(ROUTE_HOME)
          }else{
             history.push(ROUTE_HOME)
@@ -433,7 +434,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
                               </Grid>
                            </form>
 
-                           <Grid container spacing={1} >
+                           {/* <Grid container spacing={1} >
                               <Grid item xs={12} md={12}>
                                  <Button
                                     fullWidth
@@ -444,7 +445,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
                                     Registrarse
                                  </Button>
                               </Grid>
-                           </Grid>
+                           </Grid> */}
 
                         </Grid>
                      </Grid>

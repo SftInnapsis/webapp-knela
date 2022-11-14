@@ -42,7 +42,8 @@ export const medicalCenterRepository = {
          idattention_type: dataMedicalCenter.idattention_type,
          address: dataMedicalCenter.address,
          iddistrict: dataMedicalCenter.iddistrict,
-         phone: dataMedicalCenter.phone
+         phone: dataMedicalCenter.phone,
+        type_flow: dataMedicalCenter?.type_flow
       })
       return {
          status: resp.status,
@@ -60,7 +61,8 @@ export const medicalCenterRepository = {
         address: dataMedicalCenter?.address,
         iddistrict: dataMedicalCenter?.iddistrict,
         phone: dataMedicalCenter?.phone,
-        type_user: user_data?.user?.iduser_type
+        type_user: user_data?.user?.iduser_type,
+        type_flow: dataMedicalCenter?.type_flow
       })
       return {
          status: resp.status,

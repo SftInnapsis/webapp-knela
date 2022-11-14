@@ -5,9 +5,10 @@ import { Alert, Box, Button, Card, CardActionArea, CardMedia, Chip, Grid, MenuIt
 import React, { useEffect, useState } from "react";
 import { StepSearchDoctor, StepSearchPatient, StepSearchTutor } from "./Steps";
 import { StepConfirmation } from "./Steps/StepConfirmation";
+import { StepConfirmationKnela } from "./Steps/StepConfirmationKnela";
 import { StepSearchTeamMedical } from "./Steps/StepSearchTeamMedical";
 
-export const AttentionView = (props) => {
+export const AttentionKnelaView = (props) => {
     const [dataInitial, setDataInitial] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [dataStatusPatient,setDataStatusPatient] = useState<any>([]);
@@ -84,7 +85,7 @@ export const AttentionView = (props) => {
         setIdType(e.target.value)
     }
     
-    const GenerateAttention = async(dataObservation) => {
+    const GenerateAttention = async(dataObservation, dataArea) => {
         console.log(dataPatient)
         console.log(dataTutor)
         console.log(dataDoctor)
@@ -92,10 +93,10 @@ export const AttentionView = (props) => {
 
         //validar que cierto campos esten rellenados
         const dta = {
-            idarea: dataDoctor?.idarea, // me falta
+            idarea: dataArea.id, // me falta
             idpatients:dataPatient?.id,
-            iddoctor: dataDoctor?.id, 
-            idtutor:dataPatient?.tutor_id,
+            iddoctor: null, 
+            idtutor: dataPatient?.tutor_id,
             idstatus_patient: idStatus,
             idtypeSeguro: dataPatient?.idTypeSeguro,
             observations: dataObservation.text,
@@ -114,17 +115,11 @@ export const AttentionView = (props) => {
             label: 'Seleccione  el Paciente',
             description: <StepSearchPatient activeStep={activeStep} setDataPatient={setDataPatient} handleNext={handleNext}/>
         },
-        // {
-        //     label: 'Asigna un tutor (Opcional)',
-        //     description: <StepSearchTutor dataPatient={dataPatient} handleNext={handleNext} handleBack={handleBack} setDataTutor={setDataTutor}/>,
-        // },
         {
-            label: 'Asigna el doctor',
-            description: <StepSearchDoctor setDataDoctor={setDataDoctor} handleNext={handleNext}/>,
-        },
-        {
-            label: 'Confirmción de datos',
-            description: <StepConfirmation dataDoctor={dataDoctor} dataTutor={dataTutor} 
+            label: 'Datos Adicionales',
+            description: <StepConfirmationKnela 
+            dataDoctor={dataDoctor} 
+            dataTutor={dataTutor} 
             dataPatient={dataPatient} 
             dataStatusPatient={dataStatusPatient}
             idStatus={idStatus}
@@ -183,8 +178,8 @@ export const AttentionView = (props) => {
                                 <StepContent>
                                     <Typography>{step.description}</Typography>
 
-                                    <Box sx={{ mb: 2 }}>
-                                        {/* <div>
+                                    {/* <Box sx={{ mb: 2 }}>
+                                        <div>
                                            {index != 3 && <Button
                                                 disabled={index === 0}
                                                 onClick={handleBack}
@@ -200,8 +195,8 @@ export const AttentionView = (props) => {
                                             >
                                                 {'OMITIR'}
                                             </Button>}
-                                        </div> */}
-                                    </Box>
+                                        </div>
+                                    </Box> */}
                                 </StepContent>
                             </Step>
                         ))}

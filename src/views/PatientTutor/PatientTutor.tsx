@@ -27,6 +27,8 @@ import { RequestService } from '@/service/services/Request.service';
 import { ROLE_DOCTOR, ROLE_TUTOR, ROLE_PACIENTE } from '@/toolbox/defaults/static-roles';
 import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
+import { CardComponent } from '@components/common/Card';
+
 
 export const PatientTutorView = (props) => {
     const item = props.location.state.dataPacientes;
@@ -56,12 +58,13 @@ export const PatientTutorView = (props) => {
 
     const getStatusPatient = async (id_typePublication) => {
         console.log(MedicalCenterReducer.id_medical_center)
-        const res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center, id_typePublication);
+        const res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center, id_typePublication,[item?.id]);
         if (res.data && res.data.status !== false) {
             console.log(res.data.length);
-            setstatusDefault(res.data[res.data.length - 1].idstatus_patient)
+            setstatusDefault(res.data[0].data.idstatus_patient)
             setmensajePaciente(res.data)
         } else {
+            setstatusDefault(item.idstatus_patient)
             setmensajePaciente([])
         }
     }
@@ -118,6 +121,7 @@ export const PatientTutorView = (props) => {
                 }));
                 setModalSolicitud(false)
                 setPrintRequestError('');
+                getSendRequest();
             } else {
                 const { message = '' } = res.data;
                 setPrintRequestError(message);
@@ -234,7 +238,7 @@ export const PatientTutorView = (props) => {
                                             </CardActionArea>
                                         </Card>
                                     </Grid>
-                                    {item?.observation && <Grid item xs={4}>
+                                    {item?.observation && <Grid item xs={4} sx={{pt:2}}>
                                         <Card
                                             key={item.id}
                                             sx={{
@@ -395,64 +399,7 @@ export const PatientTutorView = (props) => {
                                     </Grid>}
                                 {mensajePaciente.map((item2) => (
                                     <Grid item xs={12} md={4}>
-                                        <Card
-                                            key={item2.id}
-                                            sx={{
-                                                width: "100%",
-                                                background: '#c3e6ce',
-                                                borderRadius: "10px",
-                                                height: '150px',
-                                                overflow: 'auto'
-                                            }}>
-
-                                            {/* <CardActionArea className="contenedor"> */}
-                                            <CardMedia
-                                                component="text"
-                                                height="90"
-                                                name={item2.subtitle} />
-                                            <Grid container className="texto-encima" p={2}>
-                                                <Grid item xs={12}>
-                                                    <Grid display="flex" justifyContent="space-between">
-                                                        <Typography
-                                                            gutterBottom
-                                                            variant="subtitle1"
-                                                            fontWeight={"bolder"}
-                                                        >
-                                                            {/* {`DOCTOR(A): ${item2.nameDoctor}`} */}
-                                                            {item2.nameDoctor ? `DOCTOR(A): ${item2.nameDoctor}` : `PROFESIONAL(A): ${item2.nameProfessional}`}
-                                                        </Typography>
-                                                        <Grid >
-                                                            <Typography
-                                                                gutterBottom
-                                                                fontWeight={"bolder"}
-                                                            >
-                                                                {item2.creation_date}
-                                                            </Typography>
-                                                        </Grid>
-                                                    </Grid>
-                                                    <Typography gutterBottom sx={{ textTransform: 'uppercase' }}>
-                                                        {item2.publication}
-                                                    </Typography>
-
-                                                </Grid>
-                                            </Grid>
-                                            {/* </CardActionArea> */}
-                                            {/* <Grid item container direction='row' justifyContent="center" spacing={2}>
-                                                <Grid item>
-                                                    <Button variant='outlined' color='secondary' >EDITAR</Button>
-                                                </Grid> 
-                                                <Grid item>
-                                                    <Button variant='outlined' color='error'>ELIMINAR</Button>
-                                                </Grid>
-                                            </Grid> */}
-                                            {/* <span style={{padding:'10px',fontSize:'15px'}}>
-                                                {`ESTADO: ${item2.nameStatusPatient}`}
-                                            </span> */}
-                                            <Typography fontWeight={"bolder"} gutterBottom sx={{ pl:2, textTransform: 'uppercase',color:'red' }}>
-                                                {`ESTADO: ${item2.nameStatusPatient}`}
-                                            </Typography>
-
-                                        </Card>
+                                         <CardComponent info={item2}/>
                                     </Grid>
                                 ))}
                             </Grid>
@@ -464,6 +411,7 @@ export const PatientTutorView = (props) => {
                 open={showModalTutor}
                 setOpen={setModalTutor}
             /> */}
+            
             <SolicitudModal
                 open={showModalSolicitud}
                 setOpen={setModalSolicitud}

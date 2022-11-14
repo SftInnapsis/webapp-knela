@@ -9,6 +9,8 @@ import { Button, InputAdornment,Autocomplete, TextField, Grid, CircularProgress,
 import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
 import { ROLE_SUPER_ADMIN } from "@/toolbox/defaults/static-roles";
+import { tutorService } from "@/service/services/Tutor.service";
+import { ModalTutor } from "../Tutor/ModalTutor"
 
 export const PatientMasterView = (props) => {
     console.log(props)
@@ -17,8 +19,10 @@ export const PatientMasterView = (props) => {
     const { MedicalCenterReducer ='' } = props;
     const [dataPatient, setDataPatient] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
+    const [openModalTutor, setOpenModalTutor] = useState<boolean>(false)
     const [actionSelect, setActionSelect] = useState<any>('')
     const [recoveryData, setRecoveryData] = useState<any>({})
+    const [patientCreated, setPatientCreated] = useState<any>(null)
     const [Dialog, setDialog] = useState<any>({
         open: false,
         title: 'Eliminar',
@@ -115,7 +119,8 @@ export const PatientMasterView = (props) => {
         console.log(data);
         if (data) {
             const res: any = await patientService.createPatient(data)
-            if (res.data.detail) {
+            if (res?.data?.detail) {
+                setPatientCreated(res.data.detail)
                 setSnackBarConfig(prev => ({
                     ...prev,
                     open: true,
@@ -123,10 +128,29 @@ export const PatientMasterView = (props) => {
                     message: res.data.message,
                 }));
                 setOpen(false)
+                setOpenModalTutor(true)
+                setPatientCreated(res.data.detail)
+            }
+        }
+    }
+
+    const saveTutor = async (data) => {
+        console.log(data);
+        if (data) {
+            const res: any = await tutorService.createTutor({...data, idpatients : patientCreated.id })
+            if (res.data.detail) {
+                setSnackBarConfig(prev => ({
+                    ...prev,
+                    open: true,
+                    severity: 'info',
+                    message: res.data.message,
+                }));
+                setOpenModalTutor(false)
                 getDataPatient();
             }
         }
     }
+
     const editPatientMaster = async (data) => {
         const { id } = data;
         if (data) {
@@ -156,7 +180,11 @@ export const PatientMasterView = (props) => {
         { name: 'rut', label: 'RUT', filter: false, Chip: false },
         { name: 'name', label: 'Nombre', filter: false, Chip: false },
         { name: 'last_name', label: 'Apellido', filter: false, Chip: false },
+        { name: 'nameTypeSeguro', label: 'Tipo Seguro', filter: false, Chip: false },
         { name: 'mail', label: 'Correo', filter: false, Chip: false },
+        { name: 'tutor_rut', label: 'RUT Tutor', filter: false, Chip: false },
+        { name: 'tutor_name', label: 'Nombre Tutor', filter: false, Chip: false },
+        { name: 'tutor_last_name', label: ' Apellido Tutor', filter: false, Chip: false },
         { name: 'date_birth', label: 'Fecha de Nacimiento', filter: false, Chip: false },
         { name: 'status', label: 'Estado', filter: false, Chip: true }
     ]
@@ -200,6 +228,14 @@ export const PatientMasterView = (props) => {
                 actionSelect={actionSelect}
                 recoveryData={recoveryData}
                 editPatientMaster={editPatientMaster}
+            />
+            <ModalTutor
+                open={openModalTutor}
+                setOpen={setOpenModalTutor}
+                savePatientMaster={saveTutor}
+                actionSelect={actionSelect}
+                recoveryData={recoveryData}
+                // editPatientMaster={editTutor}
             />
             <TableDataV2
                 data={dataPatient}

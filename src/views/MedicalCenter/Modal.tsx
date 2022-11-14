@@ -11,7 +11,12 @@ export const ModalMedicalCenter = (props) => {
         { id: 1, name: 'Hospitalización' },
         { id: 2, name: 'Ambulatorio' }
     ])
+    const [dataTypeFlow, setDataTypeFlow] = useState<any>([
+        { id: 1, name: 'SOFTNET' },
+        { id: 2, name: 'ALTERNO' }
+    ])
     const [typeAttention, setTypeAttention] = useState<any>({id: 0, name: ''})
+    const [typeFlow, setTypeFlow] = useState<any>(null)
     const [ubigeo, setUbigeo] = useState<any>({ 
         country: [], 
         departament: [], 
@@ -76,6 +81,7 @@ export const ModalMedicalCenter = (props) => {
         if (actionSelect == 'edit') {
             setMedicalCenterSelected(props.data)
             setTypeAttention(dataTypeAttention.find((value) => value.id == props.data.idattention_type))
+            setTypeFlow(dataTypeFlow.find((value) => value.id == props.data.type_flow))
             getUbigeo(props.data.iddistrict, props.data.idprovince, props.data.iddepartment, props.data.idcountry)
         }
 
@@ -147,6 +153,7 @@ export const ModalMedicalCenter = (props) => {
         if (medicalCenterSelected.address === '') { return setError('address') }
         if (medicalCenterSelected.address.length >= 150) { return setError('address_limit') }
         if (typeAttention.name === '') { return setError('idTypeAttention') }
+        if (!typeFlow){return setError('type_flow')}
         if (country.name === '') { return setError('country') }
         if (departament.name === '') { return setError('departament') }
         if (province.name === '') { return setError('province') }
@@ -154,8 +161,9 @@ export const ModalMedicalCenter = (props) => {
 
         if (actionSelect == 'edit') {
             console.log('edit')
-            const data_edit = { ...medicalCenterSelected, idattention_type: typeAttention.id, iddistrict: district.id }
+            const data_edit = { ...medicalCenterSelected, idattention_type: typeAttention.id, iddistrict: district.id , type_flow: typeFlow?.id}
             const resp_edit = await medicalCenterService.updateMedicalCenter(medicalCenterSelected.id, data_edit);
+            console.log(data_edit)
             if (resp_edit.data) {
                 setSnackBarConfig({ open: true, severity: 'success', message: 'Centro Médico Actualizado' })
                 props.getDataMedicalCenter();
@@ -169,7 +177,7 @@ export const ModalMedicalCenter = (props) => {
 
         if (actionSelect == 'save') {
             console.log('save')
-            const data_save = { ...medicalCenterSelected, idattention_type: typeAttention.id, iddistrict: district.id }
+            const data_save = { ...medicalCenterSelected, idattention_type: typeAttention.id, iddistrict: district.id , type_flow: typeFlow?.id}
 
             const resp_save = await medicalCenterService.createMedicalCenter(data_save);
             if (resp_save.data) {
@@ -284,6 +292,25 @@ export const ModalMedicalCenter = (props) => {
                             }}
                             id="idattention_type"
                             options={dataTypeAttention}
+                            getOptionLabel={(option: any) => option.name ? option.name : ""}
+                            renderInput={(params) => <TextField 
+                                {...params} 
+                                placeholder="Tipo Atencion" 
+                                error={error=="idTypeAttention" ? true : false} 
+                                helperText={error=="idTypeAttention"? "Campo requerido" : ""} />}
+                        />
+                    </Grid>
+                    <Grid item xs={2} md={6} >
+                        <Autocomplete
+                            // disabled={visibleProyection ? false : true}
+                            value={typeFlow}
+                            sx={{ bgcolor: '#fff' }}
+                            size='small'
+                            onChange={(e, data: any) => {
+                                setTypeFlow(data)
+                            }}
+                            id="idattention_type"
+                            options={dataTypeFlow}
                             getOptionLabel={(option: any) => option.name ? option.name : ""}
                             renderInput={(params) => <TextField 
                                 {...params} 

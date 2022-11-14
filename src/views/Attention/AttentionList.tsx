@@ -23,7 +23,7 @@ export const AttentionList = (props) => {
     const dataInitial = async() => {
         const resp = await attentionService.getAttentionAdmin();
         // console.log(resp)
-         setData(resp.data)
+         setData(resp?.data)
     }
 
     const dataSearch = () => {
@@ -35,10 +35,10 @@ export const AttentionList = (props) => {
         if(actionSelect == 'save'){
             history.push(ROUTE_ATTENTION)
         }
-        if(data.action== 'edit'){
-            setOpen(true)
-            setAttetnionSelected(data)
-        }
+        // if(data.action== 'edit'){
+        //     setOpen(true)
+        //     setAttetnionSelected(data)
+        // }
     }
 
     const saveAttention = () => {

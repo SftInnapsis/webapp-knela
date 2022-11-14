@@ -21,12 +21,13 @@ import { TutorModal } from "./TutorModal";
 import { EquipoModal } from "./EquipoModal";
 import { PublicarModal } from "./PublicarModal";
 import "./Patient.css";
-import { ROLE_DOCTOR,ROLE_TUTOR } from '@/toolbox/defaults/static-roles';
+import { ROLE_DOCTOR, ROLE_TUTOR } from '@/toolbox/defaults/static-roles';
 import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
-import {ListSolicitudModal} from "@views/PatientTutor/ListSolicitudModal";
+import { ListSolicitudModal } from "@views/PatientTutor/ListSolicitudModal";
 import { RequestService } from '@/service/services/Request.service';
 import { ROLE_PROFESSIONAL } from "@/toolbox/constants/role-type";
+import { CardComponent } from '@components/common/Card';
 
 export const PatientView = (props) => {
     const item = props.location.state.dataPaciente;
@@ -40,29 +41,65 @@ export const PatientView = (props) => {
 
     const [mensajePaciente, setmensajePaciente] = React.useState([]);
     const [statusDefault, setstatusDefault] = React.useState(null)
-    const [statusName,setStatusName] = useState(null)
+    const [statusName, setStatusName] = useState(null)
     const [estado, setEstado] = React.useState([])
     const [recoveryData, setRecoveryData] = React.useState({})
     const [printRequest, setPrintRequest] = React.useState([]);
-    const dataUser:any = readLocalStorage(KEY_USER_DATA)
+    const dataUser: any = readLocalStorage(KEY_USER_DATA)
     const userData = readLocalStorage(KEY_USER_DATA);
-    const savePublication = async (data) => {
-        const publication = {
-            medical_center: MedicalCenterReducer.id_medical_center,
-            idattention: item?.id,
-            idstatus_patient: data?.statusPatient,
-            iddoctor: userData?.user?.role == ROLE_PROFESSIONAL ? null: item?.iddoctor,
-            idprofessional: userData?.user?.role == ROLE_PROFESSIONAL ? userData?.user?.id_professional: null,
-            publication: data.publication,
-            doctorName: item?.doctorName,
-            typePublication: userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ? 2:1 
-        }
-        console.log(publication)
-        const res = await attentionService.createStatusUpdatePatient(publication);
-        if (res.data) {
-            setModalIngresoPaciente(false)
-            getStatusPatient()
-            setstatusDefault(data?.statusPatient)
+    const savePublication = async (data, cont_txt, cont_file, statusPatient) => {
+        // const publication = {
+        //     medical_center: MedicalCenterReducer.id_medical_center,
+        //     idattention: item?.id,
+        //     idstatus_patient: data?.statusPatient,
+        //     iddoctor: userData?.user?.role == ROLE_PROFESSIONAL ? null: item?.iddoctor,
+        //     idprofessional: userData?.user?.role == ROLE_PROFESSIONAL ? userData?.user?.id_professional: null,
+        //     publication: data.publication,
+        //     doctorName: item?.doctorName,
+        //     typePublication: userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ? 2:1 
+        // }
+        // const res = await attentionService.createStatusUpdatePatient(publication);
+        // if (res.data) {
+        //     setModalIngresoPaciente(false)
+        //     getStatusPatient()
+        //     setstatusDefault(data?.statusPatient)
+        // }
+        const formData = new FormData();
+        formData.append('medical_center', MedicalCenterReducer.id_medical_center);
+        formData.append('idattention', item?.id);
+        formData.append('idstatus_patient', statusPatient);
+        formData.append('iddoctor', userData?.user?.role == ROLE_PROFESSIONAL ? null : item?.iddoctor);
+        formData.append('idprofessional', userData?.user?.role == ROLE_PROFESSIONAL ? userData?.user?.id_professional : '');
+        formData.append('idpublication_type', userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ? '2' : '1');
+        formData.append('countTexts', cont_txt);
+        formData.append('countFiles', cont_file);
+        data && data.length > 0 && data.map((row, i) => {
+            if (row.message) {
+                formData.append(row.key, row.message);
+            }
+            if (row.file) {
+                formData.append(row.key, row.file);
+            }
+        })
+        if (data && data.length > 0) {
+            const res = await attentionService.createStatusUpdatePatient(formData);
+            if (res?.data?.message && res?.data?.detail) {
+                const { message = '' } = res.data;
+                getStatusPatient()
+                setModalIngresoPaciente(false)
+                // setSnackBarConfig(prev => ({
+                //     ...prev,
+                //     open: true,
+                //     message: message,
+                //     severity: 'success'
+                // }));
+                // setModalSolicitud(false)
+                // setPrintRequestError('');
+            }
+            //  else {
+            //     const { message = '' } = res.data;
+            //     setPrintRequestError(message);
+            // }
         }
     }
 
@@ -85,18 +122,18 @@ export const PatientView = (props) => {
     }
 
     const getStatusPatient = async () => {
-        console.log(MedicalCenterReducer.id_medical_center)
-        let res:any;
-        if(userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ){
-            res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center,2);
-        }else{
-            res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center,1);
+        let res: any;
+        if (userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo') {
+            res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center, 2, [item?.id]);
+        } else {
+            res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center, 1, [item?.id]);
         }
+        // console.log(res.data);
         if (res.data && res.data.status !== false) {
-            console.log(res.data.length);
-            setstatusDefault(res.data[res.data.length - 1].idstatus_patient)
+            setstatusDefault(res.data[0].data.idstatus_patient)
             setmensajePaciente(res.data)
         } else {
+            setstatusDefault(item.idstatus_patient)
             setmensajePaciente([])
         }
     }
@@ -110,21 +147,20 @@ export const PatientView = (props) => {
         }
     }
 
-    const getSendRequest = async() =>{
+    const getSendRequest = async () => {
         const res = await RequestService.getRequest(item.id, MedicalCenterReducer.id_medical_center)
-        if(res.data)
-        {
-         setPrintRequest(res.data)
+        if (res.data) {
+            setPrintRequest(res.data)
         }
     }
     const handleChange = (event) => {
-    //     console.log(event.target.value);
-    //     const filname:any = estado.find((valuee) => valuee.id == event.target.value)
-    //     console.log(filname)
-    //     setStatusName(filname.name)
+        //     console.log(event.target.value);
+        //     const filname:any = estado.find((valuee) => valuee.id == event.target.value)
+        //     console.log(filname)
+        //     setStatusName(filname.name)
     };
-    const recoveryDataClick = (row) =>{
-        setRecoveryData({ ...row, action: 'edit' }); 
+    const recoveryDataClick = (row) => {
+        setRecoveryData({ ...row, action: 'edit' });
         setModalIngresoPaciente(true)
     }
 
@@ -190,7 +226,7 @@ export const PatientView = (props) => {
                                 </Grid>
                             </Grid>
                             <Grid container direction={'row'} justifyContent={'space-between'} alignItems={'center'} >
-                                <Grid item xs={12} md={8} mt={2} container direction={'row'} spacing={2}>
+                                <Grid item xs={12} md={7} mt={2} container direction={'row'} spacing={1}>
                                     <Grid item xs={6}>
                                         <Card
                                             key={item.id}
@@ -221,84 +257,55 @@ export const PatientView = (props) => {
                                                             {`TIPO ATENCIÓN: ${item.attentionTypeName}`}
                                                         </Typography>
                                                         <Typography
-                                                             gutterBottom
-                                                             variant="body2"
-                                                             component="div"
-                                                             p={'3px'}
-                                                             className="texto-card2"
-                                                             sx={{ textTransform: 'uppercase' }}>
-                                                              {`TIPO SEGURO: ${item.nameTypeSeguro}`}
-                                                        </Typography>
-                                                    </Grid>
-                                                </Grid>
-                                            </CardActionArea>
-                                            
-                                        </Card>
-                                    </Grid>
-                                    {item?.observation && <Grid item xs={4}>
-                                        <Card
-                                            key={item.id}
-                                            sx={{
-                                                width: "100%",
-                                                background: '#feb4b3',
-                                                borderRadius: "10px"
-                                            }}>
-                                            <CardActionArea className="contenedor">
-                                                <Grid container className="texto-encima">
-                                                    <Grid item xs={12} sx={{ p: 1 }}>
-                                                        <Typography
                                                             gutterBottom
                                                             variant="body2"
                                                             component="div"
                                                             p={'3px'}
                                                             className="texto-card2"
                                                             sx={{ textTransform: 'uppercase' }}>
-                                                            {`OBSERVACIÓN:`}
+                                                            {`TIPO SEGURO: ${item.nameTypeSeguro}`}
                                                         </Typography>
-
-                                                        <Typography gutterBottom >
-                                                            {item?.observation}
-                                                        </Typography>
-                                                       
                                                     </Grid>
                                                 </Grid>
                                             </CardActionArea>
-                                            
+
                                         </Card>
-                                    </Grid>}
+                                    </Grid>
+
                                 </Grid>
                                 <Grid item container xs={12} md={4} direction={'row'} justifyContent={'flex-end'} spacing={1}>
-                                 { dataUser?.user?.role ==ROLE_DOCTOR &&  <Grid item xs={4} md={2} mt={2}>
-                                        <Card
-                                            key={item.id}
-                                            sx={{
-                                                width: "100%",
-                                                background: "#afaff4",
-                                                borderRadius: "10px"
-                                            }}
-                                            onClick={() => setModalEquipo(true)}>
-                                            <CardActionArea className="contenedor">
-                                                <CardMedia component="text" height="90" />
-                                                <Grid container className="texto-encima">
-                                                    <Grid item container xs={12} justifyContent='center' alignItems='center'>
-                                                        <PeopleIcon
-                                                            sx={{ fontSize: 60, color: "white" }} />
+                                    {dataUser?.user?.role == ROLE_DOCTOR &&
+                                        <Grid item xs={4} md={2} mt={2}>
+                                            <Card
+                                                key={item.id}
+                                                sx={{
+                                                    width: "100%",
+                                                    background: "#afaff4",
+                                                    borderRadius: "10px"
+                                                }}
+                                                onClick={() => setModalEquipo(true)}>
+                                                <CardActionArea className="contenedor">
+                                                    <CardMedia component="text" height="90" />
+                                                    <Grid container className="texto-encima">
+                                                        <Grid item container xs={12} justifyContent='center' alignItems='center'>
+                                                            <PeopleIcon
+                                                                sx={{ fontSize: 60, color: "white" }} />
+                                                        </Grid>
                                                     </Grid>
-                                                </Grid>
-                                            </CardActionArea>
-                                        </Card>
-                                        <Typography
-                                            gutterBottom
-                                            variant="body2"
-                                            component="div"
-                                            textAlign="center"
-                                            color="#28c4ac"
-                                            mt={1}
-                                            className="texto-card2">
-                                            Equipo
-                                        </Typography>
-                                    </Grid>
-}
+                                                </CardActionArea>
+                                            </Card>
+                                            <Typography
+                                                gutterBottom
+                                                variant="body2"
+                                                component="div"
+                                                textAlign="center"
+                                                color="#28c4ac"
+                                                mt={1}
+                                                className="texto-card2">
+                                                Equipo
+                                            </Typography>
+                                        </Grid>
+                                    }
                                     {<Grid item xs={4} md={2} mt={2}>
                                         <Card
                                             key={item.id}
@@ -371,7 +378,39 @@ export const PatientView = (props) => {
 
                         </Grid>
 
-                        <Grid container spacing={1} justifyContent={"center"}>
+                        {item?.observation && <Grid item xs={3} sx={{ pt: 2 }}>
+                            <Card
+                                key={item.id}
+                                sx={{
+                                    width: "100%",
+                                    background: '#feb4b3',
+                                    borderRadius: "10px"
+                                }}>
+                                <CardActionArea className="contenedor">
+                                    <Grid container className="texto-encima">
+                                        <Grid item xs={12} sx={{ p: 1 }}>
+                                            <Typography
+                                                gutterBottom
+                                                variant="body2"
+                                                component="div"
+                                                p={'3px'}
+                                                className="texto-card2"
+                                                sx={{ textTransform: 'uppercase' }}>
+                                                {`OBSERVACIÓN:`}
+                                            </Typography>
+
+                                            <Typography gutterBottom >
+                                                {item?.observation}
+                                            </Typography>
+
+                                        </Grid>
+                                    </Grid>
+                                </CardActionArea>
+
+                            </Card>
+                        </Grid>}
+
+                        <Grid container justifyContent={"center"}>
                             <Grid container spacing={1} item xs={12} md={12} mt={2}>
                                 <Grid item xs={6} md={6} mb={2}>
                                     <Typography
@@ -384,7 +423,7 @@ export const PatientView = (props) => {
                                         Ultimas Actualizaciones
                                     </Typography>
                                 </Grid>
-                             {dataUser?.user?.role ==ROLE_DOCTOR || dataUser?.user?.role == ROLE_PROFESSIONAL? <Grid
+                                {dataUser?.user?.role == ROLE_DOCTOR || dataUser?.user?.role == ROLE_PROFESSIONAL ? <Grid
                                     item
                                     xs={6}
                                     md={6}
@@ -400,68 +439,20 @@ export const PatientView = (props) => {
                                             Nuevo
                                         </Typography>
                                     </IconButton>
-                                </Grid>:
-                                <Grid
-                                item
-                                xs={6}
-                                md={6}
-                                mb={2}
-                                display="flex"
-                                justifyContent={"flex-end"}
-                               >
-                               
-                            </Grid>}
+                                </Grid> :
+                                    <Grid
+                                        item
+                                        xs={6}
+                                        md={6}
+                                        mb={2}
+                                        display="flex"
+                                        justifyContent={"flex-end"}
+                                    >
+
+                                    </Grid>}
                                 {mensajePaciente.map((item2) => (
                                     <Grid item xs={12} md={4}>
-                                        <Card
-                                            key={item2.id}
-                                            sx={{
-                                                width: "100%",
-                                                background: '#c3e6ce',
-                                                borderRadius: "10px",
-                                                height: '150px',
-                                                overflow: 'auto'
-                                            }}
-                                            onClick={() => { dataUser?.user?.role ==ROLE_DOCTOR && recoveryDataClick(item2) }}>
-                                            <CardActionArea className="contenedor">
-                                                <CardMedia
-                                                    component="text"
-                                                    height="90"
-                                                    name={item2.subtitle} />
-                                                <Grid container className="texto-encima" p={2}>
-                                                    <Grid item xs={12}>
-                                                        <Grid display="flex" justifyContent="space-between">
-                                                            <Typography
-                                                                gutterBottom
-                                                                variant="subtitle1"
-                                                                fontWeight={"bolder"}
-                                                            >
-                                                                {item2.nameDoctor}
-                                                            </Typography>
-                                                            <Grid >
-                                                                <Typography
-                                                                    gutterBottom
-                                                                    fontWeight={"bolder"}>
-                                                                    {item2.creation_date}
-                                                                </Typography>
-                                                            </Grid>
-                                                        </Grid>
-                                                        <Typography gutterBottom >
-                                                            {item2.publication}
-                                                        </Typography>
-                                                        
-                                                    </Grid>
-                                                </Grid>
-                                            </CardActionArea>
-                                            {/* <Grid item container direction='row' justifyContent="center" spacing={2}>
-                                                <Grid item>
-                                                    <Button variant='outlined' color='secondary' >EDITAR</Button>
-                                                </Grid> 
-                                                <Grid item>
-                                                    <Button variant='outlined' color='error'>ELIMINAR</Button>
-                                                </Grid>
-                                            </Grid> */}
-                                        </Card>
+                                        <CardComponent info={item2} />
                                     </Grid>
                                 ))}
                             </Grid>
@@ -488,9 +479,9 @@ export const PatientView = (props) => {
                 setOpen={setModalTutor}
             /> */}
             <ListSolicitudModal
-             open={showModalTutor}
-             setOpen={setModalTutor}
-             recoveryData={printRequest}
+                open={showModalTutor}
+                setOpen={setModalTutor}
+                recoveryData={printRequest}
             />
         </>
     );

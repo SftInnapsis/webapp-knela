@@ -9,6 +9,7 @@ import { Button, InputAdornment, Autocomplete, TextField, Grid, CircularProgress
 
 export const DoctorView = (props) => {
     const { MedicalCenterReducer = '' } = props;
+    const [tituloBoton, setTituloBoton] = useState<any>('miguel')
     const [dataDoctor, setDataDoctor] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [actionSelect, setActionSelect] = useState<any>('')
@@ -32,7 +33,7 @@ export const DoctorView = (props) => {
         const resp: any = await doctorService.getDoctorPage(
             null, null, MedicalCenterReducer.id_medical_center, null
         );
-        console.log(resp)
+       
         if (resp.data) {
             setDataDoctor(resp.data);
         }
@@ -42,7 +43,7 @@ export const DoctorView = (props) => {
         const resp: any = await doctorService.getDoctorSearchPage(
             null, null, MedicalCenterReducer.id_medical_center, null, term
         );
-        console.log(resp)
+      
         if (resp.data) {
             setDataDoctor(resp.data);
         }
@@ -61,7 +62,7 @@ export const DoctorView = (props) => {
                 setDialog(prev => ({ ...prev, message: `Seguro que quiere eliminar a ${name} ${last_name}`, id: id, medical_center: idmedical_center, open: true, confirm: true }));
                 break;
             case 'seleccionar':
-                console.log(data);
+              
                 props?.recuperarData(data);
                 break;
             default:
@@ -85,12 +86,12 @@ export const DoctorView = (props) => {
                 }
             }
         } catch (e) {
-            console.log(e)
+            // console.log(e)
         }
     }
 
     const saveDoctor = async (data) => {
-        console.log(data);
+    
         if (data) {
             const res: any = await doctorService.createDoctor(data)
             if (res.data) {
@@ -126,7 +127,6 @@ export const DoctorView = (props) => {
     // useEffect(()=>{
     //     getDataDoctor();
     // },[props?.isNOtProtected])
-
     useEffect(() => {
         getDataDoctor();
     }, [MedicalCenterReducer.id_medical_center])
@@ -153,19 +153,22 @@ export const DoctorView = (props) => {
                 { name: 'rut', label: 'RUT', filter: false, Chip: false },
                 { name: 'name', label: 'Nombre', filter: false, Chip: false },
                 { name: 'last_name', label: 'Apellido', filter: false, Chip: false },
-                { name: 'date_birth', label: 'Fecha de Nacimiento', filter: false, Chip: false },
-                { name: 'mail', label: 'Correo', filter: false, Chip: false },
+                { name: 'name_rol', label: 'Rol', filter: false, Chip: true },
                 { name: 'specialtyName', label: 'Especialidad', filter: false, Chip: true },
-                { name: 'doctorTypeName', label: 'Tipo ', filter: false, Chip: true },
+                // { name: 'doctorTypeName', label: 'Tipo ', filter: false, Chip: true },
                 { name: 'areaName', label: 'Area', filter: false, Chip: true },
-                { name: 'district', label: 'Distrito', filter: false, Chip: true },
-                { name: 'address', label: 'Direccion', filter: false, Chip: true },
+                { name: 'mail', label: 'Correo', filter: false, Chip: false },
+                { name: 'date_birth', label: 'Fecha de Nacimiento', filter: false, Chip: false },
+               
+             
+                // { name: 'district', label: 'Distrito', filter: false, Chip: true },
+                // { name: 'address', label: 'Direccion', filter: false, Chip: true },
                 { name: 'status', label: 'Estado', filter: false, Chip: true },
             ]}
             status_action
             checkbox
             select_button= {props?.select_button ?true:false}
-            title={'Doctores'}
+            title={'Equipo Médico'}
             RecuperarData={RecuperarData}
             setModalSave={setOpen}
             actionSelect={setActionSelect}

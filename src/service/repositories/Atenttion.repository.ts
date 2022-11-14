@@ -31,7 +31,7 @@ export const atenttionRepository = {
       const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
       const user_data = readLocalStorage(KEY_USER_DATA)
       const idareaa =  user_data?.user?.idarea
-      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idarea=${idareaa?JSON.stringify([idareaa]):[]}&iddoctor=${JSON.stringify(iddoctor)}` )
+      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idarea=${idareaa?JSON.stringify([idareaa]):[]}` )
       const {data,error,message} = family
       return {
          data,
@@ -88,8 +88,8 @@ export const atenttionRepository = {
          message
       };
    },
-   getStatusUpdatePatient: async (idpatients, medical_center,typePublication): Promise<any> => {
-      const family = await http.get<any>(`${API_URL_BASE}/v1/updatePatient?medical_center=${medical_center}&idpatients=${JSON.stringify(idpatients)}&typePublication=${typePublication}`)
+   getStatusUpdatePatient: async (idpatients, medical_center,typePublication,idattention): Promise<any> => {
+      const family = await http.get<any>(`${API_URL_BASE}/v1/updatePatient?medical_center=${medical_center}&idpatients=${JSON.stringify(idpatients)}&idattention=${JSON.stringify(idattention)}&typePublication=${typePublication}&status=1`)
       const { data, error, message } = family
       //oeeoeoeo te lo tumbaste xd
       return {
@@ -99,15 +99,7 @@ export const atenttionRepository = {
       };
    },
    createStatusUpdatePatient: async (data) : Promise<any> => {
-      const resp= await http.post<any>(`${API_URL_BASE}/v1/updatePatient`, {
-        medical_center: data?.medical_center,
-        idattention: data?.idattention,
-        idstatus_patient: data?.idstatus_patient,
-        iddoctor: data?.iddoctor,
-        idprofessional: data?.idprofessional,
-        publication: data?.publication,
-        idpublication_type: data?.typePublication
-      })
+      const resp= await http.post<any>(`${API_URL_BASE}/v1/updatePatient`, data)
       return {
          status: resp.status,
          message: resp.message,

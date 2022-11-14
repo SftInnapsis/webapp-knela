@@ -1,0 +1,47 @@
+.parent {
+    max-height: 100%;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    /* Internet Explorer 10+ */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.parent::-webkit-scrollbar {
+    display: none;
+    /* Safari and Chrome */
+}
+
+.container-mensaje {
+    width: 100%;
+    margin: 0 0 0em 0;
+    overflow: hidden;
+}
+
+.mensaje {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.childParent {
+    border-radius: 10px;
+    width: 100%;
+    height: 90px;
+    padding: 15px;
+}
+
+.childParentClick {
+    background-color: #AAE5E3;
+    border-radius: 10px;
+    width: 100%;
+    height: 90px;
+    padding: 15px;
+}
+
+.circle {
+    background-color: #25AF96;
+    width: 12px;
+    height: 12px;
+    border-radius: 50px;
+}

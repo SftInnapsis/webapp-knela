@@ -1,1 +1,2 @@
-export { ModalView } from './Modal';
+export { ModalView} from './Modal';
+export { ModalChangePassword} from './ModalChangePassword';

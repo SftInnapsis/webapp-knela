@@ -75,8 +75,8 @@ export const HomeDoctorView = (props) => {
     };
 
     const getAttentionOpen = async() =>{
-        const area = [1];
         const userData = readLocalStorage(KEY_USER_DATA);
+        const area = [userData?.user?.id_area];
         const doctor = [userData?.user?.id_doctor];
         const role = userData.user.role;
         let res:any;
@@ -122,6 +122,7 @@ export const HomeDoctorView = (props) => {
     React.useEffect(() => {
         getAttentionOpen();
     }, [MedicalCenterReducer.id_medical_center])
+
     const renderMenu = (
         <Menu
             id="fade-menu"
@@ -178,9 +179,9 @@ export const HomeDoctorView = (props) => {
                                             display="flex"
                                             justifyContent={"flex-start"}
                                         >
-                                            <Icon sx={{ color: "#28c4ac", mr: 1 }}>
+                                            {/* <Icon sx={{ color: "#28c4ac", mr: 1 }}>
                                                 <FmdGoodIcon />
-                                            </Icon>
+                                            </Icon> */}
                                             {/* <Typography
                                                 // align="end"
                                                 variant={"subtitle1"}>

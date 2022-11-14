@@ -62,6 +62,9 @@ export const patientRepository = {
         date_birth: datapatient?.date_birth,
         mail: datapatient?.mail,
         medical_center: datapatient?.medical_center,
+        observation: datapatient?.observation,
+        nameTypeSeguro: datapatient?.nameTypeSeguro,
+        idTypeSeguro: datapatient?.idTypeSeguro,
       })
       return {
          status: resp.status,
