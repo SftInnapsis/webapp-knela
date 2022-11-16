@@ -72,6 +72,15 @@ export const patientRepository = {
          data: resp.data
       };
    },
+   createPatientExcel: async (dataExcel) : Promise<any> => {
+
+      const resp= await http.post<any>(`${API_URL_BASE}/v1/patients/load-excel`, dataExcel)
+      return {
+         status: resp.status,
+         message: resp.message,
+         data: resp.data
+      };
+   },
    updatepatient: async (id: number, datapatient) : Promise<any> => {
       const resp = await http.patch<any>(`${API_URL_BASE}/v1/patients/${id}`, {
         name: datapatient?.name,

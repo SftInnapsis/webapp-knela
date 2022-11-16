@@ -32,12 +32,37 @@ export const PatientMasterView = (props) => {
         message: ``
     })
 
+    const [saveFile, setSaveFile] = useState({
+        name: '',
+        path: '',
+        preview: null,
+        data: null
+    });
+
     const [snackBarConfig, setSnackBarConfig] = useState<any>({
         open: false,
         severity: 'error',
         message: 'Error',
         autoHideDuration: 3000,
     })
+
+    const changefile = (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            return;
+        }
+        let src, preview, type = file.type;
+        setSaveFile(prev => ({ ...prev, data: file, path: src, preview: preview }))
+        console.log(file);
+    }
+
+    const GenerateExportExcel = async () => {
+        const formFile = new FormData();
+        formFile.append('file', saveFile.data || null);
+      
+
+    }
+
 
     const getDataPatient = async()=>{
         if(role == ROLE_SUPER_ADMIN){
@@ -181,19 +206,19 @@ export const PatientMasterView = (props) => {
         { name: 'name', label: 'Nombre', filter: false, Chip: false },
         { name: 'last_name', label: 'Apellido', filter: false, Chip: false },
         { name: 'nameTypeSeguro', label: 'Tipo Seguro', filter: false, Chip: false },
-        { name: 'mail', label: 'Correo', filter: false, Chip: false },
+        // { name: 'mail', label: 'Correo', filter: false, Chip: false },
         { name: 'tutor_rut', label: 'RUT Tutor', filter: false, Chip: false },
         { name: 'tutor_name', label: 'Nombre Tutor', filter: false, Chip: false },
         { name: 'tutor_last_name', label: ' Apellido Tutor', filter: false, Chip: false },
         { name: 'date_birth', label: 'Fecha de Nacimiento', filter: false, Chip: false },
-        { name: 'status', label: 'Estado', filter: false, Chip: true }
+        // { name: 'status', label: 'Estado', filter: false, Chip: true }
     ]
 
     const headerSuperAdmin = [
         { name: 'rut', label: 'RUT', filter: false, Chip: false },
         { name: 'name', label: 'Nombre', filter: false, Chip: false },
         { name: 'last_name', label: 'Apellido', filter: false, Chip: false },
-        { name: 'mail', label: 'Correo', filter: false, Chip: false },
+        // { name: 'mail', label: 'Correo', filter: false, Chip: false },
         { name: 'date_birth', label: 'Fecha de Nacimiento', filter: false, Chip: false },
         { name: 'medicalCenter_name', label: 'Centro Medico', filter: false, Chip: false },
         { name: 'status', label: 'Estado', filter: false, Chip: true }
@@ -243,6 +268,10 @@ export const PatientMasterView = (props) => {
                 status_action
                 checkbox
                 select_button= {props?.select_button ?true:false}
+                button_import={true}
+                ruta_import = {''}
+                // changefile={changefile}
+                GenerateExportExcel={GenerateExportExcel}
                 title={'Pacientes'}
                 RecuperarData={RecuperarData}
                 setModalSave={setOpen}

@@ -86,7 +86,7 @@ export const HeaderView = (props: any): JSX.Element => {
             sx={{ color: "#28c4ac", fontWeight: 700 }}
             variant={"h3"}
           >
-            {/* ¡Hola Hernan! */}
+          {data_user?.user?.name+' '+data_user?.user?.last_name}
           </Typography>
           {<Box sx={{ flexGrow: 1 }} />}
 

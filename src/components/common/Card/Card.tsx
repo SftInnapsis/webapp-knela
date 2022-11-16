@@ -72,7 +72,7 @@ export const CardComponent : React.FC<CardProps> = (
               <CardMedia
               component="img"
               height="194"
-              image={`http://localhost:8000/${row.send}`}//imagen si ubiera
+              image={`https://back.k-nela.cl/${row.send}`}//imagen si ubiera
               alt="img"
             />}
           { row.idsend_type==1 &&  <CardContent>

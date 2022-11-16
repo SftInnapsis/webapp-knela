@@ -8,6 +8,9 @@ export const ROUTE_ENTITY_CREATE   = "/empresas/crear";
 export const ROUTE_ENTITY_UPDATE   = "/empresas/detalle";
 export const ROUTE_ENTITY_USERS    = "/empresas/usuarios";
 export const ROUTE_PERFIL          = "/perfil";
+export const ROUTE_ACCOUNT_PERFIL  = "/account-perfil";
+
+
 export const ROUTE_CONFIGURACION   = "/configuracion";
 export const ROUTE_USER            = "/usuarios";
 export const ROUTE_USER_CREATE     = "/usuarios/crear";

@@ -6,10 +6,13 @@ import { ConfirmDialog } from '@components/common/DialogConfirm';
 import { DoctorModal } from "./DoctorModal";
 import { SaveIcon, CancelIcon } from "@toolbox/constants/icons";
 import { Button, InputAdornment, Autocomplete, TextField, Grid, CircularProgress, Snackbar, Alert, FormControl, OutlinedInput, InputLabel, MenuItem, Select } from '@mui/material';
+import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
+import { KEY_MEDICAL_CENTER } from "@/toolbox/constants/local-storage";
 
 export const DoctorView = (props) => {
     const { MedicalCenterReducer = '' } = props;
     const [tituloBoton, setTituloBoton] = useState<any>('miguel')
+   const [openImport,setOpenImport] = useState<boolean>(false);
     const [dataDoctor, setDataDoctor] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [actionSelect, setActionSelect] = useState<any>('')
@@ -28,6 +31,24 @@ export const DoctorView = (props) => {
         message: 'Error',
         autoHideDuration: 3000,
     })
+
+
+    const GenerateExportExcel = async (file) => {
+        console.log(file)
+        const idMedicalCenter = readLocalStorage(KEY_MEDICAL_CENTER)
+        const formFile = new FormData();
+        if(!file?.data){return setSnackBarConfig({...snackBarConfig, open:true, severity:'error', message:'No añadió ningun archivo'})}
+        formFile.append('file', file.data || null);
+        formFile.append('medical_center', idMedicalCenter || null);
+        
+        const resp = await doctorService.createDoctorExcel(formFile);
+        if(resp){
+           setSnackBarConfig({...snackBarConfig, open:true, severity:'success',message:'Documento Importado con éxito'}) 
+        }
+
+        getDataDoctor();
+        
+    }
 
     const getDataDoctor = async () => {
         const resp: any = await doctorService.getDoctorPage(
@@ -132,6 +153,20 @@ export const DoctorView = (props) => {
     }, [MedicalCenterReducer.id_medical_center])
 
     const bodyView = <>
+        <Snackbar
+        open={snackBarConfig.open}
+        autoHideDuration={snackBarConfig.autoHideDuration}
+        onClose={() => setSnackBarConfig(prev => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackBarConfig(prev => ({ ...prev, open: false }))}
+          severity={snackBarConfig.severity}
+          variant="filled"
+        >
+          {snackBarConfig.message}
+        </Alert>
+      </Snackbar>
         <ConfirmDialog
             open={Dialog.open}
             title={Dialog.title}
@@ -167,6 +202,11 @@ export const DoctorView = (props) => {
             ]}
             status_action
             checkbox
+            button_import={true}
+            ruta_import = {''}
+            GenerateExportExcel={GenerateExportExcel}
+            openImport={openImport}
+            setOpenImport={setOpenImport}
             select_button= {props?.select_button ?true:false}
             title={'Equipo Médico'}
             RecuperarData={RecuperarData}

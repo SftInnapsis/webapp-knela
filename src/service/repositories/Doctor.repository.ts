@@ -78,6 +78,16 @@ export const doctorRepository = {
       };
    },
 
+   createDoctorExcel: async (dataExcel) : Promise<any> => {
+
+      const resp= await http.post<any>(`${API_URL_BASE}/v1/doctor/load-excel`, dataExcel)
+      return {
+         status: resp.status,
+         message: resp.message,
+         data: resp.data
+      };
+   },
+
 
    createDoctorIndependiente: async (datadoctor) : Promise<any> => {
 

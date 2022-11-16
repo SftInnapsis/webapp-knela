@@ -64,11 +64,12 @@ export const PatientView = (props) => {
         //     getStatusPatient()
         //     setstatusDefault(data?.statusPatient)
         // }
+        console.log(userData);
         const formData = new FormData();
         formData.append('medical_center', MedicalCenterReducer.id_medical_center);
         formData.append('idattention', item?.id);
         formData.append('idstatus_patient', statusPatient);
-        formData.append('iddoctor', userData?.user?.role == ROLE_PROFESSIONAL ? null : item?.iddoctor);
+        formData.append('iddoctor', userData?.user?.role == ROLE_PROFESSIONAL ? null : userData?.user?.id_doctor);
         formData.append('idprofessional', userData?.user?.role == ROLE_PROFESSIONAL ? userData?.user?.id_professional : '');
         formData.append('idpublication_type', userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ? '2' : '1');
         formData.append('countTexts', cont_txt);
@@ -336,7 +337,7 @@ export const PatientView = (props) => {
                                             Solicitud Recibida
                                         </Typography>
                                     </Grid>}
-                                    <Grid item xs={4} md={2} mt={2}>
+                                    {/* <Grid item xs={4} md={2} mt={2}>
                                         <Card
                                             key={item.id}
                                             sx={{
@@ -372,7 +373,7 @@ export const PatientView = (props) => {
                                             className="texto-card2">
                                             Ingreso
                                         </Typography>
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             </Grid>
 

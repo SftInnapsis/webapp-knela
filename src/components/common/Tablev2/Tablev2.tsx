@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, TableBody, TableCell, TableContainer, Typography, TableHead, TablePagination, TableRow, Grid, Table, createTheme, ThemeProvider, Button, Container, Stack, Card, Checkbox, Avatar, IconButton, Popover, MenuItem, Chip, InputBase } from '@mui/material';
+import { Paper, TableBody, TableCell, TableContainer, Typography, TableHead, TablePagination, TableRow, Grid, Table, createTheme, ThemeProvider, Button, Container, Stack, Card, Checkbox, Avatar, IconButton, Popover, MenuItem, Chip, InputBase, Modal } from '@mui/material';
 import { esES } from '@mui/material/locale';
 import { VisibilityIcon, PencilIcon, DeleteIcon, MoreIcon, UsersIcon, DeleteRedIcon } from "@toolbox/constants/icons";
 import ErrorIcon from '@mui/icons-material/Error';
@@ -53,7 +53,13 @@ type TableProps = {
    disabled_action_save?:boolean,
    select_button?:boolean,
    dataInitial?:any,
-   dataSearch?:any
+   dataSearch?:any,
+   disabled_popover?:any,
+   button_import?:any,
+   ruta_import?:any,
+   GenerateExportExcel?:any,
+   setOpenImport?:any,
+   openImport?:any
 }
 
 // ----------------------------------------------------------------------
@@ -147,6 +153,25 @@ export const TableDataV2: React.FC<TableProps> = (
       setSelected([]);
    };
 
+   const [saveFile, setSaveFile] = useState({
+      name: '',
+      path: '',
+      preview: null,
+      data: null
+  });
+
+
+   const changefile = (e) => {
+      e.preventDefault()
+      const file = e.target.files[0];
+      if (!file) {
+          return;
+      }
+      let src, preview, type = file.type;
+      setSaveFile(prev => ({ ...prev, data: file, path: src, preview: preview }))
+      console.log(file);
+  }
+
    const handleClick = (event, name) => {
       const selectedIndex = selected.indexOf(name);
       // console.log(selectedIndex);
@@ -224,19 +249,24 @@ export const TableDataV2: React.FC<TableProps> = (
                
              
                <Box sx={{ m: 1 }}>
-               {/* <Button
-                  startIcon={(<UploadIcon fontSize="small" />)}
-                  sx={{ mr: 1 }}
-               >
-                  Import
-               </Button>
+               {props?.button_import && 
+               <>
                <Button
+                  href={props?.ruta_import} target="_blank" 
                   startIcon={(<DownloadIcon fontSize="small" />)}
                   sx={{ mr: 1 }}
                >
-                  Export
+                  Descargar Plantilla
                </Button>
-                */}
+               <Button
+                  startIcon={(<UploadIcon fontSize="small" />)}
+                  sx={{ mr: 1 }}
+                  onClick={()=>{props?.setOpenImport(true)}}
+               >
+                  Importar
+               </Button>
+               </>
+               }
                {
                !props.disabled_action_save &&
                <Button
@@ -328,9 +358,9 @@ export const TableDataV2: React.FC<TableProps> = (
                                        <Button variant='outlined' color='primary' onClick={() => { props.RecuperarData({...data, action:'seleccionar'}) }}>Seleccionar</Button>
                                     </TableCell>}
                                     <TableCell align="left" >
-                                       <IconButton size="large" color="inherit" onClick={(e) => { handleOpenMenu(e, data) }}>
+                                      {! props?.disabled_popover && <IconButton size="large" color="inherit" onClick={(e) => { handleOpenMenu(e, data) }}>
                                           <MoreVertIcon />
-                                       </IconButton>
+                                       </IconButton>}
                                     </TableCell>
                                  </TableRow>
                               );
@@ -380,6 +410,60 @@ export const TableDataV2: React.FC<TableProps> = (
                <Typography> {props?.text_eliminar || 'Eliminar'}</Typography>
             </MenuItem>
          </Popover>
+         <Modal
+         open={props?.openImport}
+         onClose={() => { props?.setOpenImport(false) }}
+         >
+            <div className='Modal'>
+            <div className='Title'>
+            <Typography variant='h5' fontWeight={700}>
+              {'Importar Datos'}
+            </Typography>
+          </div>
+          <div className='Body'>
+          <form>
+                            <Typography
+                                textAlign="center"
+                                variant="h6"
+                                id="transition-modal-title"
+                                sx={{ color: "#000", fontWeight: "bold" }}
+                            >
+
+                            </Typography>
+                            <Grid container  justifyContent="center">
+                                <Grid container  mt={2}>
+                  
+                                    <Grid item xs={6} mt={2}>
+                                        <Grid item xs={12} sx={{ position: 'relative' }}>
+                                            <div className="wrapper">
+                                                <div className="file-upload"
+                                                // style={{background:color}}
+                                                >
+                                                    {/* <UploadIcon /> */}
+                                                    {/* <span style={{ fontSize: '15px' }}>CARGAR</span> */}
+                                                    <input type="file"
+                                                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                                        onChange={changefile}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={6} mt={3}>
+                                    <Button fullWidth 
+                                        variant='contained'
+                                        onClick={() => { props?.GenerateExportExcel(saveFile); props?.setOpenImport(false) }}>
+                                        Importar Excel
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </form>
+          </div>
+        
+            </div>
+         </Modal>
       </>
    );
 }

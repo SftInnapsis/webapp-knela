@@ -7,6 +7,7 @@ export const doctorService = {
    getDoctorSearchPage,
    getDoctorIndependientePage,
    createDoctor,
+   createDoctorExcel,
    updateDoctor,
    deleteDoctor,
    createDoctorIndependiente
@@ -34,6 +35,11 @@ async function getDoctorSearchPage(perPage = null, page = null, medical_center, 
 }
 async function createDoctor(dataDoctor) {
    const doctor = await doctorRepository.createDoctor(dataDoctor);
+   return doctor
+}
+
+async function createDoctorExcel(dataDoctorExcel) {
+   const doctor = await doctorRepository.createDoctorExcel(dataDoctorExcel);
    return doctor
 }
 

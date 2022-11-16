@@ -50,9 +50,11 @@ export const authenticationRepository = {
       if( resp.information_user?.role != ROLE_SUPER_ADMIN){
          saveLocalStorage(KEY_MEDICAL_CENTER, resp?.medical_center[0].idmedical_center)
       }
-     
+
+     //esto es lo que se guarda en el localstorage como KEY_USER_DATA
       return {
          user: {
+            //Estos son los datos
             iduser: resp?.information_user?.iduser,
             iduser_type: resp?.information_user?.iduser_type,
             idmedical_center: null,

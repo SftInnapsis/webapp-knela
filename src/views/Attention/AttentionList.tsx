@@ -96,8 +96,8 @@ export const AttentionList = (props) => {
                     { name: 'patientsName', label: 'Paciente', filter: false, Chip: false, avatar: false },
                     { name: 'tutorName', label: 'Tutor(a)', filter: false, Chip: false, avatar: false },
                     { name: 'attentionTypeName', label: 'Tipo de Atencion', filter: false, Chip: true, avatar: false },
-                    { name: 'doctorRUT', label: 'RUT Doctor', filter: false, Chip: true, avatar: false },
-                    { name: 'doctorName', label: 'Doctor', filter: false, Chip: true, avatar: false },
+                    // { name: 'doctorRUT', label: 'RUT Doctor', filter: false, Chip: true, avatar: false },
+                    // { name: 'doctorName', label: 'Doctor', filter: false, Chip: true, avatar: false },
                     { name: 'nameArea', label: 'Area', filter: false, Chip: true, avatar: false },
                     { name: 'date_entry', label: 'Fecha de Ingreso', filter: false, Chip: true, avatar: false },
                     { name: 'statusPatientName', label: 'Estado', filter: false, Chip: true, avatar: false },
@@ -105,6 +105,7 @@ export const AttentionList = (props) => {
                 status_action
                 checkbox
                 title={'Mis Atenciones Medicas'}
+                disabled_popover={true}
                 RecuperarData={RecuperarData}
                 setModalSave={setOpen}
                 actionSelect={setActionSelect}

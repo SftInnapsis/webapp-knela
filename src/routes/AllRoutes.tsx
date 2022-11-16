@@ -27,6 +27,7 @@ import { AttentionList, AttentionView } from '@/views/Attention';
 import { DoctorIndependiente } from '@/views/DoctorIndependiente';
 import { ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 import { AttentionKnelaView } from '@/views/Attention/AttentionKnela';
+import { AccountPerfil } from '@/components/common/Header/AccountPerfil';
 
 const AllRoutes: React.FC = () => {
 
@@ -83,7 +84,9 @@ const AllRoutes: React.FC = () => {
    const moduleDoctorIndependiente = [
       <PrivateRoute key={5} exact path={Routes.ROUTE_DOCTORES_INDEPENDIENTES} component={DoctorIndependiente} />
    ]
-
+   const moduleAccountPerfil = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_ACCOUNT_PERFIL} component={AccountPerfil} />
+   ]
 
    
 
@@ -114,6 +117,7 @@ const AllRoutes: React.FC = () => {
                      {moduleSpeciality}
                      {moduleDoctorIndependiente}
                      {modulePatientTutor}
+                     {moduleAccountPerfil}
 
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_HOME} />
@@ -138,6 +142,8 @@ const AllRoutes: React.FC = () => {
                      {moduleAttentionKnela}
                      {moduleAttentionList}
                      {modulePatientTutor}
+                     {moduleAccountPerfil}
+                     
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_HOME} />
                      }} />}
@@ -153,6 +159,7 @@ const AllRoutes: React.FC = () => {
                      {modulePatient}
                      {moduleBusinessArea}
                      {modulePatientTutor}
+                     {moduleAccountPerfil}
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_HOME} />
                      }} />}
@@ -168,6 +175,7 @@ const AllRoutes: React.FC = () => {
                      {modulePatient}
                      {moduleBusinessArea}
                      {modulePatientTutor}
+                     {moduleAccountPerfil}
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_HOME} />
                      }} />}
@@ -183,6 +191,7 @@ const AllRoutes: React.FC = () => {
                         {modulePatient}
                         {moduleBusinessArea}
                         {modulePatientTutor}
+                        {moduleAccountPerfil}
                         {<Route path='*' exact={true} component={() => {
                            return <Redirect to={Routes.ROUTE_HOME} />
                         }} />}
@@ -208,6 +217,8 @@ const AllRoutes: React.FC = () => {
                      {moduleDoctorIndependiente}
                      {modulePatientTutor}
                      {moduleAttentionKnela}
+                     {moduleAccountPerfil}
+                     
                      <Route key={5} exact path={Routes.ROUTE_REGISTER} component={RegisterView} />
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {<Route path='*' exact={true} component={() => {

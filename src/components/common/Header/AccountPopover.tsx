@@ -9,6 +9,9 @@ import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
 import { ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 import { userService } from '@/service/services/User.service';
 import { SaveIcon, CancelIcon } from "@toolbox/constants/icons";
+import { AccountPerfil } from './AccountPerfil';
+import { ROUTE_ACCOUNT_PERFIL } from '@/toolbox/constants/route-map';
+import { useHistory } from 'react-router-dom';
 // mocks_
 // import account from '../../../_mock/account';
 
@@ -36,19 +39,28 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const history = useHistory();
   const [open, setOpen] = useState(null);
   const [data, setData] = useState({
     confirm_password:'',
     new_password:'',
     old_password:''
   })
+
+
   const [error, setError] = useState('')
+  //const open_perfil = AccountPerfil(ROUTE_ACCOUNT_PERFIL);
+
+  //EJEMPLO
   const data_user = readLocalStorage(KEY_USER_DATA);
+
   const account = {
     photoURL: '',
     displayName: data_user.user.name + ' ' + data_user.user.last_name,
     role: data_user.user.role
   }
+  //Asta aqui
+
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -58,9 +70,13 @@ export default function AccountPopover() {
     if(label == 'Cambiar contraseña'){
       setOpenModal(true)
     }
+    else if (label == 'Perfil'){
+      //acepta solo rutas
+      history.push(ROUTE_ACCOUNT_PERFIL)
+      } 
   };
 
-  const [openModal, setOpenModal] = useState<any>(false)
+  const [openModal, setOpenModal] = useState<any>(false);
 
   const [snackBarConfig, setSnackBarConfig] = useState<any>({
     open: false,

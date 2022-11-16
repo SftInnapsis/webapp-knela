@@ -5,6 +5,7 @@ export const patientService = {
    getPatientPageAll,
    getPatientSearchAll,
    createPatient,
+   createPatientExcel,
    updatepatient,
    getStatusPatient,
    deletePatient,
@@ -31,6 +32,10 @@ async function createPatient (dataArea) {
     const area= await patientRepository.createPatient(dataArea);
     return area
  }
+ async function createPatientExcel(dataDoctorExcel) {
+   const doctor = await patientRepository.createPatientExcel(dataDoctorExcel);
+   return doctor
+}
  async function updatepatient (id: number, dataArea) {
     const area= await patientRepository.updatepatient(id, dataArea);
     return area
