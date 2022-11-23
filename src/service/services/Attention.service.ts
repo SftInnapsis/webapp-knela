@@ -42,8 +42,8 @@ async function getAttentionAdmin() {
    const user = await atenttionRepository.getAttentionAdmin();
    return user
 }
-async function getAttentionPatient(medical_center, idtutor) {
-   const user = await atenttionRepository.getAttentionPatient(medical_center, idtutor);
+async function getAttentionPatient(medical_center, idpatients) {
+   const user = await atenttionRepository.getAttentionPatient(medical_center, idpatients);
    return user
 }
 async function getStatusUpdatePatient(id, medical_center,typePublication,idattention) {

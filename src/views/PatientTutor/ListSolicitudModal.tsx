@@ -59,7 +59,7 @@ export const ListSolicitudModal: React.FC<ModalProps> = (
     const bodyModal = (
         <Box
             sx={{
-                position: "absolute", top: "50%", left: "50%", transform: "translate(60%, -50%)", width: 400, height: 670,
+                position: "absolute", top: "50%", left: "50%", transform: "translate(60%, -50%)", width: 400, height: 620,
                 bgcolor: "background.paper", boxShadow: 24, pt: 2, px: 4, pb: 3, borderRadius: 5,
             }}>
 
@@ -86,7 +86,7 @@ export const ListSolicitudModal: React.FC<ModalProps> = (
                     }) :
                         // <Card sx={{ width: "100%", borderRadius: "10px", background: "#fff", p: 2}}>
                         <Grid container direction={'row'} justifyContent='center' alignItems={'center'} sx={{ textAlign: 'center' }}>
-                            <Typography variant="h3">
+                            <Typography variant="h6">
                                 SIN SOLICITUDES
                             </Typography>
                         </Grid>
@@ -122,7 +122,7 @@ export const ListSolicitudModal: React.FC<ModalProps> = (
 
                         }
                     </List>
-                  
+
                 </List>
             </Grid>
         </Box>

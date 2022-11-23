@@ -11,7 +11,7 @@ import {
     Typography,
     Select,
 } from "@mui/material";
-import { ROUTE_PATIENT } from '@constants/route-map';
+import { ROUTE_PATIENT, ROUTE_PATIENT_TUTOR } from '@constants/route-map';
 import Paper from '@mui/material/Paper';
 import Fade from '@mui/material/Fade';
 import { Link } from "react-router-dom";
@@ -33,8 +33,8 @@ import Menu from '@mui/material/Menu';
 import { authenticationService } from "@/service/services/Authentication.service";
 import { readLocalStorage, saveLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
-import { ROLE_ADMIN } from "@/toolbox/constants/role-type";
-import { ROLE_SUPER_ADMIN } from "@/toolbox/defaults/static-roles";
+import { ROLE_ADMIN, ROLE_PROFESSIONAL } from "@/toolbox/constants/role-type";
+import { ROLE_SUPER_ADMIN, ROLE_TUTOR } from "@/toolbox/defaults/static-roles";
 import { ROLE_DOCTOR } from '@/toolbox/defaults/static-roles';
 
 import { Protected } from "@/components/layout/Protected";
@@ -63,7 +63,7 @@ export const HomePatientView = (props) => {
     let history = useHistory();
     const seleccionarPaciente = (elemento) => {
         console.log(elemento);
-        history.push(ROUTE_PATIENT, { dataPaciente: elemento });
+        history.push(ROUTE_PATIENT_TUTOR, { dataPacientes: elemento });
     };
 
     const handleChanges = (event) => {
@@ -75,9 +75,10 @@ export const HomePatientView = (props) => {
     };
 
     const getAttentionOpen = async() =>{
-        const area = [1];
-        const doctor = [1];
-        const res = await attentionService.getAttention(MedicalCenterReducer.id_medical_center,area,doctor);
+      console.log(dataUser?.user?.id_patient)
+        const id_patients = dataUser?.user?.id_patient? [dataUser.user.id_patient]: [];
+      //   const doctor = [1];
+        const res = await attentionService.getAttentionPatient(MedicalCenterReducer.id_medical_center,id_patients);
        if(res && res.data)
        {
         setDataPacientes(res.data)
@@ -103,9 +104,16 @@ export const HomePatientView = (props) => {
                         window.location.replace('/login/admin-centro-medico');
                         break;
                     case ROLE_SUPER_ADMIN:
-                        window.location.replace('/login/admin')
+                        window.location.replace('/login/admin');
+                        break;
+                    case ROLE_PROFESSIONAL:
+                        window.location.replace('/login/profesional-administrativo')
+                        break;
+                    default:
+                        window.location.replace('/login/doctor');
+                        break;
                 }
-               
+
             }
         }
         )
@@ -156,11 +164,11 @@ export const HomePatientView = (props) => {
                                                 <PersonIcon />
                                             </Icon>
                                             <Typography
-                                                //  align="end" 
+                                                //  align="end"
                                                 variant={"subtitle1"}>
                                                 <span> Doctor:</span>{" "}
                                                 <span className="title__main">Lincoln Moreno</span>
-                                            </Typography>   
+                                            </Typography>
                                         </Grid>
                                         <Grid
                                             item
@@ -195,7 +203,7 @@ export const HomePatientView = (props) => {
                                                 className="title__main"
                                                 sx={{ textAlign: "start", color: "#28c4ac" }}
                                             >
-                                                 Mis Pacientes3
+                                             {dataUser?.user?.role ==ROLE_TUTOR?'Mis Pacientes':'Mi Atención'}
                                             </Typography>
                                         </Grid>
                                     </Grid>

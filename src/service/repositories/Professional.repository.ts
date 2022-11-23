@@ -25,8 +25,8 @@ export const professionalRepository = {
       };
    },
 
-   getProfessionalDataInitial: async (): Promise<any> => {
-      const professional = await http.get<any>(`${API_URL_BASE}/v1/professional/initial`)
+   getProfessionalDataInitial: async (idMedicalCenter): Promise<any> => {
+      const professional = await http.get<any>(`${API_URL_BASE}/v1/professional/initial?medical_center=${idMedicalCenter}`)
       const { data, error, message } = professional
       return {
          data,

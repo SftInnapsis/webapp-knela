@@ -85,7 +85,7 @@ export const HomeDoctorView = (props) => {
         }else{
             res = await attentionService.getAttention(MedicalCenterReducer.id_medical_center,area,doctor);
         }
-        
+
         if(res && res.data)
        {
         setDataPacientes(res.data)
@@ -113,7 +113,7 @@ export const HomeDoctorView = (props) => {
                     case ROLE_SUPER_ADMIN:
                         window.location.replace('/login/admin')
                 }
-               
+
             }
         }
         )
@@ -165,11 +165,11 @@ export const HomeDoctorView = (props) => {
                                                 <PersonIcon />
                                             </Icon>
                                             <Typography
-                                                //  align="end" 
+                                                //  align="end"
                                                 variant={"subtitle1"}>
                                                 <span> Doctor:</span>{" "}
                                                 <span className="title__main">{dataUser?.user?.name+' '+dataUser?.user?.last_name}</span>
-                                            </Typography>   
+                                            </Typography>
                                         </Grid>
                                         <Grid
                                             item

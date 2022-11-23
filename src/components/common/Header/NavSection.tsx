@@ -75,7 +75,7 @@ export default function NavSection() {
           location: ROUTE_PROFESSIONALS,
           icon: <PeopleIcon/>,
         }
-      ] 
+      ]
     },
     {
       id:2,
@@ -92,7 +92,7 @@ export default function NavSection() {
           location: ROUTE_ATTENTION_LIST,
           icon: <ThreePIcon/>,
         }
-      ] 
+      ]
     },
     {
       id:2,
@@ -109,11 +109,11 @@ export default function NavSection() {
           location: "/chats-cerrados",
           icon: <ChatIcon/>,
         }
-      ] 
+      ]
     }
   ]
-  
-  
+
+
   const rutasSuperAdmin = [
     {
       id:1,
@@ -125,32 +125,32 @@ export default function NavSection() {
           location: ROUTE_MEDICAL_CENTER,
           icon: <LocalHospitalIcon/>,
         },
-        {
-          name_ruta: "Areas",
-          location: ROUTE_BUSINESS_AREA,
-          icon: <GroupIcon/>,
-        },
-        {
-          name_ruta: "Especialidades",
-          location: ROUTE_SPECIALITY,
-          icon: <BadgeIcon/>,
-        },
-        {
-          name_ruta: "Equipo Médico",
-          location: ROUTE_DOCTORS,
-          icon: <AssignmentIndIcon/>,
-        },
-        {
-          name_ruta: "Pacientes",
-          location: ROUTE_PATIENT_MASTER,
-          icon: <ContactsIcon/>,
-        },
-        {
-          name_ruta: "Profesionales",
-          location: ROUTE_PROFESSIONALS,
-          icon: <PeopleIcon/>,
-        }
-      ] 
+        // {
+        //   name_ruta: "Areas",
+        //   location: ROUTE_BUSINESS_AREA,
+        //   icon: <GroupIcon/>,
+        // },
+        // {
+        //   name_ruta: "Especialidades",
+        //   location: ROUTE_SPECIALITY,
+        //   icon: <BadgeIcon/>,
+        // },
+        // {
+        //   name_ruta: "Equipo Médico",
+        //   location: ROUTE_DOCTORS,
+        //   icon: <AssignmentIndIcon/>,
+        // },
+        // {
+        //   name_ruta: "Pacientes",
+        //   location: ROUTE_PATIENT_MASTER,
+        //   icon: <ContactsIcon/>,
+        // },
+        // {
+        //   name_ruta: "Profesionales",
+        //   location: ROUTE_PROFESSIONALS,
+        //   icon: <PeopleIcon/>,
+        // }
+      ]
     },
     {
       id:2,
@@ -167,7 +167,7 @@ export default function NavSection() {
           location: "/membresias",
           icon: <ThreePIcon/>,
         }
-      ] 
+      ]
     },
     {
       id:2,
@@ -179,7 +179,7 @@ export default function NavSection() {
           location: "/gestion-alertas",
           icon: <TipsAndUpdatesIcon/>,
         }
-      ] 
+      ]
     }
   ]
 
@@ -202,19 +202,19 @@ export default function NavSection() {
         break;
     }
  }
- 
+
  React.useEffect(()=>{
   validateType();
  },[])
 
-  
+
 
   const renderPrueba =
     <Box>
       <List disablePadding sx={{ p: 1 }}>
         {
           rutasHeader.map((value) => {
-           
+
           return(
           <>
           <ListItemButton
@@ -238,7 +238,7 @@ export default function NavSection() {
                 setRuta(value.name)
               }
             }}
-           
+
           >
               <ListItemIcon
                sx={{
@@ -251,7 +251,7 @@ export default function NavSection() {
               }}
               >{value.icon}</ListItemIcon>
 
-              <ListItemText disableTypography primary={value.name} />  
+              <ListItemText disableTypography primary={value.name} />
           </ListItemButton>
 
           {ruta === value.name &&
@@ -288,7 +288,7 @@ export default function NavSection() {
               })
               }
           </>
-            
+
           )
           })
         }
@@ -301,6 +301,6 @@ export default function NavSection() {
     <>
      { renderPrueba}
     </>
- 
+
   );
 }

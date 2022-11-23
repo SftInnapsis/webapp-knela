@@ -68,36 +68,37 @@ export const ModalTutor: React.FC<ModalProps> = (
             setData(prev => ({ ...prev, last_name: value, textError: '' }));
             break;
             case 'rut':
-               // setData(prev => ({ ...prev, rut: value, textError: '' }));
-               var Fn = {
-                  // Valida el rut con su cadena completa "XXXXXXXX-X"
-                  validaRut: function (rutCompleto) {
-                     if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
-                        return false;
-                     var tmp = rutCompleto.split('-');
-                     var digv = tmp[1];
-                     var rut = tmp[0];
-                     if (digv == 'K') digv = 'k';
-                     return (Fn.dv(rut) == digv);
-                  },
-                  dv: function (T) {
-                     var M = 0, S = 1;
-                     for (; T; T = Math.floor(T / 10))
-                        S = (S + T % 10 * (9 - M++ % 6)) % 11;
-                     return S ? S - 1 : 'k';
-                  }
-               }
-   
-               var foo = value.split("-").join("")
-               if (foo.length > 0 && foo.length < 10) {
-                  foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
+               // // setData(prev => ({ ...prev, rut: value, textError: '' }));
+               // var Fn = {
+               //    // Valida el rut con su cadena completa "XXXXXXXX-X"
+               //    validaRut: function (rutCompleto) {
+               //       if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
+               //          return false;
+               //       var tmp = rutCompleto.split('-');
+               //       var digv = tmp[1];
+               //       var rut = tmp[0];
+               //       if (digv == 'K') digv = 'k';
+               //       return (Fn.dv(rut) == digv);
+               //    },
+               //    dv: function (T) {
+               //       var M = 0, S = 1;
+               //       for (; T; T = Math.floor(T / 10))
+               //          S = (S + T % 10 * (9 - M++ % 6)) % 11;
+               //       return S ? S - 1 : 'k';
+               //    }
+               // }
+
+               var foo = value
+               //.split("-").join("")
+               if (foo.length > 0 && foo.length < 11) {
+                  // foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
                   setData(prev => ({ ...prev, rut: foo }))
                } else if (foo.length == 0) {
                   setData(prev => ({ ...prev, rut: "" }))
                }
-   
+
                break;
-           
+
          case 'date_birth':
             setData(prev => ({ ...prev, date_birth: value, textError: '' }));
             break;
@@ -116,7 +117,7 @@ export const ModalTutor: React.FC<ModalProps> = (
    }
 
    async function getAutocomplete(id_centro_medico: number) {
-      const res: any = await professionalService.getProfessionalDataInitial();
+      const res: any = await professionalService.getProfessionalDataInitial(id_centro_medico);
       setMedicalCenter(res.data.MedicalCenter.find((value) => value.id == id_centro_medico));
    }
 
@@ -149,13 +150,19 @@ export const ModalTutor: React.FC<ModalProps> = (
          ...data,
          medical_center: user_data?.user?.role == ROLE_SUPER_ADMIN ? medicalCenter.id : medicalStorage
       }
+      console.log(actionSelect)
       if (actionSelect == 'edit') {
          editPatientMaster(bodyRequest)
 
       }
       if (actionSelect == 'save') {
          savePatientMaster(bodyRequest)
-      }}catch(e){
+      }
+      if (actionSelect == 'add_tutor') {
+         savePatientMaster(bodyRequest)
+      }
+
+   }catch(e){
          console.log(e)
       }
    }
@@ -203,7 +210,7 @@ export const ModalTutor: React.FC<ModalProps> = (
                      onChange={handleInput}
                      error={error == 'name' || error == 'name_limit'? true : false}
                      helperText={error == 'name' ? 'Campo es obligatorio' : error == 'name_limit'? 'Máximo 100 caracteres':''}
-                    
+
                      />
                </Grid>
                <Grid item xs={12} md={12} >
@@ -246,7 +253,7 @@ export const ModalTutor: React.FC<ModalProps> = (
                      placeholder="Fecha Nacimiento*"
                      sx={{ bgcolor: '#fff' }}
                      name="date_birth"
-                     
+
                      type="date"
                      value={data.date_birth}
                      onChange={handleInput}
@@ -272,7 +279,7 @@ export const ModalTutor: React.FC<ModalProps> = (
                   />
                </Grid>
 
-            { user_data?.user?.role == ROLE_SUPER_ADMIN && 
+            { user_data?.user?.role == ROLE_SUPER_ADMIN &&
                <Grid item xs={12} md={12} >
                   <Autocomplete
                      sx={{ bgcolor: '#fff' }}

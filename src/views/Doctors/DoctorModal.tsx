@@ -91,28 +91,29 @@ export const DoctorModal: React.FC<ModalProps> = (
             break;
          case 'rut':
             // setData(prev => ({ ...prev, rut: value, textError: '' }));
-            var Fn = {
-               // Valida el rut con su cadena completa "XXXXXXXX-X"
-               validaRut: function (rutCompleto) {
-                  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
-                     return false;
-                  var tmp = rutCompleto.split('-');
-                  var digv = tmp[1];
-                  var rut = tmp[0];
-                  if (digv == 'K') digv = 'k';
-                  return (Fn.dv(rut) == digv);
-               },
-               dv: function (T) {
-                  var M = 0, S = 1;
-                  for (; T; T = Math.floor(T / 10))
-                     S = (S + T % 10 * (9 - M++ % 6)) % 11;
-                  return S ? S - 1 : 'k';
-               }
-            }
+            // var Fn = {
+            //    // Valida el rut con su cadena completa "XXXXXXXX-X"
+            //    validaRut: function (rutCompleto) {
+            //       if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
+            //          return false;
+            //       var tmp = rutCompleto.split('-');
+            //       var digv = tmp[1];
+            //       var rut = tmp[0];
+            //       if (digv == 'K') digv = 'k';
+            //       return (Fn.dv(rut) == digv);
+            //    },
+            //    dv: function (T) {
+            //       var M = 0, S = 1;
+            //       for (; T; T = Math.floor(T / 10))
+            //          S = (S + T % 10 * (9 - M++ % 6)) % 11;
+            //       return S ? S - 1 : 'k';
+            //    }
+            // }
 
-            var foo = value.split("-").join("")
-            if (foo.length > 0 && foo.length < 10) {
-               foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
+            var foo = value
+            //.split("-").join("")
+            if (foo.length > 0 && foo.length < 11) {
+               // foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
                setData(prev => ({ ...prev, rut: foo }))
             } else if (foo.length == 0) {
                setData(prev => ({ ...prev, rut: "" }))
@@ -144,11 +145,13 @@ export const DoctorModal: React.FC<ModalProps> = (
          if(role === ROLE_ADMIN){
             const idMedicalCenter = readLocalStorage(KEY_MEDICAL_CENTER);
             const objMedicalCenter = optionsMedicalCenter.find((value => value.id == idMedicalCenter))
-            
+
             setMedicalCenter(objMedicalCenter)
 
             const resp = await areaService.getDataAreaByMedicalCenter(objMedicalCenter.id);
-            setDataArea(resp.data);
+            console.log(resp?.data)
+            const dataAreaNotAdministrativo = resp?.data.filter(item => item?.name != 'Administrativo')
+            setDataArea(dataAreaNotAdministrativo);
 
             const respSpecialty = await SpecialityService.getDataSpecialityByMedicalCenter(objMedicalCenter.id)
             setDataEspecialidad(respSpecialty.data)
@@ -472,11 +475,11 @@ export const DoctorModal: React.FC<ModalProps> = (
                             id="idTypeRol"
                             options={dataTypeRol}
                             getOptionLabel={(option: any) => option.name ? option.name : ""}
-                            renderInput={(params) => <TextField 
-                                {...params} 
-                                placeholder="Rol*" 
+                            renderInput={(params) => <TextField
+                                {...params}
+                                placeholder="Rol*"
                                 label="Rol*"
-                                error={error=="idTypeRol" ? true : false} 
+                                error={error=="idTypeRol" ? true : false}
                                 helperText={error=="idTypeRol"? "Campo requerido" : ""} />}
                         />
                     </Grid>

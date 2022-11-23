@@ -15,5 +15,6 @@ export const KEY_NAVEGACION_SUB_MODULO   = 'userSubNavigators'
 export const KEY_TOKEN_KYTE = 'tokenkyte';
 export const DATA_CAMPAING_LEADS = 'dataCampaingLeads';
 export const KEY_DOCUMENTS = 'dataDocuments';
-export const KEY_VALIDATE_CHANGE_PASSWORD = 'changePassword'
+export const KEY_VALIDATE_CHANGE_PASSWORD = 'changePassword';
+export const MESSAGES = 'messages';
 

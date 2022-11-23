@@ -43,7 +43,7 @@ export const atenttionRepository = {
    getAttentionByProfessional: async(idprofessional):Promise<any> => {
       const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
       console.log(medical_centerr)
-      const attention = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idprofessional=${idprofessional}` )
+      const attention = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}` )
       const {data,error,message} = attention
       return {
          data,
@@ -65,12 +65,12 @@ export const atenttionRepository = {
       };
    },
 
-   getAttentionPatient: async (medical_center, idtutor): Promise<any> => {
+   getAttentionPatient: async (medical_center, idpatients): Promise<any> => {
       const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
       const user_data = readLocalStorage(KEY_USER_DATA)
       console.log(user_data)
       const idareaa =  user_data?.user?.idarea
-      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idtutor=${idtutor}` )
+      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idpatients=${idpatients?JSON.stringify(idpatients):[]}` )
       const {data,error,message} = family
       return {
          data,
@@ -167,7 +167,7 @@ export const atenttionRepository = {
          medical_center: medical_center,
          idarea: data.idarea, // me falta
          idpatients: data.idpatients,
-         iddoctor: data.iddoctor, 
+         iddoctor: data.iddoctor,
          idtutor: data.idtutor,
          room: 1,//mefalta
          idattention_type: 1,//data.idattention_type,

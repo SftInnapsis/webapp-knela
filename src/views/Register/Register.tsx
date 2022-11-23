@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '../../assets/images/logoknela.png';
 import logoLogin from "@assets/img/logo-login.jpg";
+import Divider from '@mui/material/Divider';
 
 import * as qs from 'qs'
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -53,6 +54,7 @@ const theme = createTheme();
 const area = ['Area 1', 'Area 2'];
 const especialidad = ['Especialidad 1', 'Especialidad 2'];
 const distrito = ['Distrito 1', 'Distrito 2'];
+const centroMedico = ['CentroMedico 1', 'CentroMedico 2'];
 
 
 export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
@@ -71,6 +73,9 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
     const [valueDistrito, setValueDistrito] = useState<string | null>(distrito[0]);
     const [inputValueDistrito, setInputValueDistrito] = useState('');
 
+    const [valueMedicalCenter, setValueMedicalCenter] = useState<string | null>(centroMedico[0]);
+    const [inputValueMedicalCenter, setInputValueMedicalCenter] = useState('');
+
 
     const [data, setData] = useState({
         name: '',
@@ -79,15 +84,18 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
         date_birth: '',
         address: '',
         mail: '',
+        medicalCenter: 0,
         district: 0,
         area: 0,
         especiality: 0,
+
         textError: ''
     });
 
     const [idDistrict, setIdDistrict] = useState({ id: 0, name: '' });
     const [idArea, setIdArea] = useState({ id: 0, name: '' });
     const [idEspeciality, setIdEspeciality] = useState({ id: 0, name: '' });
+    const [idMedicalCenter, setIdMedicalCenter] = useState({ id: 0, name: '' });
 
     const [error, setError] = useState<any>('');
 
@@ -102,6 +110,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
         if (data.mail === '') { return setError('mail') }
         if (data.address === '') { return setError('address') }
 
+        if (idMedicalCenter.name ==='') {return setError('idMedicalCenter') }
         if (idDistrict.name === '') { return setError('idDistrict') }
         if (idArea.name === '') { return setError('idArea') }
         if (idEspeciality.name === '') { return setError('idEspeciality') }
@@ -189,11 +198,11 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                             <Grid item xs={12} md={6}>
                                                 <FormControl fullWidth variant="outlined" >
                                                     <OutlinedInput
-                                                        id="lastname"
+                                                        id="last_name"
                                                         placeholder={'Apellidos'}
                                                         value={data.lastname}
                                                         onChange={onChange}
-                                                        name='lastname'
+                                                        name='last_name'
                                                         startAdornment={
                                                             <InputAdornment position='start'>
                                                                 <PersonIcon sx={{ color: "#28c4ac" }} />
@@ -267,7 +276,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                                 </FormControl>
                                             </Grid>
 
-                                            <Grid mb={2} item xs={12}>
+                                            <Grid mb={1} item xs={6}>
                                                 <FormControl fullWidth variant="outlined" >
                                                     <Autocomplete
                                                         value={valueDistrito}
@@ -278,7 +287,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                                         onInputChange={(event, newInputValue) => {
                                                             setInputValueDistrito(newInputValue);
                                                         }}
-                                                        id="iDistrict"
+                                                        id="iddistrict"
                                                         options={distrito}
                                                         renderInput={(params) => (
                                                             <div>
@@ -301,7 +310,41 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                                 </FormControl>
                                             </Grid>
 
-                                            <Grid mb={2} item xs={12}>
+                                            <Grid mb={1} item xs={6}>
+                                                <FormControl fullWidth variant="outlined" >
+                                                    <Autocomplete
+                                                        value={valueMedicalCenter}
+                                                        onChange={(event: any, newValue: string | null) => {
+                                                            setValueMedicalCenter(newValue);
+                                                        }}
+                                                        inputValue={inputValueMedicalCenter}
+                                                        onInputChange={(event, newInputValue) => {
+                                                            setInputValueMedicalCenter(newInputValue);
+                                                        }}
+                                                        id="idMedicalCenter"
+                                                        options={centroMedico}
+                                                        renderInput={(params) => (
+                                                            <div>
+                                                                <TextField
+                                                                    {...params}
+                                                                    label="Centro Medico"
+                                                                    InputProps={{
+                                                                        ...params.InputProps,
+                                                                        startAdornment: (
+                                                                            <InputAdornment position="start">
+                                                                                <BusinessIcon sx={{ color: "#28c4ac" }} />
+                                                                            </InputAdornment>
+                                                                        )
+                                                                    }}
+                                                                    fullWidth
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+
+                                            <Grid mb={1} item xs={6}>
                                                 <FormControl fullWidth variant="outlined" >
                                                     <Autocomplete
                                                         value={valueArea}
@@ -336,7 +379,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                             </Grid>
 
 
-                                            <Grid mb={2} item xs={12}>
+                                            <Grid mb={1} item xs={6}>
                                                 <FormControl fullWidth variant="outlined" >
                                                     <Autocomplete
                                                         value={valueEspecialidad}
@@ -368,10 +411,81 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                                         )}
                                                     />
                                                 </FormControl>
-                                            </Grid>
 
-                                            <Grid container direction="row" spacing={2}>
-                                                <Grid item xs={12} md={6}>
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                            <Typography>Cargar Documentos</Typography>
+                                                <Divider />
+                                                </Grid>
+
+
+                                            <Grid container direction="row" >
+                                                <Grid container item xs={6} md={6} >
+                                                    <Grid container item alignItems='center' >
+                                                        <Grid item xs={2}>
+                                                            <IconButton aria-label="AddAPhotoIcon" size="large">
+                                                                <AddAPhotoIcon sx={{ color: "#28c4ac" }} />
+                                                            </IconButton>
+                                                        </Grid>
+                                                        <Grid item xs={2}>
+                                                            <IconButton aria-label="PictureAsPdfIcon" size="large">
+                                                                <PictureAsPdfIcon sx={{ color: "#28c4ac" }} />
+                                                            </IconButton>
+                                                        </Grid>
+                                                        <Grid item xs={8} >
+                                                            <Button
+                                                            fullWidth
+                                                                variant='outlined'
+                                                                size='small' >
+                                                                 DNI
+                                                            </Button>
+                                                        </Grid>
+                                                    </Grid>
+
+                                                    <Grid container item alignItems='center' >
+                                                        <Grid item xs={2}>
+                                                            <IconButton aria-label="AddAPhotoIcon" size="large">
+                                                                <AddAPhotoIcon sx={{ color: "#28c4ac" }} />
+                                                            </IconButton>
+                                                        </Grid>
+                                                        <Grid item xs={2}>
+                                                            <IconButton aria-label="PictureAsPdfIcon" size="large">
+                                                                <PictureAsPdfIcon sx={{ color: "#28c4ac" }} />
+                                                            </IconButton>
+                                                        </Grid>
+                                                        <Grid item xs={8} >
+                                                            <Button
+                                                            fullWidth
+                                                                variant='outlined'
+                                                                size='small' >
+                                                                 Titulo de Trabajo
+                                                            </Button>
+                                                        </Grid>
+                                                    </Grid>
+
+                                                    <Grid container item alignItems='center' >
+                                                        <Grid item xs={2}>
+                                                            <IconButton aria-label="AddAPhotoIcon" size="large">
+                                                                <AddAPhotoIcon sx={{ color: "#28c4ac" }} />
+                                                            </IconButton>
+                                                        </Grid>
+                                                        <Grid item xs={2}>
+                                                            <IconButton aria-label="PictureAsPdfIcon" size="large">
+                                                                <PictureAsPdfIcon sx={{ color: "#28c4ac" }} />
+                                                            </IconButton>
+                                                        </Grid>
+                                                        <Grid item xs={8} >
+                                                            <Button
+                                                            fullWidth
+                                                                variant='outlined'
+                                                                size='small' >
+                                                                 Curriculum
+                                                            </Button>
+                                                        </Grid>
+                                                    </Grid>
+
+                                                </Grid>
+                                                {/*  <Grid item xs={12} md={6} alignItems='center'>
                                                     <IconButton aria-label="AddAPhotoIcon" size="large">
                                                         <AddAPhotoIcon sx={{ color: "#28c4ac" }} />
                                                         <Typography>{valueFoto}</Typography>
@@ -383,9 +497,14 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                                         <PictureAsPdfIcon sx={{ color: "#28c4ac" }} />
                                                         <Typography>{valuePDF}</Typography>
                                                     </IconButton>
+                                                </Grid>*/}
+                                                    <Grid container item xs={6} md={6} >
+                                                        <Grid container item  >
+                                                        </Grid>
+                                                    </Grid>
 
-                                                </Grid>
                                             </Grid>
+
 
 
 

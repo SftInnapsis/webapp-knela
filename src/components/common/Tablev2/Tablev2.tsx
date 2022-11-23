@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, TableBody, TableCell, TableContainer, Typography, TableHead, TablePagination, TableRow, Grid, Table, createTheme, ThemeProvider, Button, Container, Stack, Card, Checkbox, Avatar, IconButton, Popover, MenuItem, Chip, InputBase, Modal } from '@mui/material';
+import { Paper, TableBody, TableCell, TableContainer, Typography, TableHead, TablePagination, TableRow, Grid, Table,ButtonGroup, createTheme, ThemeProvider, Button, Container, Stack, Card, Checkbox, Avatar, IconButton, Popover, MenuItem, Chip, InputBase, Modal } from '@mui/material';
 import { esES } from '@mui/material/locale';
 import { VisibilityIcon, PencilIcon, DeleteIcon, MoreIcon, UsersIcon, DeleteRedIcon } from "@toolbox/constants/icons";
 import ErrorIcon from '@mui/icons-material/Error';
@@ -30,8 +30,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Box } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
+import PanToolAltIcon from '@mui/icons-material/PanToolAlt';
 
 import SearchIcon from "@mui/icons-material/Search";
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 type TableProps = {
    header?: Array<any>,
    data?: Array<any>,
@@ -59,7 +61,8 @@ type TableProps = {
    ruta_import?:any,
    GenerateExportExcel?:any,
    setOpenImport?:any,
-   openImport?:any
+   openImport?:any,
+   add_tutor_button?:any
 }
 
 // ----------------------------------------------------------------------
@@ -130,7 +133,7 @@ export const TableDataV2: React.FC<TableProps> = (
    const [filterName, setFilterName] = useState('');
 
    const handleOpenMenu = (event, data) => {
-    
+
       setOpen(event.currentTarget);
       setDataSelected(data);
    };
@@ -192,7 +195,7 @@ export const TableDataV2: React.FC<TableProps> = (
 
    const handleInputSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
       try{   const name = event.target.name;
-         
+
          const value = event.target.value;
          // console.log(value)
            if(value.length>3)
@@ -205,7 +208,7 @@ export const TableDataV2: React.FC<TableProps> = (
                }
                setSearch(value);
 
-             
+
       }catch(e){
          // console.log(e)
       }
@@ -246,13 +249,13 @@ export const TableDataV2: React.FC<TableProps> = (
                >
                   {props.title}
                </Typography>
-               
-             
+
+
                <Box sx={{ m: 1 }}>
-               {props?.button_import && 
+               {props?.button_import &&
                <>
                <Button
-                  href={props?.ruta_import} target="_blank" 
+                  href={props?.ruta_import} target="_blank"
                   startIcon={(<DownloadIcon fontSize="small" />)}
                   sx={{ mr: 1 }}
                >
@@ -343,10 +346,10 @@ export const TableDataV2: React.FC<TableProps> = (
                                                 <Grid sx={{ pl: 1 }}>
                                                    <Typography sx={{ fontFamily: '"Public Sans", sans-serif !important' }} variant='inherit' fontWeight={500}>
                                                       {/* {value} */}
-                                                      {cabecera.name === 'status' ? 
+                                                      {cabecera.name === 'status' ?
                                                    (
                                                       value == 1? 'ACTIVO': 'DESACTIVADO'
-                                                   ):(value)   
+                                                   ):(value)
                                                    }
                                                    </Typography>
                                                 </Grid>
@@ -354,14 +357,57 @@ export const TableDataV2: React.FC<TableProps> = (
                                           </TableCell>
                                        )
                                     })}
-                                   {props.select_button &&  <TableCell align="center">
+                                    <TableCell align="center" >
+                                       <ButtonGroup variant="contained" color="inherit" aria-label="button-group-custom-table" style={{ padding: "0px 5px" }}>
+                                       {
+                                           ! props?.disabled_popover &&
+                                             <>
+                                                <IconButton size="small" color="success" aria-label="view"
+                                                    onClick={()=>{props.RecuperarData({...data,action:'edit'}); props.actionSelect('edit')}}
+                                                >
+                                                   <EditIcon fontSize='small' />
+                                                </IconButton>
+                                                <IconButton size="small" color="error" aria-label="view"
+                                                onClick={()=>{props.RecuperarData({...data,action:'delete'})}}                                             >
+                                                <DeleteOutlineIcon fontSize='small' />
+                                             </IconButton>
+                                             </>
+                                          }
+                                          {props.select_button &&
+                                          <IconButton size="small" color="primary" aria-label="view"
+                                          onClick={() => { props.RecuperarData({ ...data, action: 'seleccionar' }) }}
+                                                >
+                                                   <PanToolAltIcon fontSize='small' />
+                                                </IconButton>
+                                          }
+                                          {
+                                             props.add_tutor_button &&
+                                             <IconButton size="small" color="primary" aria-label="view"
+                                             onClick={() => { props.RecuperarData({ ...data, action: 'add_tutor' }) }}
+                                                   >
+                                                      <PersonAddAlt1Icon fontSize='small' />
+                                                   </IconButton>
+                                             // <TableCell align="center">
+                                             //    <Button variant='outlined' color='primary' onClick={() => { props.RecuperarData({ ...data, action: 'add_tutor' }) }}>Agregar Tutor</Button>
+                                             // </TableCell>
+                                          }
+                                       </ButtonGroup>
+                                    </TableCell>
+
+                                   {/* {props.select_button &&  <TableCell align="center">
                                        <Button variant='outlined' color='primary' onClick={() => { props.RecuperarData({...data, action:'seleccionar'}) }}>Seleccionar</Button>
                                     </TableCell>}
+                                    {
+                                       props.add_tutor_button &&
+                                       <TableCell align="center">
+                                       <Button variant='outlined' color='primary' onClick={() => { props.RecuperarData({...data, action:'add_tutor'}) }}>Agregar Tutor</Button>
+                                    </TableCell>
+                                    }
                                     <TableCell align="left" >
                                       {! props?.disabled_popover && <IconButton size="large" color="inherit" onClick={(e) => { handleOpenMenu(e, data) }}>
                                           <MoreVertIcon />
                                        </IconButton>}
-                                    </TableCell>
+                                    </TableCell> */}
                                  </TableRow>
                               );
                            })}
@@ -432,7 +478,7 @@ export const TableDataV2: React.FC<TableProps> = (
                             </Typography>
                             <Grid container  justifyContent="center">
                                 <Grid container  mt={2}>
-                  
+
                                     <Grid item xs={6} mt={2}>
                                         <Grid item xs={12} sx={{ position: 'relative' }}>
                                             <div className="wrapper">
@@ -452,7 +498,7 @@ export const TableDataV2: React.FC<TableProps> = (
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={6} mt={3}>
-                                    <Button fullWidth 
+                                    <Button fullWidth
                                         variant='contained'
                                         onClick={() => { props?.GenerateExportExcel(saveFile); props?.setOpenImport(false) }}>
                                         Importar Excel
@@ -461,7 +507,7 @@ export const TableDataV2: React.FC<TableProps> = (
                             </Grid>
                         </form>
           </div>
-        
+
             </div>
          </Modal>
       </>

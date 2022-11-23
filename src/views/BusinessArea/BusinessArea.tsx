@@ -36,7 +36,7 @@ export const BusinessAreaView: React.FC<any> = (props: any): JSX.Element => {
         autoHideDuration: 5000,
      })
 
-   
+
     const getDataArea = async () => {
         const resp: any = await areaService.getAreaPage();
         console.log(resp)
@@ -52,11 +52,16 @@ export const BusinessAreaView: React.FC<any> = (props: any): JSX.Element => {
         }
     }
 
-    
+
     const RecuperarData = async (data) => {
         const { action, id } = data;
         switch (action) {
             case 'edit':
+                console.log(data)
+                if(data?.name === 'Administrativo'){
+                    setSnackBarConfig({...snackBarConfig,open:true,severity:'warning', message:'Este no es un área editable'});
+                    return
+                }
                 setOpen(true)
                 setData(data)
                 break;
@@ -144,7 +149,7 @@ export const BusinessAreaView: React.FC<any> = (props: any): JSX.Element => {
               getDataInitial = {getDataInitial}
               data = {data}
             />
-           
+
             <TableDataV2
                 data={dataArea}
                 header={[

@@ -25,7 +25,7 @@ import logokyte from "@assets/img/vacio.png";
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import { HomeDoctor } from './Doctor';
 import { HomeTutor } from './Tutor' ;
-import { HomePatient } from './Paciente'; 
+import { HomePatient } from './Paciente';
 import { ROLE_DOCTOR, ROLE_SUPER_ADMIN, ROLE_TUTOR, ROLE_PACIENTE } from '@/toolbox/defaults/static-roles';
 import { MedicalCenter } from '../MedicalCenter';
 import { ROLE_ADMIN, ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
@@ -53,10 +53,10 @@ export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
    console.log(type_user)
 
    const validateHome = ( ) => {
-      
+
       // if(type_user == ROLE_ADMIN){
       //    return <Doctor/>
-      // } 
+      // }
 
       switch(type_user){
          case ROLE_SUPER_ADMIN:
@@ -70,7 +70,7 @@ export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
             }else{
                return <AttentionKnelaView/>
             }
-            
+
          case ROLE_DOCTOR:
             console.log('doctor')
             return <HomeDoctor/>
@@ -100,7 +100,7 @@ export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
                alignItems="center">
                <SpinnerGrow />
                <h1 style={{ marginLeft: '10px' }}><strong>Cargando...</strong></h1>
-               
+
             </Grid>
          </Backdrop>
         {validateHome()}

@@ -56,6 +56,7 @@ export const authenticationRepository = {
          user: {
             //Estos son los datos
             iduser: resp?.information_user?.iduser,
+            iduser_detail:resp?.information_user?.iduser_detail,
             iduser_type: resp?.information_user?.iduser_type,
             idmedical_center: null,
             name: resp?.information_user?.name,
@@ -68,6 +69,7 @@ export const authenticationRepository = {
             id_professional: resp?.information_user?.id_professional,
             id_doctor: resp?.information_user?.id_doctor,
             id_tutor: resp?.information_user?.id_tutor,
+            id_patient:resp?.information_user?.id_patient,
             idspecialty: resp?.information_user?.idspecialty,
             address: resp?.information_user?.address,
             iddistrict: resp?.information_user?.iddistrict,

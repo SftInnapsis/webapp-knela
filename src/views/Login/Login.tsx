@@ -36,6 +36,7 @@ import Echo from 'laravel-echo'
 import { Toaster, toast } from 'react-hot-toast';
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import { chatService } from "@/service/services/Chat.service";
 
 const theme = createTheme();
 
@@ -125,10 +126,10 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
             decodeRut = atob(rut);
             decodeIdType = atob(idtype);
             decodePassword = atob(password);
-            authSubmit(decodeRut, decodePassword,decodeIdType);
+            authSubmit(decodeRut, decodePassword, decodeIdType);
          } catch (error) {
          }
-      } 
+      }
    }, []);
 
    const rules = useMemo(() => ({
@@ -172,34 +173,36 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
             setData(prev => ({ ...prev, perfil: value, textError: '' }));
             break;
          case 'rut':
-            setVerify(false)
-            var Fn = {
-               // Valida el rut con su cadena completa "XXXXXXXX-X"
-               validaRut: function (rutCompleto) {
-                  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
-                     return false;
-                  var tmp = rutCompleto.split('-');
-                  var digv = tmp[1];
-                  var rut = tmp[0];
-                  if (digv == 'K') digv = 'k';
-                  return (Fn.dv(rut) == digv);
-               },
-               dv: function (T) {
-                  var M = 0, S = 1;
-                  for (; T; T = Math.floor(T / 10))
-                     S = (S + T % 10 * (9 - M++ % 6)) % 11;
-                  return S ? S - 1 : 'k';
-               }
-            }
+            // setVerify(false)
+            // var Fn = {
+            //    // Valida el rut con su cadena completa "XXXXXXXX-X"
+            //    validaRut: function (rutCompleto) {
+            //       if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rutCompleto))
+            //          return false;
+            //       var tmp = rutCompleto.split('-');
+            //       var digv = tmp[1];
+            //       var rut = tmp[0];
+            //       if (digv == 'K') digv = 'k';
+            //       return (Fn.dv(rut) == digv);
+            //    },
+            //    dv: function (T) {
+            //       var M = 0, S = 1;
+            //       for (; T; T = Math.floor(T / 10))
+            //          S = (S + T % 10 * (9 - M++ % 6)) % 11;
+            //       return S ? S - 1 : 'k';
+            //    }
+            // }
 
-            var foo = value.split("-").join("")
-            if (foo.length > 0 && foo.length < 10) {
-               foo = foo.match(new RegExp('.{1,8}', 'g')).join("-");
+            var foo = value
+            //.split("-").join("")
+            if (foo.length > 0 && foo.length < 11) {
+               // foo = foo.match(new RegExp('.{1,8}', 'g'))
+               //.join("-");
                setData(prev => ({ ...prev, rut: foo, textError: '' }))
             } else if (foo.length == 0) {
                setData(prev => ({ ...prev, rut: "", textError: '' }))
             }
-
+            // setData(prev => ({ ...prev, rut: value, textError: '' }))
             break;
          default:
             break;
@@ -231,63 +234,82 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
       setLoading(true);
       const response: any = await authenticationService.login(rut, password, perfil);
       // console.log(response.user.medical_center[0].id)
-      if (response.data?.token == '') {
+      console.log(response)
+      if (response?.token == '') {
+         console.log('holaaaa')
          setSnackBarConfig(prev => ({
             ...prev,
             open: true,
-            message: response.data.message,
+            message: 'Credenciales incorrectas',
          }));
       } else {
+         console.log(response)
+         // setSnackBarConfig(prev => ({
+         //    ...prev,
+         //    open: true,
+         //    severity:'error',
+         //    message: response.data.message,
+         // }));
          response && response.user && props.$action.SelectMedicalCenter(response.user.medical_center[0].id);
          // saveLocalStorage(KEY_VALIDATE_CHANGE_PASSWORD, 'normal');
          const data = readLocalStorage(KEY_USER_DATA)
-         if (data?.user?.role == ROLE_SUPER_ADMIN) {
-            history.push(ROUTE_HOME);
-         }
-         if (data?.user?.role == ROLE_ADMIN) {
-            history.push(ROUTE_HOME)
-         }
-         if (data?.user?.role == ROLE_DOCTOR_IND) {
-            history.push(ROUTE_HOME)
-         }
-         if (data?.user?.role == ROLE_DOCTOR) {
-            history.push(ROUTE_HOME)
-         }
-         if (data?.user?.role == ROLE_PACIENTE) {
-            history.push(ROUTE_HOME)
-         }
-         if (data?.user?.role == ROLE_FAMILIAR) {
-            history.push(ROUTE_HOME)
-         }
-         if (data?.user?.role == ROLE_TUTOR) {
-            history.push(ROUTE_HOME)
-         }else{
-            history.push(ROUTE_HOME)
-         }
+         console.log(data)
+         history.push(ROUTE_HOME)
+         // if (data?.user?.role == ROLE_SUPER_ADMIN) {
+         //    history.push(ROUTE_HOME);
+         // }
+         // if (data?.user?.role == ROLE_ADMIN) {
+         //    history.push(ROUTE_HOME)
+         // }
+         // if (data?.user?.role == ROLE_DOCTOR_IND) {
+         //    history.push(ROUTE_HOME)
+         // }
+         // if (data?.user?.role == ROLE_DOCTOR) {
+         //    history.push(ROUTE_HOME)
+         // }
+         // if (data?.user?.role == ROLE_PACIENTE) {
+         //    history.push(ROUTE_HOME)
+         // }
+         // if (data?.user?.role == ROLE_FAMILIAR) {
+         //    history.push(ROUTE_HOME)
+         // }
+         // if (data?.user?.role == ROLE_TUTOR) {
+         //    history.push(ROUTE_HOME)
+         // } else {
+         //    history.push(ROUTE_HOME)
+         // }
 
 
 
          // props.$action.actionSetListNotification(2)
-         // if (data) {
-         //    window['Echo'] = new Echo({
-         //       broadcaster: 'pusher',
-         //       key: 'crm_key',
-         //       wsHost: window.location.hostname,
-         //       wsPort: 6002,
-         //       cluster: 'mt1',
-         //       wssPort: 6002,
-         //       disableStats: true,
-         //       forceTLS: false,
-         //       enabledTransports: ['ws', 'wss'],
-         //       authEndpoint: `${process.env.REACT_APP_API_URL}/api/broadcasting/auth`,
-         //       auth: {
-         //          headers: {
-         //             Accept: 'application/json',
-         //             Authorization: `${readLocalStorage(KEY_TOKEN_KYTE)}`
-         //          }
-         //       },
-         //    });
-         // }
+         if (data) {
+            window['Echo'] = new Echo({
+               broadcaster: 'pusher',
+               key: 'knela2',
+               wsHost: window.location.hostname,
+               wsPort: 6005,
+               cluster: 'mt1',
+               wssPort: 6005,
+               disableStats: true,
+               forceTLS: false,
+               enabledTransports: ['ws', 'wss'],
+               authEndpoint: `${process.env.REACT_APP_API_URL}/api/broadcasting/auth`,
+               auth: {
+                  headers: {
+                     Accept: 'application/json',
+                     Authorization: `${readLocalStorage(KEY_TOKEN_KYTE)}`
+                  }
+               },
+            });
+
+            window['Echo'].channel(`messageChat${data.user.iduser_detail}`).listen('MessageChat', (e) => {
+               console.log(e)
+               if(e && e.message && e.message.idchats)
+               {
+               onListMessage(e?.message?.idchats)
+               }
+            })
+         }
       }
 
       setLoading(false);
@@ -298,6 +320,21 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
    };
+
+   const onListMessage = async (idChat) =>{
+      if(idChat)
+      {
+       const res:any = await chatService.getDetailMessage(idChat);
+       console.log(res)
+       if(res && res.data && res.data.detail)
+       {
+          console.log(res.data.detail)
+         props.$action.getMessagetChat(res.data.detail)
+         //  setMessage(res.data.detail)
+       }
+      }
+    }
+
 
    return (
       <ThemeProvider theme={theme}>
@@ -348,7 +385,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
                                           label="perfil"
                                           name='perfil'
                                           onChange={handleInput}
-                                          // sx={{ color: "#28c4ac" }} 
+                                          // sx={{ color: "#28c4ac" }}
                                           startAdornment={
                                              <InputAdornment position='start'>
                                                 <AssignmentIndIcon sx={{ color: "#28c4ac" }} />
@@ -434,18 +471,20 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
                               </Grid>
                            </form>
 
-                           {/* <Grid container spacing={1} >
-                              <Grid item xs={12} md={12}>
-                                 <Button
-                                    fullWidth
-                                    variant="contained"
-                                    className='btn-login'
-                                    onClick={() => { history.push(ROUTE_REGISTER) }}
-                                 >
-                                    Registrarse
-                                 </Button>
-                              </Grid>
-                           </Grid> */}
+                           {name === 'doctor-independiente' ?
+                              <Grid container spacing={1} >
+                                 <Grid item xs={12} md={12}>
+                                    <Button
+                                       fullWidth
+                                       variant="contained"
+                                       className='btn-login'
+                                       onClick={() => { history.push(ROUTE_REGISTER) }}
+                                    >
+                                       Registrarse
+                                    </Button>
+                                 </Grid>
+                              </Grid>:
+                              <Grid></Grid>}
 
                         </Grid>
                      </Grid>

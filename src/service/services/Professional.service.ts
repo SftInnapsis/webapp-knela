@@ -19,8 +19,8 @@ async function getProfessionalAll () {
    const area= await professionalRepository.getProfessionalAll();
    return area
 }
-async function getProfessionalDataInitial () {
-   const area= await professionalRepository.getProfessionalDataInitial();
+async function getProfessionalDataInitial (idMedicalCenter) {
+   const area= await professionalRepository.getProfessionalDataInitial(idMedicalCenter);
    return area
 }
 async function createProfessional (dataArea) {
@@ -54,5 +54,5 @@ async function createProfessional (dataArea) {
       resp.push(staff);
    })
    return resp
-  
+
  }

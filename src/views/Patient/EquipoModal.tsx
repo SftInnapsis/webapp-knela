@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect,createRef} from 'react';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Grid, TextField, Divider, Autocomplete, Dialog, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material';
+import { Grid, TextField, Divider, Autocomplete, Dialog, InputAdornment, IconButton, Snackbar, Alert, Avatar } from '@mui/material';
 import { Icon } from '@components/common/Icon';
-import { Paper, Card, CardActionArea, InputBase, Box, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Table, createTheme, ThemeProvider, Button } from '@mui/material';
+import { Paper, Card, List, CardActionArea, InputBase, Box, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Table, createTheme, ThemeProvider, Button } from '@mui/material';
 import { CancelIcon, SaveIcon } from "@toolbox/constants/icons";
 import PersonIcon from '@mui/icons-material/Person';
 // import './Modal.css';
@@ -30,223 +30,322 @@ import MicIcon from '@mui/icons-material/Mic';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { MainBody } from './Childrens/MainBody';
+import logoknelaV2 from '@assets/images/logoknelaV2.png';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ImageIcon from '@mui/icons-material/Image';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { chatService } from '@/service/services/Chat.service';
+import { connect } from "react-redux";
+import { bindActionCreators, compose } from "redux";
+import { withRouter } from "react-router-dom";
+import {getMessagetChat } from '@/redux/actions';
 
+import { ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 
 type ModalProps = {
-    open: boolean,
-    setOpen: any,
-    actionSelect?: string,
-    recoveryData?: any,
-    //    savePatientMaster?: ({ }) => void,
-    //    editPatientMaster?: ({ }) => void,
+   open: boolean,
+   setOpen: any,
+   actionSelect?: string,
+   recoveryData?: any,
+   idChat?: any,
+   typeChat?:any,
+   MessageReducer?:any,
+   $action?:any
+   // message?:any
+   //    editPatientMaster?: ({ }) => void,
 }
 
-const itemModalEquipo = [
-    {
-        id: 1,
-        title1: "Javiera Sanhueza V.",
-        subtitle1: "Rol:Enfermera",
-    },
-    {
-        id: 2,
-        title1: "Cecilia Fuenzalida V.",
-        subtitle1: "Rol:Enfermera",
-    },
-    {
-        id: 3,
-        title1: "Jose Miguel Luarte V.",
-        subtitle1: "Rol:Doctor",
-    },
-];
 
-export const EquipoModal: React.FC<ModalProps> = (
-    props: ModalProps
+export const EquipoModalView: React.FC<ModalProps> = (
+   props: ModalProps
 ): JSX.Element => {
-    const { open, setOpen, actionSelect, recoveryData } = props
-    console.log(open)
-    const user_data = readLocalStorage(KEY_USER_DATA)
-    const [mensajeModalEquipo, setmensajeModalEquipo] = React.useState(itemModalEquipo);
-    const [showChatEquipo, setshowChatEquipo] = useState(false);
+   const { open, setOpen, actionSelect, recoveryData, idChat, typeChat} = props
+   const user_data = readLocalStorage(KEY_USER_DATA)
+   const inputRef = createRef();
+   const { MessageReducer ='' } = props;
+   // console.log(props.MessageReducer.messageChats)
+   const [mensajeTemp, setMensajeTemp] = useState(null)
+   const [imageContent, setImageContent] = React.useState([]);
+   const [messageCombinate, setMessageCombinate] = React.useState([]);
+   const [statusText, setStatusText] = React.useState(false);
+   const [statusFile, setStatusFile] = React.useState(false);
+   const [cursorPosition, setCursorPosition] = React.useState();
+   const [message, setMessage] = useState([]);
+   const userData = readLocalStorage(KEY_USER_DATA)
 
-    const bodyModal = (
-        <Box
-        sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(60%, -50%)",
-            width: 400,
-            height: 670,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            pt: 2,
-            px: 4,
-            pb: 3,
-            borderRadius: 5,
-        }}
-    //sx={{ ...style, 
-    // width: 430 
-    //}}
-    >
-        <Grid item xs={12} md={6} mt={1}>
-            <Typography sx={{ color: '#28c4ac' }} fontSize='20px' fontWeight={'bold'} id="parent-modal-title">EQUIPO</Typography>
-        </Grid>
-        {mensajeModalEquipo.map((item3: any) => (
-            <Grid item xs={12} md={6} mt={1}>
-                <Card
-                    key={item3.id}
+   const addContent = async (data) => {
+      if (data) {
+         const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
+         const FormValue = new FormData();
+         FormValue.append("medical_center",medical_center)
+         FormValue.append("idchat_type", typeChat)
+         FormValue.append("iddoctor", userData?.user?.id_doctor == undefined ? '': userData?.user?.id_doctor )
+         FormValue.append("idprofessional",userData?.user?.id_professional == undefined? '': userData?.user?.id_professional)
+         FormValue.append("send",mensajeTemp)
+         FormValue.append("idsend_type","1")
+         const resp = await chatService.createMessage(idChat,FormValue )
+         if(resp){
+            setMensajeTemp("")
+         }
+      }
+   }
 
-                    sx={{
-                        width: "200%",
-                        background: "white",
-                        borderRadius: "15px",
-                        border: "1px solid #000",
-                    }}
-                >
-                    <CardActionArea className="contenedor">
-                        <Grid container className="texto-encima" p={1.5}>
-                            <Grid item xs={12}>
-                                <Grid display="flex" justifyContent="space-between">
-                                    <Typography
-                                        sx={{ color: '#6a4032' }}
-                                        gutterBottom
-                                        variant="h6"
-                                        fontWeight={"bolder"}
-                                    >
-                                        {item3.title1}
-                                    </Typography>
-                                </Grid>
-                                <Grid display="flex" justifyContent="space-between">
-                                    <Typography gutterBottom >
-                                        {item3.subtitle1}
-                                    </Typography>
-                                    <Grid
-                                        item
-                                        xs={6}
-                                        md={6}
-                                        display="flex"
-                                        justifyContent={"flex-end"}
-                                        onClick={() => setshowChatEquipo(true)}
 
-                                    >
-                                        <IconButton sx={{ color: "#28c4ac" }}>
-                                            <AddCircleSharpIcon />
-                                            <Typography
-                                                variant={"body1"}
-                                                className="subtitle_doctor"
-                                            >
-                                                Empezar Chat
-                                            </Typography>
-                                        </IconButton>
+   const onChange = (e) => {
+      e.preventDefault();
+      setMensajeTemp(e?.target?.value || "");
+   }
 
-                                    </Grid>
-                                </Grid>
+   const handleSubmit = () => {
 
-                            </Grid>
-                        </Grid>
-                    </CardActionArea>
-                </Card>
+   }
+
+   const processImage  = async(event) => {
+      if (event && event.target.files && event.target.files.length > 0) {
+         const file = event.target.files[0];
+         const fileUrl = URL.createObjectURL(file);
+         const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
+        const FormValue = new FormData();
+         FormValue.append("medical_center",medical_center)
+         FormValue.append("idchat_type", typeChat)
+         FormValue.append("iddoctor", userData?.user?.id_doctor == undefined ? '': userData?.user?.id_doctor )
+         FormValue.append("idprofessional",userData?.user?.id_professional == undefined? '': userData?.user?.id_professional)
+         FormValue.append("send",file)
+         FormValue.append("idsend_type","3")
+         const resp = await chatService.createMessage(idChat,FormValue )
+      }
+   }
+
+   const processFile = async(event) => {
+      if (event && event.target.files && event.target.files.length > 0) {
+         const file = event.target.files[0];
+         const fileUrl = URL.createObjectURL(file);
+         const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
+         const FormValue = new FormData();
+          FormValue.append("medical_center",medical_center)
+          FormValue.append("idchat_type", typeChat)
+          FormValue.append("iddoctor", userData?.user?.id_doctor == undefined ? '': userData?.user?.id_doctor )
+          FormValue.append("idprofessional",userData?.user?.id_professional == undefined? '': userData?.user?.id_professional)
+           FormValue.append("send",file)
+          FormValue.append("idsend_type","2")
+          const resp = await chatService.createMessage(idChat,FormValue )
+      }
+   }
+
+   const Limpiar = () => {
+      setMensajeTemp("")
+      setImageContent([])
+      setMessageCombinate([])
+      setStatusText(false)
+      setStatusFile(false)
+      // setPrintRequestError('')
+   }
+
+   const onListMessage = async () =>{
+     if(idChat)
+     {
+      const res:any = await chatService.getDetailMessage(idChat);
+      if(res && res.data && res.data.detail)
+      {
+         setMessage(res.data.detail)
+         props.$action.getMessagetChat(res.data.detail)
+      }
+     }
+   }
+
+   const sendMessage = (type, comentary) => {
+      // if (type == "text" && !msg) {
+      //   return;
+      // }
+
+      // if (type == "image" && !uploadImage) {
+      //   console.log(uploadImage);
+      //   return;
+      // }
+
+      // if (type == "file" && !uploadFile) {
+      //   return;
+      // }
+
+
+    }
+
+   React.useEffect(() => {
+      // console.log(props)
+      onListMessage()
+   }, [open]);
+
+   // React.useEffect(() => {
+   //    onListMessage()
+   // }, [open]);
+
+   const bodyModal = (
+      <Box sx={{
+         position: "absolute", top: "50%", left: "50%", transform: "translate(60%, -50%)", width: 450, height: 670,
+         bgcolor: "background.paper", boxShadow: 24
+      }}>
+         <Grid item container xs={12} direction='row' justifyContent="space-between" alignItems={'center'} sx={{ bgcolor: '#28C4AC', px: 2, height: 70 }}>
+            <Grid item container direction='row' alignItems={'center'} xs={11}>
+               <ArrowBackIcon sx={{mr:1.5}} onClick={()=>{setOpen(false)}}/>
+               <Avatar
+                  alt="Remy Sharp"
+                  src={logoknelaV2}
+                  sx={{ width: 66, height: 66, mr: 2 }}
+               />
+               <div style={{color:'#C22828', fontWeight:600,fontSize:'25px'}}>KNELA</div>
+            </Grid>
+            <Grid item container direction='row' xs={1}>
+               <ExpandMoreIcon />
+            </Grid>
+         </Grid>
+         <Grid item xs={12} md={12} sx={{ height: 550, bgcolor: '#F0F0F0' }} >
+            {/* <List
+                  sx={{
+                      width: '100%',
+                      maxWidth: 400,
+                      bgcolor: 'background.paper',
+                      position: 'relative',
+                      overflow: 'auto',
+                      maxHeight: 380,
+                      '& ul': { padding: 0 },
+                  }}>
+                  <Card
+                      sx={{
+                          width: "100%",
+                          background: "#f3f3f3",
+                          borderRadius: "10px",
+                      }}
+                  >
+                  </Card>
+                  {messageCombinate?.map(e => {
+                      return (
+                          <Grid container spacing={2} sx={{ p: 2 }} justifyContent='left' >
+                              <Card sx={{ width: "auto", borderRadius: "10px", background: "#f3f3f3", p: 2, justifyContent: 'center' }}>
+                                  {e.message && <Typography>
+                                      {e.message}
+                                  </Typography>}
+                                  {e.img && <a href={e.img} target="_blank">
+                                      <img style={{ width: '50%', display: e.img ? 'flex' : 'none' }} src={e.img} />
+                                  </a>}
+
+                              </Card>
+                          </Grid>
+                      );
+                  })
+                  }
+                  {statusText &&
+                      <Grid container spacing={2} sx={{ p: 2 }} justifyContent='right' >
+                          <Card sx={{ width: "50%", borderRadius: "10px", background: "#F5AEAD", p: 2, justifyContent: 'center', textAlign: 'left' }}>
+                              <Typography>
+                                  Solo se puede hacer un envio de texto
+                              </Typography>
+                          </Card>
+                      </Grid>
+                  }
+                  {statusFile &&
+                      <Grid container spacing={2} sx={{ p: 2 }} justifyContent='right' >
+                          <Card sx={{ width: "50%", borderRadius: "10px", background: "#F5AEAD", p: 2, justifyContent: 'center', textAlign: 'left' }}>
+
+                              <Typography>
+                                  Solo se puede enviar una imagen
+                              </Typography>
+                          </Card>
+                      </Grid>
+                  }
+
+
+              </List> */}
+            <MainBody
+            messages={MessageReducer && MessageReducer.messageChats ? MessageReducer.messageChats : []}
+            user={{id: userData?.user?.id_doctor ? userData?.user?.id_doctor:  userData?.user?.id_professional}}
+            />
+         </Grid>
+         <Grid container xs={12} display="flex" justifyContent="space-between" >
+            <Grid item xs={12} >
+
+               <Paper >
+                  <Grid container xs={12} display="flex" justifyContent="space-between" alignItems="center">
+                     <Grid item xs={1} >
+                     <input style={{ display: 'none' }} id="upload-file" type="file" onChange={processFile}  />
+                        <label htmlFor="upload-file">
+                        <IconButton
+                          component="span"
+                          sx={{ p: "10px" }}>
+                           <AttachFileIcon />
+                        </IconButton>
+                        </label>
+                     </Grid>
+                     <Grid item xs={1}>
+                        <input style={{ display: 'none' }} id="upload-img" type="file" onChange={processImage} accept="image/*" />
+                        <label htmlFor="upload-img">
+                           <IconButton
+                              component="span"
+                              sx={{ p: "10px" }}>
+                              <ImageIcon />
+                           </IconButton>
+                        </label>
+                     </Grid>
+                     <Grid item xs={9}
+                        sx={{
+                           overflow: 'auto',
+                           maxHeight: 70,
+                        }}>
+                        <InputBase
+                           sx={{ ml: 1, flex: 1 }}
+                           // multiline
+                           value={mensajeTemp}
+                           onChange={onChange}
+                           placeholder="Escribe un Mensaje"
+                           name='mensaje'
+                           id='mensaje'
+                           onKeyPress={event => { event.key === 'Enter' && addContent(mensajeTemp) }}
+                        />
+                     </Grid>
+                     <Grid item xs={1} >
+                        <IconButton
+                           type="button"
+                           sx={{ p: "10px" }}
+                           aria-label="search"
+                           onClick={(e) => { addContent(mensajeTemp) }}>
+                           <SendIcon />
+                        </IconButton>
+                     </Grid>
+
+                  </Grid>
+               </Paper>
             </Grid>
 
-        ))}
+         </Grid>
+      </Box>
+   )
 
-        {showChatEquipo && (
-            <Grid item xs={12} p={1} md={12} mt={2}
-                sx={{
-                    background: "#f3f3f3",
-                    borderRadius: "10px",
-                    marginBottom: "180px",
-                    padding: "5",
-                    width: "100%",
-                }}
-            >
-                <Card
-                    sx={{
-                        width: "100%",
-                        background: "#f3f3f3",
-                        borderRadius: "10px",
-                        marginBottom: "110px"
-                    }}
-                >
-                    <CardActionArea className="contenedor">
-                        <Grid container className="texto-encima" sx={{ backgroundColor: 'white' }} p={1}>
-                            <Grid item xs={12}>
-                                <Grid display="flex" justifyContent="space-between">
-                                    <Typography
-                                        gutterBottom
-                                        variant="subtitle1"
-                                        fontWeight={"bold"}
-                                        color="#28c4ac"
-                                    >
-                                        Claudia Mantila
-                                    </Typography>
-                                </Grid>
-
-                                <Typography gutterBottom >
-                                    Hola Doctor! nos puede contar como salio la operacion?
-                                    Gracias!
-                                </Typography>
-                                <Grid mt={1}>
-                                    <Typography gutterBottom>
-                                        08:30 AM
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </CardActionArea>
-                </Card>
-                <Grid container item xs={12} md={12} mt={1}>
-                    <Grid display="flex">
-                        <IconButton
-                            type="button"
-                            sx={{ p: "10px" }}
-                            aria-label="search"
-                        >
-                            <CameraAltOutlinedIcon sx={{ color: '#28c4ac' }} />
-                        </IconButton>
-                        <Paper component="form" sx={{ p: "0px 2px" }}>
-                            <InputBase
-                                sx={{ ml: 1, flex: 1 }}
-                                placeholder="Escribe un Mensaje"
-                            />
-                            <IconButton
-                                type="button"
-                                sx={{ p: "10px" }}
-                                aria-label="search"
-                            >
-                                <SendIcon />
-                            </IconButton>
-                        </Paper>
-
-                        <IconButton
-                            type="button"
-                            sx={{ p: "10px" }}
-                            aria-label="search"
-                        >
-                            <AttachFileIcon />
-                        </IconButton>
-                        <IconButton
-                            type="button"
-                            sx={{ p: "10px" }}
-                            aria-label="search"
-                        >
-                            <MicIcon sx={{ color: '#28c4ac' }} />
-                        </IconButton>
-
-                    </Grid>
-                </Grid>
-            </Grid>
-        )}
-    </Box>
-    )
-
-    return (
-        <div>
-            <Modal
-                open={open}
-                onClose={() => { setOpen(false) }}>
-                {bodyModal}
-            </Modal>
-        </div>
-    );
+   return (
+      <div>
+         <Modal
+            open={open}
+            onClose={() => { setOpen(false) }}>
+            {bodyModal}
+         </Modal>
+      </div>
+   );
 }
+
+
+const mapStateToProps = ({ MessageReducer}) => ({
+      MessageReducer
+});
+const mapDispatchToProps = (dispatch) => ({
+   $action: bindActionCreators(
+      {
+         getMessagetChat: getMessagetChat
+      },
+      dispatch
+   ),
+});
+
+
+export const EquipoModal: any = compose(
+   withRouter,
+   connect(mapStateToProps, mapDispatchToProps)
+)(EquipoModalView);

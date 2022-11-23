@@ -10,8 +10,29 @@ export const patientRepository = {
       const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
       const patient = await http.get<any>(`${API_URL_BASE}/v1/patients?medical_center=${medical_centerr}` )
       const {data,error,message} = patient
+      console.log(data)
       return {
-         data,
+         // data,
+         data : (data||[]).map((dt) => ({
+            id: dt.id,
+            idTypeSeguro: dt.idTypeSeguro,
+            date_birth: dt.date_birth,
+            idmedical_center: dt.idmedical_center,
+            name: dt.name,
+            last_name: dt.last_name,
+            full_name: dt.name + ' ' +  dt.last_name,
+            mail: dt.mail,
+            medicalCenter_name: dt.medicalCenter_name,
+            medicalCenter_rut: dt.medicalCenter_rut,
+            nameTypeSeguro: dt.nameTypeSeguro,
+            rut: dt.rut,
+            status: dt.status,
+            tutor_id:dt.tutor_id,
+            tutor_last_name: dt.tutor_last_name,
+            tutor_name: dt.tutor_name,
+            full_name_tutor: dt.tutor_name ? dt.tutor_name + ' ' + dt.tutor_last_name: '',
+            tutor_rut: dt.tutor_rut
+         })),
          error,
          message
       };

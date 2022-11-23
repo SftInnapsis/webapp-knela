@@ -38,7 +38,6 @@ export const CardComponent : React.FC<CardProps> = (
     props: CardProps
  ) : JSX.Element => {
   const {data, detail}=props.info;
- console.log(data)
 
   return (
     <Card sx={{ maxWidth: 345 }}>
@@ -46,7 +45,8 @@ export const CardComponent : React.FC<CardProps> = (
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-           {data.nameDoctor.charAt(0)}
+           {/* {data?.nameDoctor?.charAt(0) } */}
+           {data?.nameDoctor?data.nameDoctor.charAt(0): data?.nameProfessional.charAt(0)}
           </Avatar>//iniciales del docotor
         }
         // action={
@@ -54,7 +54,7 @@ export const CardComponent : React.FC<CardProps> = (
         //     <MoreVertIcon />
         //   </IconButton>
         // }
-        title={data.nameDoctor}//nombre del doctor
+        title={data?.nameDoctor || data?.nameProfessional }//nombre del doctor
         subheader={data.creation_date}//fecha de publicacion
         // component={<div>aass</div>}
       />
@@ -62,13 +62,12 @@ export const CardComponent : React.FC<CardProps> = (
           <Chip label={data.nameStatusPatient} color="error" variant="outlined" />
       </CardActions>
       </Grid>
-        
+
       {
         detail.map((row, i)=>{
-          console.log(row)
           return(
             <div key={i}>
-              {row.idsend_type==3 &&  
+              {row.idsend_type==3 &&
               <CardMedia
               component="img"
               height="194"
@@ -86,8 +85,8 @@ export const CardComponent : React.FC<CardProps> = (
           )
         })
       }
-  
-     
+
+
     </Card>
   );
 }

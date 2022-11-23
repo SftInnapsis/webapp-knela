@@ -40,21 +40,21 @@ export const DoctorView = (props) => {
         if(!file?.data){return setSnackBarConfig({...snackBarConfig, open:true, severity:'error', message:'No añadió ningun archivo'})}
         formFile.append('file', file.data || null);
         formFile.append('medical_center', idMedicalCenter || null);
-        
+
         const resp = await doctorService.createDoctorExcel(formFile);
         if(resp){
-           setSnackBarConfig({...snackBarConfig, open:true, severity:'success',message:'Documento Importado con éxito'}) 
+           setSnackBarConfig({...snackBarConfig, open:true, severity:'success',message:'Documento Importado con éxito'})
         }
 
         getDataDoctor();
-        
+
     }
 
     const getDataDoctor = async () => {
         const resp: any = await doctorService.getDoctorPage(
             null, null, MedicalCenterReducer.id_medical_center, null
         );
-       
+
         if (resp.data) {
             setDataDoctor(resp.data);
         }
@@ -64,11 +64,11 @@ export const DoctorView = (props) => {
         const resp: any = await doctorService.getDoctorSearchPage(
             null, null, MedicalCenterReducer.id_medical_center, null, term
         );
-      
+
         if (resp.data) {
             setDataDoctor(resp.data);
         }
-    
+
     }
 
     const RecuperarData = async (data) => {
@@ -83,7 +83,7 @@ export const DoctorView = (props) => {
                 setDialog(prev => ({ ...prev, message: `Seguro que quiere eliminar a ${name} ${last_name}`, id: id, medical_center: idmedical_center, open: true, confirm: true }));
                 break;
             case 'seleccionar':
-              
+
                 props?.recuperarData(data);
                 break;
             default:
@@ -112,7 +112,7 @@ export const DoctorView = (props) => {
     }
 
     const saveDoctor = async (data) => {
-    
+
         if (data) {
             const res: any = await doctorService.createDoctor(data)
             if (res.data) {
@@ -194,8 +194,8 @@ export const DoctorView = (props) => {
                 { name: 'areaName', label: 'Area', filter: false, Chip: true },
                 { name: 'mail', label: 'Correo', filter: false, Chip: false },
                 { name: 'date_birth', label: 'Fecha de Nacimiento', filter: false, Chip: false },
-               
-             
+
+
                 // { name: 'district', label: 'Distrito', filter: false, Chip: true },
                 // { name: 'address', label: 'Direccion', filter: false, Chip: true },
                 { name: 'status', label: 'Estado', filter: false, Chip: true },
@@ -221,7 +221,7 @@ export const DoctorView = (props) => {
             {props?.isNOtProtected == true ?
                 bodyView : <Protected>
                     {bodyView}
-                </Protected>      
+                </Protected>
 
 
 

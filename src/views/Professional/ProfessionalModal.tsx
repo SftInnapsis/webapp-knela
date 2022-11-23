@@ -125,13 +125,14 @@ export const ProfessionalModal: React.FC<ModalProps> = (
    };
 
    const dataInitial = async () => {
-      const res: any = await professionalService.getProfessionalDataInitial();
-      setDataEspecialidad(res.data.Specialty)
-      setDataMedicalCenter(res.data.MedicalCenter)
-      setDataArea(res.data.Area)
+      const idMedicalCenter = readLocalStorage(KEY_MEDICAL_CENTER)
+      const res: any = await professionalService.getProfessionalDataInitial(idMedicalCenter);
+      setDataEspecialidad(res?.data?.Specialty ||[])
+      setDataMedicalCenter(res?.data?.MedicalCenter ||[])
+      setDataArea(res?.data?.Area ||[])
       if (role == ROLE_ADMIN) {
          console.log(res.data.MedicalCenter)
-         const idMedicalCenter = readLocalStorage(KEY_MEDICAL_CENTER)
+
          console.log(idMedicalCenter)
          const objMedicalCenter = res.data.MedicalCenter.find(value => value.id == idMedicalCenter)
          setMedicalCenter(objMedicalCenter)
@@ -197,7 +198,7 @@ export const ProfessionalModal: React.FC<ModalProps> = (
    }
 
    async function getAutocomplete(id_centro_medico: number, id_especialidad: number, id_area: number) {
-      const res: any = await professionalService.getProfessionalDataInitial();
+      const res: any = await professionalService.getProfessionalDataInitial(id_centro_medico);
       const resp = await areaService.getDataAreaByMedicalCenter(id_centro_medico);
       setDataArea(resp.data);
       const medicalCenter = res.data.MedicalCenter.find((value) => value.id == id_centro_medico);

@@ -2,20 +2,22 @@ import { KyteApp as Kyte} from './KyteApp';
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import { withRouter } from "react-router-dom";
-import { actionSetListNotification, SelectMedicalCenter } from '@/redux/actions';
+import { actionSetListNotification, SelectMedicalCenter,getMessagetChat } from '@/redux/actions';
 
 
-const mapStateToProps = ({ NotificationReducer, MedicalCenterReducer}) => ({
+const mapStateToProps = ({ NotificationReducer, MedicalCenterReducer, MessageReducer}) => ({
    $store: {
       NotificationReducer,
-      MedicalCenterReducer
+      MedicalCenterReducer,
+      MessageReducer
    },
 });
 const mapDispatchToProps = (dispatch) => ({
    $action: bindActionCreators(
       {
          actionSetListNotification: actionSetListNotification,
-         SelectMedicalCenter: SelectMedicalCenter
+         SelectMedicalCenter: SelectMedicalCenter,
+         getMessagetChat: getMessagetChat
       },
       dispatch
    ),

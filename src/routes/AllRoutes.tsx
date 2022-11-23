@@ -88,19 +88,17 @@ const AllRoutes: React.FC = () => {
       <PrivateRoute key={5} exact path={Routes.ROUTE_ACCOUNT_PERFIL} component={AccountPerfil} />
    ]
 
-   
+
 
 
    const routes = useMemo(() => {
       let role: string = 'prueba';
-      console.log(role)
       if (!!dataUser) {
          if (!!dataUser.user) {
             role = dataUser.user.role;
          }
       }
 
-      console.log(role)
       switch (role) {
          case ROLE_SUPER_ADMIN:
             return (
@@ -108,13 +106,13 @@ const AllRoutes: React.FC = () => {
                   <Switch>
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {moduleHome}
-                     {moduleBusinessArea}
-                     {moduleDoctors}
+                     {/* {moduleBusinessArea}
+                     {moduleDoctors} */}
                      {moduleMedicalCenter}
-                     {modulePatient}
+                     {/* {modulePatient}
                      {modulePatientMaster}
                      {moduleProfessional}
-                     {moduleSpeciality}
+                     {moduleSpeciality} */}
                      {moduleDoctorIndependiente}
                      {modulePatientTutor}
                      {moduleAccountPerfil}
@@ -143,7 +141,7 @@ const AllRoutes: React.FC = () => {
                      {moduleAttentionList}
                      {modulePatientTutor}
                      {moduleAccountPerfil}
-                     
+
                      {<Route path='*' exact={true} component={() => {
                         return <Redirect to={Routes.ROUTE_HOME} />
                      }} />}
@@ -198,7 +196,7 @@ const AllRoutes: React.FC = () => {
                      </Switch>
                   </Router>
                );
-   
+
 
          default:
             return (
@@ -218,7 +216,7 @@ const AllRoutes: React.FC = () => {
                      {modulePatientTutor}
                      {moduleAttentionKnela}
                      {moduleAccountPerfil}
-                     
+
                      <Route key={5} exact path={Routes.ROUTE_REGISTER} component={RegisterView} />
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {<Route path='*' exact={true} component={() => {

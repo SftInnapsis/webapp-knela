@@ -3,7 +3,7 @@ import {
 } from '@constants/action-type'
 
 const initialState = {
-    messageChats: 1
+    messageChats: []
 }
 
 export default function (state = initialState, action: any) {

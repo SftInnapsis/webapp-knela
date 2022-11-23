@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Card, CardActionArea, CardMedia, Grid, IconButton, MenuItem, Modal, TextField, Typography, Box, InputBase, Button, } from "@mui/material";
 import { ROUTE_HOME } from '@constants/route-map';
 import { Link } from "react-router-dom";
@@ -28,17 +28,18 @@ import { ListSolicitudModal } from "@views/PatientTutor/ListSolicitudModal";
 import { RequestService } from '@/service/services/Request.service';
 import { ROLE_PROFESSIONAL } from "@/toolbox/constants/role-type";
 import { CardComponent } from '@components/common/Card';
+import { chatService } from "@/service/services/Chat.service";
+import { ParticipantChatModal } from "./ParticipantChatModal";
 
 export const PatientView = (props) => {
     const item = props.location.state.dataPaciente;
-    console.log(item)
     const { MedicalCenterReducer = '' } = props;
     const [showModalEquipo, setModalEquipo] = React.useState(false);
     const [showModalTutor, setModalTutor] = React.useState(false);
     const [showChatEquipo, setshowChatEquipo] = useState(false);
 
     const [showModalIngresoPaciente, setModalIngresoPaciente] = React.useState(false);
-
+    const [statusValidate, setStatusValidate] = React.useState(false);
     const [mensajePaciente, setmensajePaciente] = React.useState([]);
     const [statusDefault, setstatusDefault] = React.useState(null)
     const [statusName, setStatusName] = useState(null)
@@ -56,7 +57,7 @@ export const PatientView = (props) => {
         //     idprofessional: userData?.user?.role == ROLE_PROFESSIONAL ? userData?.user?.id_professional: null,
         //     publication: data.publication,
         //     doctorName: item?.doctorName,
-        //     typePublication: userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ? 2:1 
+        //     typePublication: userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ? 2:1
         // }
         // const res = await attentionService.createStatusUpdatePatient(publication);
         // if (res.data) {
@@ -64,7 +65,6 @@ export const PatientView = (props) => {
         //     getStatusPatient()
         //     setstatusDefault(data?.statusPatient)
         // }
-        console.log(userData);
         const formData = new FormData();
         formData.append('medical_center', MedicalCenterReducer.id_medical_center);
         formData.append('idattention', item?.id);
@@ -139,6 +139,28 @@ export const PatientView = (props) => {
         }
     }
 
+   const validateAtentiton = async () => {
+      if (item && userData.user) {
+         const { id_doctor = null, id_professional = null } = userData.user;
+         const { id } = item;
+         const res = await chatService.validateAtentiton(id, id_doctor, id_professional, 1);
+         if (res && res.data) {
+            setStatusValidate(res.data)
+         }
+      }
+   }
+
+   const InsertParticipantAtentiton = async () => {
+      if (item && userData.user) {
+         const { id_doctor = null, id_professional = null } = userData.user;
+         const { id } = item;
+         const res = await chatService.InsertParticipantAtentiton(id, id_doctor, id_professional, 1);
+         if (res && res.data) {
+            validateAtentiton()
+         }
+      }
+   }
+
     const dataInitialStatusPatient = async () => {
         const res = await attentionService.getStatusPatient(MedicalCenterReducer.id_medical_center);
         if (res.data && res.data.status !== false) {
@@ -166,10 +188,16 @@ export const PatientView = (props) => {
     }
 
     React.useEffect(() => {
+        validateAtentiton();
         dataInitialStatusPatient()
         getStatusPatient()
         getSendRequest()
     }, [MedicalCenterReducer.id_medical_center])
+
+   // const validate = useMemo(() => {
+   //    validateAtentiton()
+   // }, [statusValidate]);
+
     return (
         <>
             <Grid container className="containerInvite">
@@ -196,6 +224,11 @@ export const PatientView = (props) => {
                                         Paciente {item.patientsName}{" "}
                                     </Typography>
                                 </Grid>
+                              <Grid item>
+                                 <Button variant='contained' disabled={statusValidate} onClick={() => { InsertParticipantAtentiton()}}>
+                                    {statusValidate ? 'PARTICIPANDO' : 'UNIRME'}
+                                 </Button>
+                              </Grid>
                                 <Grid item>
                                     <Grid item container direction={'row'} justifyContent='center' alignItems={'center'} spacing={1}>
                                         <Grid item xs={6} >
@@ -275,7 +308,6 @@ export const PatientView = (props) => {
 
                                 </Grid>
                                 <Grid item container xs={12} md={4} direction={'row'} justifyContent={'flex-end'} spacing={1}>
-                                    {dataUser?.user?.role == ROLE_DOCTOR &&
                                         <Grid item xs={4} md={2} mt={2}>
                                             <Card
                                                 key={item.id}
@@ -283,9 +315,10 @@ export const PatientView = (props) => {
                                                     width: "100%",
                                                     background: "#afaff4",
                                                     borderRadius: "10px"
+
                                                 }}
-                                                onClick={() => setModalEquipo(true)}>
-                                                <CardActionArea className="contenedor">
+                                               >
+                                                <CardActionArea className="contenedor" disabled={!statusValidate} onClick={() => setModalEquipo(true)}>
                                                     <CardMedia component="text" height="90" />
                                                     <Grid container className="texto-encima">
                                                         <Grid item container xs={12} justifyContent='center' alignItems='center'>
@@ -306,7 +339,6 @@ export const PatientView = (props) => {
                                                 Equipo
                                             </Typography>
                                         </Grid>
-                                    }
                                     {<Grid item xs={4} md={2} mt={2}>
                                         <Card
                                             key={item.id}
@@ -315,8 +347,8 @@ export const PatientView = (props) => {
                                                 background: "#f25ba7",
                                                 borderRadius: "10px",
                                             }}
-                                            onClick={() => setModalTutor(true)}>
-                                            <CardActionArea className="contenedor">
+                                            >
+                                            <CardActionArea className="contenedor" disabled={!statusValidate} onClick={() => setModalTutor(true)}>
                                                 <CardMedia component="text" height="90" />
                                                 <Grid container className="texto-encima">
                                                     <Grid item container xs={12} justifyContent='center' alignItems='center'>
@@ -431,8 +463,8 @@ export const PatientView = (props) => {
                                     mb={2}
                                     display="flex"
                                     justifyContent={"flex-end"}
-                                    onClick={() => setModalIngresoPaciente(true)}>
-                                    <IconButton sx={{ color: "#28c4ac" }}>
+                                    >
+                                    <IconButton sx={{ color: "#28c4ac" }} disabled={!statusValidate} onClick={() => setModalIngresoPaciente(true)}>
                                         <AddCircleSharpIcon />
                                         <Typography
                                             variant={"body1"}
@@ -471,10 +503,11 @@ export const PatientView = (props) => {
                 recoveryData={recoveryData}
                 setRecoveryData={setRecoveryData}
             />
-            <EquipoModal
-                open={showModalEquipo}
-                setOpen={setModalEquipo}
-            />
+            <ParticipantChatModal
+             open={showModalEquipo}
+             setOpen={setModalEquipo}
+             idAttention={item?.id}
+             />
             {/* <TutorModal
                 open={showModalTutor}
                 setOpen={setModalTutor}

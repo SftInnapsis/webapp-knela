@@ -4,7 +4,7 @@ import { userService } from '@service/services/User.service';
 import {
     MESSAGE_CHAT,
  } from '@constants/action-type';
- 
+
  // export const MESSAGE_CHATAction = () => async dispatch => {
  //    const res:any = await taskService.getFeeds();
  //    console.log(res)
@@ -15,11 +15,10 @@ import {
  //    })
  //    return res && res.data || [];
  // }
- 
+
  export function getMessagetChat(data: any) {
-    const value = userService.PruebaReducer(data);
     return {
        type: MESSAGE_CHAT,
-       payload: value
+       payload: data
     }
  }

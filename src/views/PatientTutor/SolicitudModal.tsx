@@ -122,7 +122,7 @@ export const SolicitudModal: React.FC<ModalProps> = (
     const bodyModal = (
         <Box
             sx={{
-                position: "absolute", top: "50%", left: "50%", transform: "translate(60%, -50%)", width: 400, height: 670,
+                position: "absolute", top: "50%", left: "50%", transform: "translate(60%, -50%)", width: 400, height: 620,
                 bgcolor: "background.paper", boxShadow: 24, pt: 2, px: 4, pb: 3, borderRadius: 5,
             }}>
             <Grid container spacing={2} display="flex" justifyContent="space-between">
@@ -138,7 +138,7 @@ export const SolicitudModal: React.FC<ModalProps> = (
             </Grid>
             <Divider sx={{ pt: 2 }} />
             <Divider />
-            <Grid item xs={12} md={12} mt={2} sx={{ height: 540 }} >
+            <Grid item xs={12} md={12} mt={2} sx={{ height: 480 }} >
                 <List
                     sx={{
                         width: '100%',

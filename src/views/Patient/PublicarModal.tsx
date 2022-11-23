@@ -166,8 +166,8 @@ export const PublicarModal: React.FC<ModalProps> = (
 
     const bodyModal = (
         <Box  sx={{
-            position: "absolute", top: "50%", left: "50%", transform: "translate(60%, -50%)", width: 400, height: 670,
-            bgcolor: "background.paper", boxShadow: 24, pt: 2, px: 4, pb: 3, borderRadius: 5,
+            position: "absolute", top: "50%", left: "50%", transform: "translate(55%, -50%)", width: 430, height: 620,
+            bgcolor: "background.paper", boxShadow: 24, pt: 2, px: 2, pb: 3, borderRadius: 5,
         }}>
             <Grid container item xs={12} md={12} mt={2}>
                 <Grid item xs={6} md={6} mt={1}>
@@ -201,7 +201,7 @@ export const PublicarModal: React.FC<ModalProps> = (
                 </Grid>
             </Grid>
 
-            <Grid item xs={12} md={12} mt={2} sx={{ height: 400 }} >
+            <Grid item xs={12} md={12} mt={2} sx={{ height: 350 }} >
                 <List
                     sx={{
                         width: '100%',
@@ -281,7 +281,7 @@ export const PublicarModal: React.FC<ModalProps> = (
                             fullWidth
                             variant="contained"
                             className='btn-login2'
-                            onClick={() => {setOpen(false); 
+                            onClick={() => {setOpen(false);
                             setPublication('');
                             setStatusPatient(null);
                             setRecoveryData({})}}
@@ -293,12 +293,12 @@ export const PublicarModal: React.FC<ModalProps> = (
             </Grid> */}
             <Grid container xs={12} display="flex" justifyContent="space-between" >
                 <Grid item xs={12} >
-                    <Paper component="form" sx={{ height: '140px' }}>
+                    <Paper component="form" sx={{ height: '100px' }}>
                         <Grid container xs={12} display="flex" justifyContent="space-between" alignItems="center">
                             <Grid item xs={10}
                                 sx={{
                                     overflow: 'auto',
-                                    maxHeight: 140,
+                                    maxHeight: 100,
                                 }}>
                                 <InputBase
                                     sx={{ ml: 1, flex: 1 }}

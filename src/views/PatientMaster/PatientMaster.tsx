@@ -59,7 +59,7 @@ export const PatientMasterView = (props) => {
     const GenerateExportExcel = async () => {
         const formFile = new FormData();
         formFile.append('file', saveFile.data || null);
-      
+
 
     }
 
@@ -78,7 +78,7 @@ export const PatientMasterView = (props) => {
                 setDataPatient(resp.data);
             }
         }
-       
+
     }
 
 
@@ -97,10 +97,11 @@ export const PatientMasterView = (props) => {
                 setDataPatient(resp.data);
             }
         }
-       
+
     }
-    
+
     const RecuperarData = async (data) => {
+        console.log(data)
         const { action, id, idmedical_center, name, last_name } = data;
         setActionSelect(action)
         switch (action) {
@@ -114,6 +115,14 @@ export const PatientMasterView = (props) => {
             case 'seleccionar':
                 console.log(data);
                 props?.recuperarData(data);
+                break;
+            case 'add_tutor':
+                if(data?.tutor_id ){
+                    setSnackBarConfig({...snackBarConfig, open:true, severity:'warning', message:'Ya existe un tutor asignado a este paciente'})
+                    return
+                }
+                setOpenModalTutor(true)
+                setPatientCreated({id: data?.id})
                 break;
             default:
                 break;
@@ -171,10 +180,15 @@ export const PatientMasterView = (props) => {
                     message: res.data.message,
                 }));
                 setOpenModalTutor(false)
-                getDataPatient();
             }
         }
     }
+
+    useEffect(()=>{
+        if(!openModalTutor){
+            getDataPatient();
+        }
+    },[openModalTutor])
 
     const editPatientMaster = async (data) => {
         const { id } = data;
@@ -203,13 +217,11 @@ export const PatientMasterView = (props) => {
 
     const headerAdmin = [
         { name: 'rut', label: 'RUT', filter: false, Chip: false },
-        { name: 'name', label: 'Nombre', filter: false, Chip: false },
-        { name: 'last_name', label: 'Apellido', filter: false, Chip: false },
+        { name: 'full_name', label: 'Nombre', filter: false, Chip: false },
         { name: 'nameTypeSeguro', label: 'Tipo Seguro', filter: false, Chip: false },
         // { name: 'mail', label: 'Correo', filter: false, Chip: false },
         { name: 'tutor_rut', label: 'RUT Tutor', filter: false, Chip: false },
-        { name: 'tutor_name', label: 'Nombre Tutor', filter: false, Chip: false },
-        { name: 'tutor_last_name', label: ' Apellido Tutor', filter: false, Chip: false },
+        { name: 'full_name_tutor', label: 'Nombre Tutor', filter: false, Chip: false },
         { name: 'date_birth', label: 'Fecha de Nacimiento', filter: false, Chip: false },
         // { name: 'status', label: 'Estado', filter: false, Chip: true }
     ]
@@ -269,6 +281,7 @@ export const PatientMasterView = (props) => {
                 checkbox
                 select_button= {props?.select_button ?true:false}
                 button_import={true}
+                add_tutor_button
                 ruta_import = {''}
                 // changefile={changefile}
                 GenerateExportExcel={GenerateExportExcel}
@@ -287,9 +300,9 @@ export const PatientMasterView = (props) => {
              bodyView :<Protected>
              {bodyView}
          </Protected>
-           
+
         }
         </>
-       
+
     );
 };

@@ -31,7 +31,9 @@ import { CardComponent } from '@components/common/Card';
 
 
 export const PatientTutorView = (props) => {
+    console.log(props)
     const item = props.location.state.dataPacientes;
+    console.log(item)
     const { MedicalCenterReducer = '' } = props;
     const [showModalEquipo, setModalEquipo] = React.useState(false);
     const [showModalTutor, setModalTutor] = React.useState(false);
@@ -55,9 +57,9 @@ export const PatientTutorView = (props) => {
     const [showModalSolicitud, setModalSolicitud] = React.useState(false);
     const [printRequest, setPrintRequest] = React.useState([]);
     const [printRequestError, setPrintRequestError] = React.useState('');
+    console.log(item)
 
     const getStatusPatient = async (id_typePublication) => {
-        console.log(MedicalCenterReducer.id_medical_center)
         const res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center, id_typePublication,[item?.id]);
         if (res.data && res.data.status !== false) {
             console.log(res.data.length);
@@ -262,11 +264,11 @@ export const PatientTutorView = (props) => {
                                                         <Typography gutterBottom >
                                                             {item?.observation}
                                                         </Typography>
-                                                       
+
                                                     </Grid>
                                                 </Grid>
                                             </CardActionArea>
-                                            
+
                                         </Card>
                                     </Grid>}
                                 </Grid>
@@ -411,7 +413,7 @@ export const PatientTutorView = (props) => {
                 open={showModalTutor}
                 setOpen={setModalTutor}
             /> */}
-            
+
             <SolicitudModal
                 open={showModalSolicitud}
                 setOpen={setModalSolicitud}

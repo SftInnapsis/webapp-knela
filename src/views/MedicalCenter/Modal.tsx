@@ -17,10 +17,10 @@ export const ModalMedicalCenter = (props) => {
     ])
     const [typeAttention, setTypeAttention] = useState<any>({id: 0, name: ''})
     const [typeFlow, setTypeFlow] = useState<any>(null)
-    const [ubigeo, setUbigeo] = useState<any>({ 
-        country: [], 
-        departament: [], 
-        province: [], 
+    const [ubigeo, setUbigeo] = useState<any>({
+        country: [],
+        departament: [],
+        province: [],
         district: [] });
     const [country, setCountry] = useState<any>({id: 0, name: ''})
     const [departament, setDepartament] = useState<any>({id: 0, name: ''})
@@ -126,7 +126,7 @@ export const ModalMedicalCenter = (props) => {
                 [e.target.name]: e.target.value
             }
             setMedicalCenterSelected(changedFormValues);
-    
+
         }
     }
 
@@ -154,14 +154,14 @@ export const ModalMedicalCenter = (props) => {
         if (medicalCenterSelected.address.length >= 150) { return setError('address_limit') }
         if (typeAttention.name === '') { return setError('idTypeAttention') }
         if (!typeFlow){return setError('type_flow')}
-        if (country.name === '') { return setError('country') }
-        if (departament.name === '') { return setError('departament') }
-        if (province.name === '') { return setError('province') }
-        if (district.name === '') { return setError('district') }
+        // if (country.name === '') { return setError('country') }
+        // if (departament.name === '') { return setError('departament') }
+        // if (province.name === '') { return setError('province') }
+        // if (district.name === '') { return setError('district') }
 
         if (actionSelect == 'edit') {
             console.log('edit')
-            const data_edit = { ...medicalCenterSelected, idattention_type: typeAttention.id, iddistrict: district.id , type_flow: typeFlow?.id}
+            const data_edit = { ...medicalCenterSelected, idattention_type: typeAttention.id, iddistrict: district.id == 0? null:  district.id , type_flow: typeFlow?.id}
             const resp_edit = await medicalCenterService.updateMedicalCenter(medicalCenterSelected.id, data_edit);
             console.log(data_edit)
             if (resp_edit.data) {
@@ -177,7 +177,7 @@ export const ModalMedicalCenter = (props) => {
 
         if (actionSelect == 'save') {
             console.log('save')
-            const data_save = { ...medicalCenterSelected, idattention_type: typeAttention.id, iddistrict: district.id , type_flow: typeFlow?.id}
+            const data_save = { ...medicalCenterSelected, idattention_type: typeAttention.id,iddistrict: district.id == 0? null:  district.id , type_flow: typeFlow?.id}
 
             const resp_save = await medicalCenterService.createMedicalCenter(data_save);
             if (resp_save.data) {
@@ -293,10 +293,10 @@ export const ModalMedicalCenter = (props) => {
                             id="idattention_type"
                             options={dataTypeAttention}
                             getOptionLabel={(option: any) => option.name ? option.name : ""}
-                            renderInput={(params) => <TextField 
-                                {...params} 
-                                placeholder="Tipo Atencion" 
-                                error={error=="idTypeAttention" ? true : false} 
+                            renderInput={(params) => <TextField
+                                {...params}
+                                placeholder="Tipo Atencion"
+                                error={error=="idTypeAttention" ? true : false}
                                 helperText={error=="idTypeAttention"? "Campo requerido" : ""} />}
                         />
                     </Grid>
@@ -312,10 +312,10 @@ export const ModalMedicalCenter = (props) => {
                             id="idattention_type"
                             options={dataTypeFlow}
                             getOptionLabel={(option: any) => option.name ? option.name : ""}
-                            renderInput={(params) => <TextField 
-                                {...params} 
-                                placeholder="Tipo Atencion" 
-                                error={error=="idTypeAttention" ? true : false} 
+                            renderInput={(params) => <TextField
+                                {...params}
+                                placeholder="Tipo Atencion"
+                                error={error=="idTypeAttention" ? true : false}
                                 helperText={error=="idTypeAttention"? "Campo requerido" : ""} />}
                         />
                     </Grid>
@@ -325,7 +325,7 @@ export const ModalMedicalCenter = (props) => {
                             sx={{ bgcolor: '#fff' }}
                             size='small'
                             onChange={(e, data: any) => {
-                                
+
                                 if(data) {
                                  getDepartament(data.id)
                                 }else{
@@ -333,16 +333,16 @@ export const ModalMedicalCenter = (props) => {
                                     setProvince({id: 0, name: ''});
                                     setDistrict({id: 0, name: ''});
                                 }
-                              
+
                                 setCountry(data || [])
                             }}
                             id="idcountry"
                             options={ubigeo.country}
                             getOptionLabel={(option: any) => option.name ? option.name : ""}
-                            renderInput={(params) => <TextField 
-                                {...params} 
-                                placeholder="Pais" 
-                                error={error=="country" ? true : false} 
+                            renderInput={(params) => <TextField
+                                {...params}
+                                placeholder="Pais"
+                                error={error=="country" ? true : false}
                                 helperText={error=="country"? "Campo requerido" : ""} />}
                         />
                     </Grid>
@@ -363,10 +363,10 @@ export const ModalMedicalCenter = (props) => {
                             id="iddepartment"
                             options={ubigeo.departament}
                             getOptionLabel={(option: any) => option.name ? option.name : ""}
-                            renderInput={(params) => <TextField 
-                                {...params} 
-                                placeholder="Region" 
-                                error={error=="departament" ? true : false} 
+                            renderInput={(params) => <TextField
+                                {...params}
+                                placeholder="Region"
+                                error={error=="departament" ? true : false}
                                 helperText={error=="departament"? "Campo requerido" : ""} />}
                         />
                     </Grid>
@@ -386,10 +386,10 @@ export const ModalMedicalCenter = (props) => {
                             id="idprovince"
                             options={ubigeo.province}
                             getOptionLabel={(option: any) => option.name ? option.name : ""}
-                            renderInput={(params) => <TextField 
-                                {...params} 
-                                placeholder="Provincia" 
-                                error={error=="province" ? true : false} 
+                            renderInput={(params) => <TextField
+                                {...params}
+                                placeholder="Provincia"
+                                error={error=="province" ? true : false}
                                 helperText={error=="province"? "Campo requerido" : ""} />}
                         />
                     </Grid>
@@ -404,10 +404,10 @@ export const ModalMedicalCenter = (props) => {
                             id="iddistrict"
                             options={ubigeo.district}
                             getOptionLabel={(option: any) => option.name ? option.name : ""}
-                            renderInput={(params) => <TextField 
-                                {...params} 
-                                placeholder="Distrito" 
-                                error={error=="district" ? true : false} 
+                            renderInput={(params) => <TextField
+                                {...params}
+                                placeholder="Comuna"
+                                error={error=="district" ? true : false}
                                 helperText={error=="district"? "Campo requerido" : ""} />}
                         />
                     </Grid>
@@ -435,7 +435,7 @@ export const ModalMedicalCenter = (props) => {
                         </Grid>
                     </Grid>
                     {/* <Grid item xs={12} md={6} >
-                       
+
                     </Grid> */}
                 </Grid>
             </form>
