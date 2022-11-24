@@ -44,8 +44,8 @@ export const KyteApp: React.FC<Props> = (props: any): JSX.Element => {
                }
             },
          });
-
-         window['Echo'].channel(`messageChat${data.user.iduser_detail}`).listen('MessageChat', (e) => {
+         console.log(data.user.iduser)
+         window['Echo'].private(`messageChat${data.user.iduser}`).listen('MessageChat', (e) => {
             console.log(e)
             if(e && e.message && e.message.idchats)
             {
