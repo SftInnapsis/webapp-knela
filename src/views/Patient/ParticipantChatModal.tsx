@@ -45,7 +45,8 @@ import { ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 type ModalProps = {
    open: boolean,
    setOpen: any,
-   idAttention: any
+   idAttention: any,
+   chatsId?:any,
 //    actionSelect?: string,
 //    recoveryData?: any,
    //    savePatientMaster?: ({ }) => void,
@@ -56,7 +57,7 @@ type ModalProps = {
 export const ParticipantChatModal: React.FC<ModalProps> = (
    props: ModalProps
 ): JSX.Element => {
-    const { open, setOpen, idAttention } = props
+    const { open, setOpen, idAttention, chatsId} = props
     const [participantsPublic, setParticipantPublic] = useState<any>([])
     const [participantsPublicNotEmisor, setParticipantPublicNotEmisor] = useState<any>([])
     const [participantEmisor, setParticipantEmisor] = useState<any>(null)
@@ -70,8 +71,10 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
         if(userData?.user?.role == ROLE_PROFESSIONAL){
             particpanNotEmisor = resp?.data.filter(x => x.idprofessional != userData?.user.id_professional)
         }else{
-            particpanNotEmisor = resp?.data.filter(x => x.idprofessional != userData?.user.id_doctor)
+            particpanNotEmisor = resp?.data.filter(x => x.iddoctor!= userData?.user.id_doctor)
         }
+        console.log(userData?.user)
+        console.log(particpanNotEmisor)
         setParticipantPublicNotEmisor(particpanNotEmisor)
         setParticipantPublic(resp?.data)
     }
@@ -91,6 +94,7 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
     }
 
    const abrirChat = async (data) => {
+      console.log(data);
       let participantEmisorFind;
       if(userData?.user?.role == ROLE_PROFESSIONAL){
           participantEmisorFind = participantsPublic.find(item => item.idprofessional == userData?.user.id_professional)
@@ -120,8 +124,6 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
                 participantEmisorFind = participantsPublic.find(item => item.iddoctor == userData?.user.id_doctor)
             }
             setParticipantEmisor(participantEmisorFind)
-
-
     },[])
 
 
@@ -155,7 +157,7 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
          </Grid>
          <Grid>
                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                   <ListItem onClick={()=>{abrirChatPublic(participantsPublic[0]?.idchats)}}>
+                   <ListItem onClick={()=>{abrirChatPublic(chatsId)}}>
                        <ListItemAvatar>
                            <Avatar>
                                <GroupsIcon/>

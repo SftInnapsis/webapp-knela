@@ -11,6 +11,7 @@ import { ProfessionalModal } from "./ProfessionalModal";
 import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_MEDICAL_CENTER, KEY_USER_DATA } from "@/toolbox/constants/local-storage";
 import { ROLE_ADMIN } from "@/toolbox/defaults/static-roles";
+import { userService } from "@/service/services/User.service";
 
 
 export const ProfessionalView = (props) => {
@@ -51,7 +52,7 @@ export const ProfessionalView = (props) => {
                 setDataProfessional(resp.data)
             }
         }
-        
+
     }
 
     const RecuperarData = async (data) => {
@@ -70,6 +71,13 @@ export const ProfessionalView = (props) => {
                 let injectData = medicalTeamSelected;
                 injectData.push(data);
                 break;
+                case 'credential':
+                  const res = await userService.recoveryPassword(id, 8)
+                  if(res && res.data)
+                  {
+                  setSnackBarConfig({...snackBarConfig, open:true, severity:'success', message:res.data})
+                  }
+               break;
             default:
                 break;
         }
@@ -134,15 +142,15 @@ export const ProfessionalView = (props) => {
     //     if(user_data?.user?.role === ROLE_ADMIN){
     //         getDataProfessionalAll();
     //     }
-       
+
     // }, [])
 
     useEffect(() => {
             getDataProfessional();
-       
+
     }, [ MedicalCenterReducer.id_medical_center])
 
-    const bodyView = 
+    const bodyView =
     <>
             <ConfirmDialog
                 open={Dialog.open}
@@ -192,6 +200,7 @@ export const ProfessionalView = (props) => {
                 setModalSave={setOpen}
                 actionSelect={setActionSelect}
                 select_button= {props?.select_button ?true:false}
+                credential={true}
             />
         </>
 

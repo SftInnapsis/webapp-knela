@@ -34,6 +34,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import DeleteIcon from '@mui/icons-material/Delete';
 import "./PatientTutor.css";
+import { API_URL_BASE } from '@/toolbox/defaults/app';
 
 
 type ModalProps = {
@@ -110,8 +111,8 @@ export const ListSolicitudModal: React.FC<ModalProps> = (
                                                 {e.send}
                                             </Typography>}
                                             {e.idsend_type == 3 &&
-                                                <a href={`https://back.k-nela.cl/${e.send}`} target="_blank">
-                                                    <img style={{ width: '50%', display: e.idsend_type == 3 ? 'flex' : 'none' }} src={`https://back.k-nela.cl/${e.send}`} />
+                                                <a href={`${API_URL_BASE}/${e.send}`} target="_blank">
+                                                    <img style={{ width: '50%', display: e.idsend_type == 3 ? 'flex' : 'none' }} src={`${API_URL_BASE}/${e.send}`} />
                                                 </a>
                                             }
                                             {/* </CardActionArea> */}

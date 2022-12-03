@@ -36,7 +36,7 @@
     "firebase": "8.8.0",
     "interweave": "^13.0.0",
     "js-cookie": "^3.0.1",
-    "laravel-echo": "^1.11.3",
+    "laravel-echo": "^1.11.1",
     "lint-staged": "^11.1.2",
     "moment": "^2.29.1",
     "pusher-js": "4.3.1",
@@ -111,5 +111,5 @@
       "last 1 safari version"
     ]
   },
-  "buildDate": 1669327119187
+  "buildDate": 1669996693517
 }

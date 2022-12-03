@@ -14,6 +14,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { API_URL_BASE } from '@/toolbox/defaults/app';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -31,7 +33,8 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 type CardProps = {
-  info?:any
+  info?:any,
+  RecuperarData?:any
  }
 
 export const CardComponent : React.FC<CardProps> = (
@@ -60,6 +63,7 @@ export const CardComponent : React.FC<CardProps> = (
       />
         <CardActions disableSpacing>
           <Chip label={data.nameStatusPatient} color="error" variant="outlined" />
+          <DeleteIcon color='error' onClick={()=>{props.RecuperarData(data)}}/>
       </CardActions>
       </Grid>
 
@@ -71,7 +75,7 @@ export const CardComponent : React.FC<CardProps> = (
               <CardMedia
               component="img"
               height="194"
-              image={`https://back.k-nela.cl/${row.send}`}//imagen si ubiera
+              image={`${API_URL_BASE}/${row.send}`}//imagen si ubiera
               alt="img"
             />}
           { row.idsend_type==1 &&  <CardContent>

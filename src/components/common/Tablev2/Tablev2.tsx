@@ -25,6 +25,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Filter } from '@mui/icons-material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditIcon from '@mui/icons-material/Edit';
+import KeyIcon from '@mui/icons-material/Key';
 // import Label from '@components/common/label'
 // import { sentenceCase } from 'change-case';
 import { Box } from "@mui/material";
@@ -34,6 +35,7 @@ import PanToolAltIcon from '@mui/icons-material/PanToolAlt';
 
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import PersonIcon from '@mui/icons-material/Person';
 type TableProps = {
    header?: Array<any>,
    data?: Array<any>,
@@ -62,7 +64,9 @@ type TableProps = {
    GenerateExportExcel?:any,
    setOpenImport?:any,
    openImport?:any,
-   add_tutor_button?:any
+   add_tutor_button?:any,
+   credential?:any,
+   disabled_edit?:any
 }
 
 // ----------------------------------------------------------------------
@@ -362,31 +366,50 @@ export const TableDataV2: React.FC<TableProps> = (
                                        {
                                            ! props?.disabled_popover &&
                                              <>
-                                                <IconButton size="small" color="success" aria-label="view"
+                                               {!props.disabled_edit &&
+                                               <Tooltip title="Editar" >
+                                               <IconButton size="small" color="success" aria-label="view"
                                                     onClick={()=>{props.RecuperarData({...data,action:'edit'}); props.actionSelect('edit')}}
                                                 >
                                                    <EditIcon fontSize='small' />
                                                 </IconButton>
+                                                </Tooltip>
+                                                }
+                                                <Tooltip title="Eliminar">
                                                 <IconButton size="small" color="error" aria-label="view"
                                                 onClick={()=>{props.RecuperarData({...data,action:'delete'})}}                                             >
                                                 <DeleteOutlineIcon fontSize='small' />
                                              </IconButton>
+                                             </Tooltip>
                                              </>
                                           }
+                                           {props.credential &&
+                                           <Tooltip title="Reenviar credenciales">
+                                             <IconButton size="small" color="primary" aria-label="view"
+                                                onClick={() => { props.RecuperarData({ ...data, action: 'credential' }) }}
+                                             >
+                                                <KeyIcon fontSize='small' />
+                                             </IconButton>
+                                             </Tooltip>
+                                          }
                                           {props.select_button &&
-                                          <IconButton size="small" color="primary" aria-label="view"
+                                          <Tooltip title="Agregar paciente a la atención">
+                                          <IconButton size="small" color="secondary" aria-label="view"
                                           onClick={() => { props.RecuperarData({ ...data, action: 'seleccionar' }) }}
                                                 >
                                                    <PanToolAltIcon fontSize='small' />
-                                                </IconButton>
+                                          </IconButton>
+                                          </Tooltip>
                                           }
                                           {
                                              props.add_tutor_button &&
-                                             <IconButton size="small" color="primary" aria-label="view"
+                                             <Tooltip title="Agregar / Editar tutor">
+                                             <IconButton size="small" color="warning" aria-label="view"
                                              onClick={() => { props.RecuperarData({ ...data, action: 'add_tutor' }) }}
                                                    >
-                                                      <PersonAddAlt1Icon fontSize='small' />
+                                                      <PersonIcon fontSize='small' />
                                                    </IconButton>
+                                                   </Tooltip>
                                              // <TableCell align="center">
                                              //    <Button variant='outlined' color='primary' onClick={() => { props.RecuperarData({ ...data, action: 'add_tutor' }) }}>Agregar Tutor</Button>
                                              // </TableCell>

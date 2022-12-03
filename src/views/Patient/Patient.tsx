@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Card, CardActionArea, CardMedia, Grid, IconButton, MenuItem, Modal, TextField, Typography, Box, InputBase, Button, } from "@mui/material";
+import { Card, CardActionArea, CardMedia, Grid, IconButton, MenuItem, Modal, TextField, Typography, Box, InputBase, Button, Snackbar, Alert, } from "@mui/material";
 import { ROUTE_HOME } from '@constants/route-map';
 import { Link } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -30,6 +30,7 @@ import { ROLE_PROFESSIONAL } from "@/toolbox/constants/role-type";
 import { CardComponent } from '@components/common/Card';
 import { chatService } from "@/service/services/Chat.service";
 import { ParticipantChatModal } from "./ParticipantChatModal";
+import { ConfirmDialog } from "@/components/common/DialogConfirm";
 
 export const PatientView = (props) => {
     const item = props.location.state.dataPaciente;
@@ -37,6 +38,20 @@ export const PatientView = (props) => {
     const [showModalEquipo, setModalEquipo] = React.useState(false);
     const [showModalTutor, setModalTutor] = React.useState(false);
     const [showChatEquipo, setshowChatEquipo] = useState(false);
+    const [Dialog, setDialog] = useState<any>({
+      open: false,
+      title: 'Eliminar',
+      confirm: false,
+      id: null,
+      message: ``
+      })
+      const [snackBarConfig, setSnackBarConfig] = useState<any>({
+         open: false,
+         severity: 'success',
+         message: 'Error',
+         autoHideDuration: 5000,
+      })
+
 
     const [showModalIngresoPaciente, setModalIngresoPaciente] = React.useState(false);
     const [statusValidate, setStatusValidate] = React.useState(false);
@@ -46,6 +61,7 @@ export const PatientView = (props) => {
     const [estado, setEstado] = React.useState([])
     const [recoveryData, setRecoveryData] = React.useState({})
     const [printRequest, setPrintRequest] = React.useState([]);
+    const [chatsId, setChatsId] = React.useState(null);
     const dataUser: any = readLocalStorage(KEY_USER_DATA)
     const userData = readLocalStorage(KEY_USER_DATA);
     const savePublication = async (data, cont_txt, cont_file, statusPatient) => {
@@ -129,7 +145,8 @@ export const PatientView = (props) => {
         } else {
             res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center, 1, [item?.id]);
         }
-        // console.log(res.data);
+         console.log(res.data)
+         console.log(item);
         if (res.data && res.data.status !== false) {
             setstatusDefault(res.data[0].data.idstatus_patient)
             setmensajePaciente(res.data)
@@ -145,7 +162,8 @@ export const PatientView = (props) => {
          const { id } = item;
          const res = await chatService.validateAtentiton(id, id_doctor, id_professional, 1);
          if (res && res.data) {
-            setStatusValidate(res.data)
+            setChatsId(res.data.chatId)
+            setStatusValidate(res.data.status_confirm)
          }
       }
    }
@@ -186,6 +204,41 @@ export const PatientView = (props) => {
         setRecoveryData({ ...row, action: 'edit' });
         setModalIngresoPaciente(true)
     }
+
+    const Delete = async () => {
+      try {
+          if (Dialog.confirm == true) {
+              const resp_delete = await attentionService.deleteStatusUpdatePatient(Dialog.id, MedicalCenterReducer.id_medical_center)
+              if(resp_delete.data.status){
+                  setSnackBarConfig(prev => ({
+                      ...prev,
+                      open: true,
+                      severity: 'success',
+                      message: 'Se eliminó la publicación con éxito',
+                   }));
+              }else{
+                  setSnackBarConfig(prev => ({
+                      ...prev,
+                      open: true,
+                      severity: 'success',
+                      message: 'No se eliminó la publicación',
+                   }));
+              }
+            //   getDataInitial();
+            getStatusPatient()
+              console.log(resp_delete)
+          }
+      } catch (e) {
+          console.log(e)
+      }
+  }
+
+   const RecuperarData = async (data) => {
+      if (data) {
+         const { id } = data;
+         setDialog(prev => ({ ...prev, message: ``, id: id, open: true, confirm: true }));
+      }
+   }
 
     React.useEffect(() => {
         validateAtentiton();
@@ -485,7 +538,7 @@ export const PatientView = (props) => {
                                     </Grid>}
                                 {mensajePaciente.map((item2) => (
                                     <Grid item xs={12} md={4}>
-                                        <CardComponent info={item2} />
+                                        <CardComponent info={item2} RecuperarData={RecuperarData}/>
                                     </Grid>
                                 ))}
                             </Grid>
@@ -507,6 +560,7 @@ export const PatientView = (props) => {
              open={showModalEquipo}
              setOpen={setModalEquipo}
              idAttention={item?.id}
+             chatsId={chatsId}
              />
             {/* <TutorModal
                 open={showModalTutor}
@@ -517,6 +571,27 @@ export const PatientView = (props) => {
                 setOpen={setModalTutor}
                 recoveryData={printRequest}
             />
+            <ConfirmDialog
+                open={Dialog.open}
+                title={Dialog.title}
+                message={Dialog.message}
+                onConfirm={() => Delete()}
+                onClose={() => setDialog(prev => ({ ...prev, open: false }))}
+            />
+              <Snackbar
+               open={snackBarConfig.open}
+               autoHideDuration={snackBarConfig.autoHideDuration}
+               onClose={() => setSnackBarConfig(prev => ({ ...prev, open: false }))}
+               anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+               <Alert
+                  onClose={() => setSnackBarConfig(prev => ({ ...prev, open: false }))}
+                  severity={snackBarConfig.severity}
+                  variant="filled"
+               >
+                  {snackBarConfig.message}
+               </Alert>
+            </Snackbar>
         </>
     );
 };

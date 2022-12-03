@@ -282,10 +282,11 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
 
 
          // props.$action.actionSetListNotification(2)
+         console.log(data);
          if (data) {
             window['Echo'] = new Echo({
                broadcaster: 'pusher',
-               key: 'knela2',
+               key: 'knela_key',
                wsHost: window.location.hostname,
                wsPort: 6005,
                cluster: 'mt1',

@@ -8,6 +8,7 @@ import { SaveIcon, CancelIcon } from "@toolbox/constants/icons";
 import { Button, InputAdornment, Autocomplete, TextField, Grid, CircularProgress, Snackbar, Alert, FormControl, OutlinedInput, InputLabel, MenuItem, Select } from '@mui/material';
 import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_MEDICAL_CENTER } from "@/toolbox/constants/local-storage";
+import { userService } from "@/service/services/User.service";
 
 export const DoctorView = (props) => {
     const { MedicalCenterReducer = '' } = props;
@@ -83,9 +84,15 @@ export const DoctorView = (props) => {
                 setDialog(prev => ({ ...prev, message: `Seguro que quiere eliminar a ${name} ${last_name}`, id: id, medical_center: idmedical_center, open: true, confirm: true }));
                 break;
             case 'seleccionar':
-
-                props?.recuperarData(data);
+               //  props?.recuperarData(data);
                 break;
+            case 'credential':
+               const res = await userService.recoveryPassword(id, 4)
+               if(res && res.data)
+               {
+               setSnackBarConfig({...snackBarConfig, open:true, severity:'success', message:res.data})
+               }
+            break;
             default:
                 break;
         }
@@ -214,6 +221,7 @@ export const DoctorView = (props) => {
             actionSelect={setActionSelect}
             dataSearch={getDoctorSearchPage}
             dataInitial={getDataDoctor}
+            credential={true}
         />
     </>
     return (

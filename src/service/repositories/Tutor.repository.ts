@@ -74,6 +74,7 @@ export const tutorRepository = {
       };
    },
    updateTutor: async (id: number, dataTutor) : Promise<any> => {
+      const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
       const resp = await http.patch<any>(`${API_URL_BASE}/v1/tutor/${id}`, {
         name: dataTutor?.name,
         last_name: dataTutor?.last_name,
@@ -81,6 +82,7 @@ export const tutorRepository = {
         date_birth: dataTutor?.date_birth,
         mail: dataTutor?.mail,
         idpatients: dataTutor?.idpatients,
+        medical_center: medical_center
       })
       return {
          status: resp.status,

@@ -10,6 +10,7 @@ export const userService = {
    getUserSearch,
    updateParticipationUsers,
    ResendPassword,
+   recoveryPassword,
    PruebaReducer:(value) =>{
       switch (value) {
          case 1:
@@ -72,6 +73,11 @@ async function updateParticipationUsers (participacion) {
 async function ResendPassword(idusuario)
 {
    const user= await userRepository.ResendPassword(idusuario);
+   return user
+}
+
+async function recoveryPassword(id_user, rol_type) {
+   const user = await userRepository.recoveryPassword(id_user, rol_type);
    return user
 }
 

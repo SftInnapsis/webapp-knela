@@ -1,3 +1,4 @@
+import { ConfirmDialog } from "@/components/common/DialogConfirm";
 import { TableDataV2 } from "@/components/common/Tablev2"
 import { Protected } from "@/components/layout/Protected";
 import { attentionService } from "@/service/services/Attention.service"
@@ -20,6 +21,14 @@ export const AttentionList = (props) => {
         message: 'Error',
         autoHideDuration: 5000,
      })
+     const [Dialog, setDialog] = useState<any>({
+      open: false,
+      title: 'Eliminar',
+      confirm: false,
+      id: null,
+      message: `¿Desea eliminar al contacto --- con Rut ----?`
+  })
+
     const dataInitial = async() => {
         const resp = await attentionService.getAttentionAdmin();
         // console.log(resp)
@@ -32,14 +41,36 @@ export const AttentionList = (props) => {
 
     const RecuperarData = (data) => {
         console.log(data)
+        const {id} = data
         if(actionSelect == 'save'){
             history.push(ROUTE_ATTENTION)
         }
-        // if(data.action== 'edit'){
-        //     setOpen(true)
-        //     setAttetnionSelected(data)
-        // }
+        if(data.action== 'delete'){
+         setDialog(prev => ({ ...prev, message: `Seguro que quiere eliminar la atención`, id: id, medical_center: '', open: true, confirm: true }));
+        }
+
     }
+
+    const Delete = async () => {
+      const { confirm, id } = Dialog;
+      try {
+          if (confirm == true) {
+              const res = await attentionService.deleteAttention(id)
+              console.log(res)
+              if (res.data) {
+                  setSnackBarConfig(prev => ({
+                      ...prev,
+                      open: true,
+                      severity: 'info',
+                      message: res.data.message,
+                  }));
+                  dataInitial();
+              }
+          }
+      } catch (e) {
+          // console.log(e)
+      }
+  }
 
     const saveAttention = () => {
 
@@ -78,6 +109,13 @@ export const AttentionList = (props) => {
                   {snackBarConfig.message}
                </Alert>
             </Snackbar>
+          <ConfirmDialog
+             open={Dialog.open}
+             title={Dialog.title}
+             message={Dialog.message}
+             onConfirm={() => Delete()}
+             onClose={() => setDialog(prev => ({ ...prev, open: false }))}
+          />
            <ModalAttention
                 open={open}
                 setOpen={setOpen}
@@ -105,13 +143,15 @@ export const AttentionList = (props) => {
                 status_action
                 checkbox
                 title={'Mis Atenciones Medicas'}
-                disabled_popover={true}
+                disabled_popover={false}
+                disabled_edit = {true}
                 RecuperarData={RecuperarData}
                 setModalSave={setOpen}
                 actionSelect={setActionSelect}
                 dataInitial = {dataInitial}
                 dataSearch = {dataSearch}
             />
+
         </Protected>
     )
 }

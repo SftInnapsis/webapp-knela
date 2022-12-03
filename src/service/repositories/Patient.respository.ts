@@ -30,6 +30,7 @@ export const patientRepository = {
             tutor_id:dt.tutor_id,
             tutor_last_name: dt.tutor_last_name,
             tutor_name: dt.tutor_name,
+            tutor_mail: dt.tutor_mail,
             full_name_tutor: dt.tutor_name ? dt.tutor_name + ' ' + dt.tutor_last_name: '',
             tutor_rut: dt.tutor_rut
          })),

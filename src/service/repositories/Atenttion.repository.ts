@@ -18,7 +18,7 @@ export const atenttionRepository = {
    getAttentionAdmin: async ( ): Promise<any> => {
       const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
       console.log(medical_center)
-      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_center}` )
+      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_center}&status=1` )
       const {data,error,message} = family
       return {
          data,
@@ -31,7 +31,7 @@ export const atenttionRepository = {
       const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
       const user_data = readLocalStorage(KEY_USER_DATA)
       const idareaa =  user_data?.user?.idarea
-      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idarea=${idareaa?JSON.stringify([idareaa]):[]}` )
+      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idarea=${idareaa?JSON.stringify([idareaa]):[]}&status=1` )
       const {data,error,message} = family
       return {
          data,
@@ -43,7 +43,7 @@ export const atenttionRepository = {
    getAttentionByProfessional: async(idprofessional):Promise<any> => {
       const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
       console.log(medical_centerr)
-      const attention = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}` )
+      const attention = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&status=1` )
       const {data,error,message} = attention
       return {
          data,
@@ -56,7 +56,7 @@ export const atenttionRepository = {
       // const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
       // const user_data = readLocalStorage(KEY_USER_DATA)
       // const idareaa =  user_data?.user?.idarea
-      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_center}&idtutor=${idtutor}` )
+      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_center}&idtutor=${idtutor}&status=1` )
       const {data,error,message} = family
       return {
          data,
@@ -70,7 +70,7 @@ export const atenttionRepository = {
       const user_data = readLocalStorage(KEY_USER_DATA)
       console.log(user_data)
       const idareaa =  user_data?.user?.idarea
-      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idpatients=${idpatients?JSON.stringify(idpatients):[]}` )
+      const family = await http.get<any>(`${API_URL_BASE}/v1/attention?medical_center=${medical_centerr}&idpatients=${idpatients?JSON.stringify(idpatients):[]}&status=1` )
       const {data,error,message} = family
       return {
          data,
@@ -79,7 +79,8 @@ export const atenttionRepository = {
       };
    },
    getStatusPatient: async ( medical_center ): Promise<any> => {
-      const family = await http.get<any>(`${API_URL_BASE}/v1/statusPatient?medical_center=${medical_center}` )
+      const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
+      const family = await http.get<any>(`${API_URL_BASE}/v1/statusPatient?medical_center=${medical_centerr}` )
       const {data,error,message} = family
       //oeeoeoeo te lo tumbaste xd
       return {
@@ -123,10 +124,15 @@ export const atenttionRepository = {
    },
 
    deleteStatusUpdatePatient: async (id: number, medical_center): Promise<any> => {
-      const familyDeleted = await http.delete(`${API_URL_BASE}/v1/updatePatient/${id}?medical_center${medical_center}`)
+      const familyDeleted = await http.delete(`${API_URL_BASE}/v1/updatePatient/${id}?medical_center=${medical_center}`)
       return familyDeleted;
    },
 
+   deleteAttention: async (id: number): Promise<any> => {
+      const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
+      const res = await http.delete(`${API_URL_BASE}/v1/attention/${id}?medical_center=${medical_center}`)
+      return res;
+   },
 
    createfamily: async (datafamily) : Promise<any> => {
 
@@ -175,6 +181,8 @@ export const atenttionRepository = {
          observation: data.observations,
          idstatus_patient: data.idstatus_patient// me falta
       })
+
+      return dataAttention;
    },
    getTypeAttention : async(): Promise<any> => {
       const resp_type = await http.get(`${API_URL_BASE}/v1/attentionType`);

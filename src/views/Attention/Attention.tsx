@@ -48,7 +48,7 @@ export const AttentionView = (props) => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-   
+
        const [activeStep, setActiveStep] = React.useState(0);
        const [dataPatient, setDataPatient] = useState<any>({
         id:0, name:'', last_name:'', rut:''
@@ -75,15 +75,15 @@ export const AttentionView = (props) => {
            })
     };
 
-    
+
     const handleChanges = (e) => {
         setIdStatus(e.target.value)
-    } 
+    }
 
     const handleChanges2 = (e) => {
         setIdType(e.target.value)
     }
-    
+
     const GenerateAttention = async(dataObservation) => {
         console.log(dataPatient)
         console.log(dataTutor)
@@ -94,17 +94,19 @@ export const AttentionView = (props) => {
         const dta = {
             idarea: dataDoctor?.idarea, // me falta
             idpatients:dataPatient?.id,
-            iddoctor: dataDoctor?.id, 
+            iddoctor: dataDoctor?.id,
             idtutor:dataPatient?.tutor_id,
             idstatus_patient: idStatus,
             idtypeSeguro: dataPatient?.idTypeSeguro,
             observations: dataObservation.text,
-            
+
         }
         console.log(dta)
         const resp_attention = await attentionService.createAttention(dta);
         // if(resp_attention){
-            setSnackBarConfig({...snackBarConfig, open:true, severity:'success', message:'La atención médica ha sido registrada con éxito'})
+         console.log(resp_attention);
+       const { severity, message } = resp_attention.data;
+       setSnackBarConfig({ ...snackBarConfig, open: true, severity: severity, message: message })
             handleReset()
         // }
     }
@@ -124,8 +126,8 @@ export const AttentionView = (props) => {
         },
         {
             label: 'Confirmción de datos',
-            description: <StepConfirmation dataDoctor={dataDoctor} dataTutor={dataTutor} 
-            dataPatient={dataPatient} 
+            description: <StepConfirmation dataDoctor={dataDoctor} dataTutor={dataTutor}
+            dataPatient={dataPatient}
             dataStatusPatient={dataStatusPatient}
             idStatus={idStatus}
             handleChanges={handleChanges}
@@ -140,7 +142,7 @@ export const AttentionView = (props) => {
         },
     ];
 
-    
+
     const createAttetion = () => {
         console.log(dataPatient)
         console.log(dataTutor)
@@ -206,7 +208,7 @@ export const AttentionView = (props) => {
                             </Step>
                         ))}
                     </Stepper>
-                   
+
                 </Box>
                 <Snackbar
                 open={snackBarConfig.open}

@@ -13,7 +13,8 @@ export const attentionService = {
    updateStatusUpdatePatient,
    deleteStatusUpdatePatient,
    getAttentionPatienByTutor,
-   getAttentionByProfessional
+   getAttentionByProfessional,
+   deleteAttention
    //    createArea,
    //    updateArea,
    //    deleteArea
@@ -73,6 +74,10 @@ async function createAttention(data) {
 async function getTypeAttention() {
    const resp_type_attention = await atenttionRepository.getTypeAttention();
    return resp_type_attention
+}
+async function deleteAttention(id) {
+   const res = await atenttionRepository.deleteAttention(id);
+   return res
 }
 // async function createArea (dataArea) {
 //     const user= await atenttionRepository.createArea(dataArea);

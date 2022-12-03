@@ -172,8 +172,10 @@ export const EquipoModalView: React.FC<ModalProps> = (
     }
 
    React.useEffect(() => {
-      // console.log(props)
+     if(open)
+     {
       onListMessage()
+     }
    }, [open]);
 
    // React.useEffect(() => {
@@ -299,6 +301,7 @@ export const EquipoModalView: React.FC<ModalProps> = (
                            placeholder="Escribe un Mensaje"
                            name='mensaje'
                            id='mensaje'
+                           spellCheck={true}
                            onKeyPress={event => { event.key === 'Enter' && addContent(mensajeTemp) }}
                         />
                      </Grid>

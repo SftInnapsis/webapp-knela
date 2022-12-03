@@ -24,11 +24,12 @@ export const KyteApp: React.FC<Props> = (props: any): JSX.Element => {
       //  ContNotify();
       console.log(props)
       console.log(readLocalStorage(KEY_TOKEN_KYTE));
+      console.log(data);
       if(data.user)
       {
          window['Echo'] = new Echo({
             broadcaster: 'pusher',
-            key: 'knela2',
+            key: 'knela_key',
             wsHost: window.location.hostname,
             wsPort: 6005,
             cluster: 'mt1',
@@ -57,7 +58,7 @@ export const KyteApp: React.FC<Props> = (props: any): JSX.Element => {
       }
       //  console.log(data.user.idmedical_center);
       //   console.log(data);
-      if (data && data.user && !data.user.idmedical_center) {
+      if (data && data.user && !data.user.idmedical_center && data.user.medical_center) {
          data.user.medical_center.length > 0 && props.$action.SelectMedicalCenter(data && data.user && data.user.medical_center[0].idmedical_center);
       } else {
          props.$action.SelectMedicalCenter(data && data.user && data.user.idmedical_center);
