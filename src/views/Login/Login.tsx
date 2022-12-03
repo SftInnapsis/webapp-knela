@@ -321,8 +321,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
    };
-
-   const onListMessage = async (idChat) =>{
+ const onListMessage = async (idChat) =>{
       if(idChat)
       {
        const res:any = await chatService.getDetailMessage(idChat);
@@ -334,8 +333,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
          //  setMessage(res.data.detail)
        }
       }
-    }
-
+    }//ds
 
    return (
       <ThemeProvider theme={theme}>
@@ -371,10 +369,17 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
                            </Grid>
                         </Grid>
 
-                        <Grid item container xs={12} md={5} sx={{ background: "rgb(255, 255, 255)", borderRadius: "20px" }} p={2}>
-                           <Grid sx={{ background: "#ed6566", height: "5px", borderRadius: "10px 10px 0px 0px ", width: "100%" }}></Grid>
+                        <Grid item container xs={12} md={5} sx={{ background: "rgb(255, 255, 255)", borderRadius: "20px" }} p={2}
+                           direction="column"
+                           justifyContent="flex-start"
+                           alignItems="center">
+                           <Grid sx={{
+                              background: "#ed6566", height: "5px",
+                              borderRadius: "10px 10px 0px 0px ", width: "100%",
+                              mb: '30%'
+                           }}></Grid>
                            <form onSubmit={handleSubmit} >
-                              <Grid container >
+                              <Grid container sx={{ mb: '10px' }} >
 
                                  {/* <Grid mb={2} item xs={12}>
                                     <FormControl fullWidth variant="outlined" >

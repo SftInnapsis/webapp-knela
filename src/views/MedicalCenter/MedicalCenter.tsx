@@ -140,6 +140,7 @@ export const MedicalCenter = (props) => {
                 RecuperarData={RecuperarData}
                 actionSelect={setActionSelect}
                 setModalSave={setOpen}
+            
             />
         </Protected>
     );

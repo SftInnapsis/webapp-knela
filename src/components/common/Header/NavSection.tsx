@@ -186,7 +186,7 @@ export default function NavSection() {
   const { pathname } = useLocation();
   const initialRuta = readLocalStorage(KEY_RUTA)
   const [ruta, setRuta] = React.useState(initialRuta || '');
-  console.log(data_user)
+  //console.log(data_user)
   const type_user = data_user.user.role;
   const [rutasHeader, setRutasHeader] = React.useState([])
   const validateType = () => {

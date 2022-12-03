@@ -121,7 +121,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
             const req = await doctorService.createDoctorIndependiente(data)
         }
         catch (e) {
-
+            console.log(e);
         }
 
     }
