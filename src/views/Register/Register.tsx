@@ -79,46 +79,56 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
 
     const [data, setData] = useState({
         name: '',
-        lastname: '',
+        last_name: '',
         rut: '',
         date_birth: '',
         address: '',
         mail: '',
         medicalCenter: 0,
-        district: 0,
+        iddistrict: 0,
         area: 0,
         especiality: 0,
-
+        dni: '',
+        job_tittle: '',
+        front_photo: '',
+        side_photo: '',
+        curriculum: '',
+        observations:'',
         textError: ''
     });
+
+    const [file, setFile] = useState(null)
 
     const [idDistrict, setIdDistrict] = useState({ id: 0, name: '' });
     const [idArea, setIdArea] = useState({ id: 0, name: '' });
     const [idEspeciality, setIdEspeciality] = useState({ id: 0, name: '' });
     const [idMedicalCenter, setIdMedicalCenter] = useState({ id: 0, name: '' });
 
-    const [error, setError] = useState<any>('');
+    const [error, setError] = useState('');
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        console.log(data);
-        if (data.name === '') { return setError('name') }
-        if (data.lastname === '') { return setError('lastname') }
-        if (data.rut === '') { return setError('rut') }
-        if (data.date_birth === '') { return setError('date_birth') }
-        if (data.mail === '') { return setError('mail') }
-        if (data.address === '') { return setError('address') }
-
-        if (idMedicalCenter.name ==='') {return setError('idMedicalCenter') }
-        if (idDistrict.name === '') { return setError('idDistrict') }
-        if (idArea.name === '') { return setError('idArea') }
-        if (idEspeciality.name === '') { return setError('idEspeciality') }
-
-        //const { name, last_name, rut, date_birth, mail, address, area, district, especiality } = data
-
         try {
+            e.preventDefault();
+            console.log('data', data);
+            if (data.last_name === '') { return setError('last_name') }
+            /*if (data.name === ''){return setError('name')}
+            
+            if (data.rut === '') { return setError('rut') }
+            if (data.date_birth === '') { return setError('date_birth') }
+            if (data.mail === '') { return setError('mail') }
+            if (data.address === '') { return setError('address') }
+
+            if (idMedicalCenter.name === '') { return setError('idMedicalCenter') }
+            if (idDistrict.name === '') { return setError('idDistrict') }
+            if (idArea.name === '') { return setError('idArea') }
+            if (idEspeciality.name === '') { return setError('idEspeciality') }*/
+
+            //const { name, last_name, rut, date_birth, mail, address, area, district, especiality } = data
+
+
             const req = await doctorService.createDoctorIndependiente(data)
+            console.log('respuesta', req)
         }
         catch (e) {
             console.log(e);
@@ -135,6 +145,16 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
         setData(injectData)
     }
 
+    const loadFile = (e) => {
+        const injectFile = { 
+            ...data,
+            [e.target.name]: e.target.files[0].name
+        } 
+        setData(injectFile)
+    }
+
+
+    console.log(data)
 
     useEffect(() => {
     }, [])
@@ -182,6 +202,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                             <Grid item xs={12} md={6}>
                                                 <FormControl fullWidth variant="outlined" >
                                                     <OutlinedInput
+                                                        required
                                                         id="name"
                                                         value={data.name}
                                                         onChange={onChange}
@@ -197,16 +218,19 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
 
                                             <Grid item xs={12} md={6}>
                                                 <FormControl fullWidth variant="outlined" >
-                                                    <OutlinedInput
+                                                    <TextField
+
                                                         id="last_name"
                                                         placeholder={'Apellidos'}
-                                                        value={data.lastname}
+                                                        value={data.last_name}
                                                         onChange={onChange}
                                                         name='last_name'
-                                                        startAdornment={
-                                                            <InputAdornment position='start'>
-                                                                <PersonIcon sx={{ color: "#28c4ac" }} />
-                                                            </InputAdornment>}
+                                                        error={error == "last_name" ? true : false}
+                                                        helperText={error == "last_name" ? "Campo requerido" : ""}
+                                                    // startAdornment={
+                                                    //     <InputAdornment position='start'>
+                                                    //         <PersonIcon sx={{ color: "#28c4ac" }} />
+                                                    // </InputAdornment>}
                                                     />
                                                 </FormControl>
                                             </Grid>
@@ -215,6 +239,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                             <Grid item xs={12} md={6}>
                                                 <FormControl fullWidth variant="outlined" >
                                                     <OutlinedInput
+                                                        required
                                                         id="rut"
                                                         placeholder={'Rut'}
                                                         value={data.rut}
@@ -230,6 +255,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
 
                                             <Grid item xs={12} md={6}>
                                                 <OutlinedInput
+                                                    required
                                                     fullWidth
                                                     type="date"
                                                     id="date_birth"
@@ -247,6 +273,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                             <Grid item xs={12} md={6}>
                                                 <FormControl fullWidth variant="outlined" >
                                                     <OutlinedInput
+                                                        required
                                                         id="mail"
                                                         value={data.mail}
                                                         placeholder={'Correo electronico'}
@@ -263,6 +290,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                             <Grid item xs={12} md={6}>
                                                 <FormControl fullWidth variant="outlined" >
                                                     <OutlinedInput
+                                                        required
                                                         id="address"
                                                         placeholder={'Direccion'}
                                                         name='address'
@@ -414,15 +442,20 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
 
                                             </Grid>
                                             <Grid item xs={12}>
-                                            <Typography>Cargar Documentos</Typography>
+                                                <Typography>Cargar Documentos</Typography>
                                                 <Divider />
-                                                </Grid>
+                                            </Grid>
 
 
-                                            <Grid container direction="row" >
-                                                <Grid container item xs={6} md={6} >
+                                            <Grid container direction="row"
+                                                sx={{
+                                                    mt: '10px',
+                                                    ml: '40px',
+                                                    width: '100%'
+                                                }}>
+                                                <Grid container item >
                                                     <Grid container item alignItems='center' >
-                                                        <Grid item xs={2}>
+                                                        {/* <Grid item xs={2}>
                                                             <IconButton aria-label="AddAPhotoIcon" size="large">
                                                                 <AddAPhotoIcon sx={{ color: "#28c4ac" }} />
                                                             </IconButton>
@@ -431,58 +464,62 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                                             <IconButton aria-label="PictureAsPdfIcon" size="large">
                                                                 <PictureAsPdfIcon sx={{ color: "#28c4ac" }} />
                                                             </IconButton>
-                                                        </Grid>
-                                                        <Grid item xs={8} >
-                                                            <Button
-                                                            fullWidth
-                                                                variant='outlined'
-                                                                size='small' >
-                                                                 DNI
+                                                        </Grid> 
+                                                        <Grid item xs={8} alignItems='flex-start' >
+                                                            <Button variant="outlined" component="label" sx={{ width: '70%', mb:'15px' }}>
+                                                                DNI
+                                                                <input hidden accept="/*" type="file" onChange={e=> console.log(e)} />
                                                             </Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Typography>{file.nameFile}</Typography>
+                                                        </Grid>*/}
+                                                        
+                                                        <input type="file" name="dni" id="" onChange={loadFile} />
+                                                        <input type="file" name="job_tittle" id="" onChange={loadFile} />
+                                                        <input type="file" name="front_photo" id="" onChange={loadFile} />
+                                                        <input type="file" name="side_photo" id="" onChange={loadFile} />
+                                                        <input type="file" name="curriculum" id="" onChange={loadFile} />
+
+                                                    </Grid>
+
+                                                    {/* <br />
+
+                                                    <Grid container item alignItems='center' >
+                                                        <Grid item xs={8} >
+                                                            <Button variant="outlined" component="label" sx={{ width: '70%', mb:'15px' }}>
+                                                                Foto
+                                                                <input hidden accept="image/*" multiple type="file" />
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Typography>{file.nameFile}</Typography>
                                                         </Grid>
                                                     </Grid>
 
                                                     <Grid container item alignItems='center' >
-                                                        <Grid item xs={2}>
-                                                            <IconButton aria-label="AddAPhotoIcon" size="large">
-                                                                <AddAPhotoIcon sx={{ color: "#28c4ac" }} />
-                                                            </IconButton>
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            <IconButton aria-label="PictureAsPdfIcon" size="large">
-                                                                <PictureAsPdfIcon sx={{ color: "#28c4ac" }} />
-                                                            </IconButton>
-                                                        </Grid>
                                                         <Grid item xs={8} >
-                                                            <Button
-                                                            fullWidth
-                                                                variant='outlined'
-                                                                size='small' >
-                                                                 Titulo de Trabajo
+                                                            <Button variant="outlined" component="label" sx={{ width: '70%', mb:'15px' }}>
+                                                                Titulo de Trabajo
+                                                                <input hidden accept="image/*" multiple type="file" />
                                                             </Button>
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Typography>{file.nameFile}</Typography>
                                                         </Grid>
                                                     </Grid>
 
                                                     <Grid container item alignItems='center' >
-                                                        <Grid item xs={2}>
-                                                            <IconButton aria-label="AddAPhotoIcon" size="large">
-                                                                <AddAPhotoIcon sx={{ color: "#28c4ac" }} />
-                                                            </IconButton>
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            <IconButton aria-label="PictureAsPdfIcon" size="large">
-                                                                <PictureAsPdfIcon sx={{ color: "#28c4ac" }} />
-                                                            </IconButton>
-                                                        </Grid>
                                                         <Grid item xs={8} >
-                                                            <Button
-                                                            fullWidth
-                                                                variant='outlined'
-                                                                size='small' >
-                                                                 Curriculum
+                                                            <Button variant="outlined" component="label" sx={{ width: '70%', mb:'15px' }}>
+                                                                CURRICULUM
+                                                                <input hidden accept="image/*" multiple type="file" />
                                                             </Button>
                                                         </Grid>
-                                                    </Grid>
+                                                        <Grid>
+                                                            <Typography>{file.nameFile}</Typography>
+                                                        </Grid>
+                                                    </Grid> */}
 
                                                 </Grid>
                                                 {/*  <Grid item xs={12} md={6} alignItems='center'>
@@ -498,10 +535,10 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                                         <Typography>{valuePDF}</Typography>
                                                     </IconButton>
                                                 </Grid>*/}
-                                                    <Grid container item xs={6} md={6} >
-                                                        <Grid container item  >
-                                                        </Grid>
+                                                <Grid container item xs={6} md={6} >
+                                                    <Grid container item  >
                                                     </Grid>
+                                                </Grid>
 
                                             </Grid>
 
@@ -515,7 +552,7 @@ export const RegisterView: React.FC<Props> = (props: any): JSX.Element => {
                                                         fullWidth
                                                         variant="contained"
                                                         className='btn-register'
-                                                    // onClick={handleSubmit}
+                                                        onClick={() => { handleSubmit }}
                                                     >
                                                         Registrarse
                                                     </Button>
