@@ -31,6 +31,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CardComponent } from '@components/common/Card';
+import { ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 
 type ModalProps = {
     open: boolean,
@@ -40,16 +41,17 @@ type ModalProps = {
     setRecoveryData?: any,
     savePublication?: any,
     editPublication?: ({ }) => void,
+    statusDefault?:any
 }
 
 export const PublicarModal: React.FC<ModalProps> = (
     props: ModalProps
 ): JSX.Element => {
-    const { open, setOpen, dataInitial, recoveryData, setRecoveryData, savePublication, editPublication } = props;
+    const { open, setOpen, dataInitial, recoveryData, setRecoveryData, savePublication, editPublication, statusDefault } = props;
 
+    console.log(statusDefault)
     const [publication, setPublication] = useState(recoveryData.publication);
-    const [statusPatient, setStatusPatient] = useState(recoveryData.idstatus_patient);
-    const user_data = readLocalStorage(KEY_USER_DATA)
+    const [statusPatient, setStatusPatient] = useState(statusDefault);
 
     const [mensajeTemp, setMensajeTemp] = useState("")
     const [messageContent, setMessageContent] = React.useState([]);
@@ -57,6 +59,7 @@ export const PublicarModal: React.FC<ModalProps> = (
     const [messageCombinate, setMessageCombinate] = React.useState([]);
     const [statusText, setStatusText] = React.useState(false);
     const [statusFile, setStatusFile] = React.useState(false);
+    const userData = readLocalStorage(KEY_USER_DATA);
 
     const addContentText = (text) => {
         if (text) {
@@ -121,6 +124,8 @@ export const PublicarModal: React.FC<ModalProps> = (
             setStatusPatient(null)
             setRecoveryData({})
         } else {
+            console.log(statusDefault)
+            console.log(statusPatient)
             if (messageCombinate.length > 0 && statusPatient) {
                 // savePublication({
                 //     publication: publication,
@@ -160,9 +165,9 @@ export const PublicarModal: React.FC<ModalProps> = (
         // setPrintRequestError('')
     }
     useEffect(() => {
-        setPublication(recoveryData.publication)
-        setStatusPatient(recoveryData.idstatus_patient)
-    }, [recoveryData.publication])
+        console.log(statusDefault)
+        setStatusPatient(3)
+    }, [])
 
     const bodyModal = (
         <Box  sx={{
@@ -181,6 +186,7 @@ export const PublicarModal: React.FC<ModalProps> = (
                         size="small"
                         label='Seleccione Estado'
                         value={statusPatient}
+                        disabled={userData?.user?.role == ROLE_PROFESSIONAL?true:false}
                         onChange={(e) => { setStatusPatient(e.target.value) }}
                     >
                         {dataInitial.map((option: any) => (

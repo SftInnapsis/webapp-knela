@@ -10,7 +10,8 @@ export const doctorService = {
    createDoctorExcel,
    updateDoctor,
    deleteDoctor,
-   createDoctorIndependiente
+   createDoctorIndependiente,
+   aceptOrDeniedDoctorIndependent
 };
 
 async function getDoctorPage(perPage = null, page = null, medical_center, idarea = null) {
@@ -19,6 +20,7 @@ async function getDoctorPage(perPage = null, page = null, medical_center, idarea
 }
 async function getDoctorIndependientePage(){
    const doctor= await doctorRepository.getDoctorIndependientePage();
+   console.log(doctor)
    return doctor
 }
 async function getDoctorDataInitial() {
@@ -46,7 +48,7 @@ async function createDoctorExcel(dataDoctorExcel) {
 async function createDoctorIndependiente(dataDoctor) {
    const doctor = await doctorRepository.createDoctorIndependiente(dataDoctor);
    //Crear Fordata
-   const upFile = await doctorRepository.upFile(dataDoctor);
+   // const upFile = await doctorRepository.upFile(dataDoctor);
    return doctor
 }
 
@@ -54,6 +56,10 @@ async function createDoctorIndependiente(dataDoctor) {
 
 async function updateDoctor(id: number, dataDoctor) {
    const doctor = await doctorRepository.updateDoctor(id, dataDoctor);
+   return doctor
+}
+async function aceptOrDeniedDoctorIndependent(id: number, status) {
+   const doctor = await doctorRepository.aceptOrDeniedDoctorIndependent(id, status);
    return doctor
 }
 async function deleteDoctor(id: number, medical_center) {

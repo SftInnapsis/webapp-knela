@@ -1,5 +1,5 @@
 import { http } from '../http/http';
-import { API_URL_BASE } from '@toolbox/defaults/app';
+import { API_URL_BASE, ID_AMBULATORIO } from '@toolbox/defaults/app';
 import { readLocalStorage } from '@/toolbox/helpers/local-storage-helper';
 import { KEY_MEDICAL_CENTER } from '@/toolbox/constants/local-storage';
 
@@ -17,11 +17,33 @@ export const doctorRepository = {
       };
    },
    getDoctorIndependientePage: async (): Promise<any> => {
-      const id_medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
-      const doctorIndependiente = await http.get<any>(`${API_URL_BASE}/v1/userValidation?medical_center=${id_medical_center}` )
+      // const id_medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
+      const doctorIndependiente = await http.get<any>(`${API_URL_BASE}/v1/userValidation?medical_center=${ID_AMBULATORIO}` )
       const {data,error,message} = doctorIndependiente
       return {
-         data,
+         data: (data||[]).map((value)=>({
+            address: value.address,
+            curriculum: value.curriculum,
+            date_birth: value.date_birth,
+            dni: value.dni,
+            front_photo: value.front_photo,
+            id: value.id,
+            iddoctor: value.iddoctor,
+            iduser: value.iduser,
+            job_tittle: value.job_tittle,
+            last_name: value.last_name,
+            name_all : value.name+' '+value.last_name,
+            mail: value.mail,
+            name: value.name,
+            observations: value.observations,
+            rut: value.rut,
+            side_photo: value.side_photo,
+            specialty: value.specialty,
+            status: value.status,
+            status_validation: value.status_validation,
+            status_validation_name: value.status_validation == "0"? "Pendiente":  value.status_validation == "1"? "Aceptado": "Rechazado",
+            userRut: value.userRut
+       })),
          error,
          message
       };
@@ -79,7 +101,6 @@ export const doctorRepository = {
    },
 
    createDoctorExcel: async (dataExcel) : Promise<any> => {
-
       const resp= await http.post<any>(`${API_URL_BASE}/v1/doctor/load-excel`, dataExcel)
       return {
          status: resp.status,
@@ -90,18 +111,8 @@ export const doctorRepository = {
 
 
    createDoctorIndependiente: async (datadoctor) : Promise<any> => {
-
-      const resp= await http.post<any>(`${API_URL_BASE}/v1/doctor/createIndepent`, {
-        name: datadoctor?.name,
-        last_name: datadoctor?.last_name,
-        rut: datadoctor?.rut,
-        date_birth: datadoctor?.date_birth,
-        mail: datadoctor?.mail,
-        idspecialty: 2,
-        address: datadoctor?.address,
-        iddistrict: datadoctor?.iddistrict,
-        medical_center: 2
-      })
+      // const { name, last_name, rut, date_birth, mail, address } = datadoctor;
+      const resp= await http.post<any>(`${API_URL_BASE}/v1/doctor/createIndepent`,datadoctor)
       return {
          status: resp.status,
          message: resp.message,
@@ -131,6 +142,16 @@ export const doctorRepository = {
         medical_center: datadoctor?.medical_center,
         type_rol: datadoctor?.type_rol,
         name_rol: datadoctor?.name_rol,
+      })
+      return {
+         status: resp.status,
+         message: resp.message,
+         data: resp.data
+      };
+   },
+   aceptOrDeniedDoctorIndependent: async (id: number, statusDoc) : Promise<any> => {
+      const resp = await http.patch<any>(`${API_URL_BASE}/v1/doctor/changeStatusIndepent/${id}`, {
+        status: statusDoc
       })
       return {
          status: resp.status,

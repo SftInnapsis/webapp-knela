@@ -82,14 +82,14 @@ export const BusinessAreaView: React.FC<any> = (props: any): JSX.Element => {
                         ...prev,
                         open: true,
                         severity: 'success',
-                        message: 'Se Desahabilito el Centro Medico con éxito',
+                        message: 'Se Desahabilito el Area con éxito',
                      }));
                 }else{
                     setSnackBarConfig(prev => ({
                         ...prev,
                         open: true,
                         severity: 'success',
-                        message: 'No se puedo desahibilitar el Centro Medico',
+                        message: 'No se puedo desahibilitar el Area',
                      }));
                 }
                 getDataInitial();

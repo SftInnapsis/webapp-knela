@@ -7,11 +7,12 @@ import { KEY_MEDICAL_CENTER, KEY_OPTIONS_MEDICAL_CENTER, KEY_USER_DATA } from '@
 import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
 
 export const authenticationRepository = {
-   login: async (rut: string, password: string, perfil :number): Promise<Login> => {
+   login: async (rut: string, password: string, perfil :number, from = ''): Promise<Login> => {
       const resp = await http.post<LoginDTO>(`${API_URL_BASE}/v1/auth/login`, {
          rut: rut,
          password: password,
-         type_user:perfil
+         type_user:perfil,
+         from:from
       })
       return {
          error: resp.error,

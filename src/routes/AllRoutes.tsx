@@ -28,6 +28,8 @@ import { DoctorIndependiente } from '@/views/DoctorIndependiente';
 import { ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 import { AttentionKnelaView } from '@/views/Attention/AttentionKnela';
 import { AccountPerfil } from '@/components/common/Header/AccountPerfil';
+import { DetailDoctorIndp } from '@/views/DetailDoctorIndp';
+import { PatientInd } from '@/views/PatientInd';
 
 const AllRoutes: React.FC = () => {
 
@@ -41,6 +43,10 @@ const AllRoutes: React.FC = () => {
 
    const modulePatient = [
       <PrivateRoute key={5} exact path={Routes.ROUTE_PATIENT} component={Patient} />,
+   ];
+
+   const modulePatientInd = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_PATIENT_INDEPENDIENTE} component={PatientInd} />,
    ];
 
    const modulePatientTutor = [
@@ -84,6 +90,9 @@ const AllRoutes: React.FC = () => {
    const moduleDoctorIndependiente = [
       <PrivateRoute key={5} exact path={Routes.ROUTE_DOCTORES_INDEPENDIENTES} component={DoctorIndependiente} />
    ]
+   const moduleDetailDoctorIndependiente = [
+      <PrivateRoute key={5} exact path={Routes.ROUTE_DETAIL_DOCTORES_INDEPENDIENTES} component={DetailDoctorIndp} />
+   ]
    const moduleAccountPerfil = [
       <PrivateRoute key={5} exact path={Routes.ROUTE_ACCOUNT_PERFIL} component={AccountPerfil} />
    ]
@@ -113,7 +122,9 @@ const AllRoutes: React.FC = () => {
                      {modulePatientMaster}
                      {moduleProfessional}
                      {moduleSpeciality} */}
+                     {modulePatientInd}
                      {moduleDoctorIndependiente}
+                     {moduleDetailDoctorIndependiente}
                      {modulePatientTutor}
                      {moduleAccountPerfil}
 
@@ -133,6 +144,7 @@ const AllRoutes: React.FC = () => {
                      {moduleDoctors}
                      {moduleMedicalCenter}
                      {modulePatient}
+                     {modulePatientInd}
                      {modulePatientMaster}
                      {moduleProfessional}
                      {moduleSpeciality}
@@ -155,6 +167,7 @@ const AllRoutes: React.FC = () => {
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {moduleHome}
                      {modulePatient}
+                     {modulePatientInd}
                      {moduleBusinessArea}
                      {modulePatientTutor}
                      {moduleAccountPerfil}
@@ -171,6 +184,7 @@ const AllRoutes: React.FC = () => {
                      <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                      {moduleHome}
                      {modulePatient}
+                     {modulePatientInd}
                      {moduleBusinessArea}
                      {modulePatientTutor}
                      {moduleAccountPerfil}
@@ -187,6 +201,7 @@ const AllRoutes: React.FC = () => {
                         <AuthRoute exact path={Routes.ROUTE_LOGIN} component={LoginView} />
                         {moduleHome}
                         {modulePatient}
+                        {modulePatientInd}
                         {moduleBusinessArea}
                         {modulePatientTutor}
                         {moduleAccountPerfil}
@@ -207,12 +222,14 @@ const AllRoutes: React.FC = () => {
                      {moduleDoctors}
                      {moduleMedicalCenter}
                      {modulePatient}
+                     {modulePatientInd}
                      {modulePatientMaster}
                      {moduleProfessional}
                      {moduleSpeciality}
                      {moduleAttention}
                      {moduleAttentionList}
                      {moduleDoctorIndependiente}
+                     {moduleDetailDoctorIndependiente}
                      {modulePatientTutor}
                      {moduleAttentionKnela}
                      {moduleAccountPerfil}

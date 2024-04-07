@@ -6,16 +6,20 @@ import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { PatientMaster } from "@/views/PatientMaster";
 import { Alert, Autocomplete, Button, Chip, Grid, MenuItem, Paper, Select, Snackbar, Stack, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
+import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
+import { ROLE_SUPER_ADMIN, ROLE_DOCTOR_IND} from "@/toolbox/defaults/static-roles";
 
 export const StepConfirmationKnela = (props) => {
 
+    const user_data = readLocalStorage(KEY_USER_DATA)
+    const role = user_data.user.role
     const { dataDoctor, dataTutor, dataPatient, dataStatusPatient,
         idStatus, handleChanges, typeSeguro, idType, handleChanges2,
         GenerateAttention, handleReset, handleBack } = props
     const [dataArea, setDataArea] = useState<any>([]);
     const [idArea, setIdArea] = useState(null);
     const [error, setError] = useState('')
-  
+
     const [observations, setObservations] = useState<any>({ text: '' })
     const handleInput = (event: any) => {
         const name_input = event.target.name;
@@ -28,7 +32,7 @@ export const StepConfirmationKnela = (props) => {
                 break;
         }
     };
-    
+
     const getAreasByMedicalCenter = async() => {
         const medicalCenter = readLocalStorage(KEY_MEDICAL_CENTER)
         const resp = await areaService.getDataAreaByMedicalCenter(medicalCenter);
@@ -36,7 +40,10 @@ export const StepConfirmationKnela = (props) => {
     }
 
     const handleGenerateAttention = () => {
-        if(!idArea){return setError('idArea')}
+        if( role !== ROLE_DOCTOR_IND){
+            if(!idArea){return setError('idArea')}
+        }
+
         GenerateAttention(observations, idArea)
     }
 
@@ -76,7 +83,8 @@ export const StepConfirmationKnela = (props) => {
                     </Select>
 
                 </Grid>
-                <Grid item md={4} >
+
+                { role !== ROLE_DOCTOR_IND &&<Grid item md={4} >
                     <Typography>Seleccione el Área de atención médica</Typography>
                     <Autocomplete
                      sx={{ bgcolor: '#fff' }}
@@ -95,7 +103,7 @@ export const StepConfirmationKnela = (props) => {
                         error={error == "idArea" ? true : false}
                         helperText={error == "idArea" ? "Campo requerido" : ""} />}
                   />
-                </Grid>
+                </Grid>}
                 </Grid>
                 <Grid item md={8}>
                     <form>

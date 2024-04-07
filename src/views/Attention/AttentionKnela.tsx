@@ -7,8 +7,18 @@ import { StepSearchDoctor, StepSearchPatient, StepSearchTutor } from "./Steps";
 import { StepConfirmation } from "./Steps/StepConfirmation";
 import { StepConfirmationKnela } from "./Steps/StepConfirmationKnela";
 import { StepSearchTeamMedical } from "./Steps/StepSearchTeamMedical";
+import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
+import { ROLE_SUPER_ADMIN, ROLE_DOCTOR_IND} from "@/toolbox/defaults/static-roles";
+import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
+import { useHistory } from "react-router-dom";
+import { ROUTE_HOME } from "@/toolbox/constants/route-map";
+import { Link } from "react-router-dom";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 export const AttentionKnelaView = (props) => {
+    const history = useHistory();
+    const user_data = readLocalStorage(KEY_USER_DATA)
+    const role = user_data.user.role
     const [dataInitial, setDataInitial] = useState<any>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [dataStatusPatient,setDataStatusPatient] = useState<any>([]);
@@ -92,15 +102,29 @@ export const AttentionKnelaView = (props) => {
         console.log(activeStep)
 
         //validar que cierto campos esten rellenados
-        const dta = {
-            idarea: dataArea.id, // me falta
-            idpatients:dataPatient?.id,
-            iddoctor: null,
-            idtutor: dataPatient?.tutor_id,
-            idstatus_patient: idStatus,
-            idtypeSeguro: dataPatient?.idTypeSeguro,
-            observations: dataObservation.text,
 
+        let dta;
+        if(role == ROLE_DOCTOR_IND){
+            dta = {
+                idarea: user_data.user.idarea, // me falta
+                idpatients:dataPatient?.id,
+                iddoctor: null,
+                idtutor: dataPatient?.tutor_id,
+                idstatus_patient: idStatus,
+                idtypeSeguro: dataPatient?.idTypeSeguro,
+                observations: dataObservation.text,
+            }
+        }else{
+            dta = {
+                idarea: dataArea.id, // me falta
+                idpatients:dataPatient?.id,
+                iddoctor: null,
+                idtutor: dataPatient?.tutor_id,
+                idstatus_patient: idStatus,
+                idtypeSeguro: dataPatient?.idTypeSeguro,
+                observations: dataObservation.text,
+
+            }
         }
 
         const resp_attention = await attentionService.createAttention(dta);
@@ -156,7 +180,7 @@ export const AttentionKnelaView = (props) => {
     // }
 
         useEffect(() => {
-            getDataInitial();
+            // getDataInitial();
             getStatusAttention();
             // getTypeAttention()
         }, [])
@@ -165,6 +189,19 @@ export const AttentionKnelaView = (props) => {
          <>
             <Protected>
                 <Box p={4}>
+                        {role == ROLE_DOCTOR_IND &&
+                            <Grid item xs={12} md={3} mt={2}>
+                                <Link to={ROUTE_HOME} className="link__css">
+                                    <Typography
+                                        variant="h6"
+                                        gutterBottom
+                                        className="link__css-back">
+                                        <ArrowBackIosIcon className="icon_back" />
+                                        Volver
+                                    </Typography>
+                                </Link>
+                            </Grid>
+                        }
                     {/* <Button onClick={()=>{createAttetion()}}>prueba</Button> */}
                     <Stepper activeStep={activeStep} orientation="vertical">
                         {steps.map((step, index) => (

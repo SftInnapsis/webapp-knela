@@ -9,6 +9,7 @@ import { ConfirmDialog } from '@components/common/DialogConfirm';
 import { ubigeoService } from "@/service/services/Ubigeo.service";
 import '../../components/common/Modal/Modal.sass';
 import { ModalMedicalCenter } from "./Modal";
+import { userService } from "@/service/services/User.service";
 
 export const MedicalCenter = (props) => {
    const [actionSelect,setActionSelect] = useState<any>('')
@@ -37,7 +38,7 @@ export const MedicalCenter = (props) => {
             setDataMedicalCenter(resp.data);
         }
     }
- 
+
     const RecuperarData = async (data) => {
         console.log(data)
         const { action, id, name } = data;
@@ -46,13 +47,17 @@ export const MedicalCenter = (props) => {
             case 'edit':
                 setData(data);
                 setOpen(true)
-                // setMedicalCenterSelected({
-                //    ...medicalCenterSelected, id:id, rut:data.rut, name:data.name, phone:data.phone, address:data.address, mail:data.mail
-                // })
                 break;
             case 'delete':
                 setDialog(prev => ({ ...prev, message: `¿Desea deshabilitar el Centro Medico ${name}?`, id: id, open: true, confirm: true }));
                 break;
+            case 'credential':
+                  const res = await userService.recoveryPassword(id, 20, id)
+                  if(res && res.data)
+                  {
+                  setSnackBarConfig({...snackBarConfig, open:true, severity:'success', message:res.data})
+                  }
+               break;
             default:
                 break;
         }
@@ -98,7 +103,7 @@ export const MedicalCenter = (props) => {
                 onConfirm={() => Delete()}
                 onClose={() => setDialog(prev => ({ ...prev, open: false }))}
             />
-          
+
              <Snackbar
                open={snackBarConfig.open}
                autoHideDuration={snackBarConfig.autoHideDuration}
@@ -140,7 +145,8 @@ export const MedicalCenter = (props) => {
                 RecuperarData={RecuperarData}
                 actionSelect={setActionSelect}
                 setModalSave={setOpen}
-            
+                credential={true}
+
             />
         </Protected>
     );

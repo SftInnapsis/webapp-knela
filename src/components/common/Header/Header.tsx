@@ -64,7 +64,7 @@ export const HeaderView = (props: any): JSX.Element => {
       padding: theme.spacing(0, 5),
     },
   }));
-  
+
   return (
     <header>
       <StyledRoot>
@@ -98,7 +98,7 @@ export const HeaderView = (props: any): JSX.Element => {
               </Box>
               {/* {mostrarCombo()} */}
               {/*Icono Notificacion*/}
-              <IconButton
+              {/* <IconButton
                 sx={{ marginLeft: "5px" }}
                 aria-label="delete"
                 size="large"
@@ -111,17 +111,17 @@ export const HeaderView = (props: any): JSX.Element => {
                   />
 
                 </Badge>
-              </IconButton>
+              </IconButton> */}
 
               {/*Icono User*/}
               <IconButton>
                 <AccountPopover />
               </IconButton>
 
-              <NotificacionModal
+              {/* <NotificacionModal
                 open={modalNotification}
                 setOpen={setModalNotification}
-              />
+              /> */}
 
             </Grid>
 

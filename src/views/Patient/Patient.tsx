@@ -31,6 +31,8 @@ import { CardComponent } from '@components/common/Card';
 import { chatService } from "@/service/services/Chat.service";
 import { ParticipantChatModal } from "./ParticipantChatModal";
 import { ConfirmDialog } from "@/components/common/DialogConfirm";
+import WorkIcon from '@mui/icons-material/Work';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 export const PatientView = (props) => {
     const item = props.location.state.dataPaciente;
@@ -84,7 +86,7 @@ export const PatientView = (props) => {
         const formData = new FormData();
         formData.append('medical_center', MedicalCenterReducer.id_medical_center);
         formData.append('idattention', item?.id);
-        formData.append('idstatus_patient', statusPatient);
+        formData.append('idstatus_patient',  userData?.user?.role == ROLE_PROFESSIONAL ? statusDefault: statusPatient);
         formData.append('iddoctor', userData?.user?.role == ROLE_PROFESSIONAL ? null : userData?.user?.id_doctor);
         formData.append('idprofessional', userData?.user?.role == ROLE_PROFESSIONAL ? userData?.user?.id_professional : '');
         formData.append('idpublication_type', userData?.user?.role == ROLE_PROFESSIONAL && userData?.user?.name_area == 'Administrativo' ? '2' : '1');
@@ -389,7 +391,7 @@ export const PatientView = (props) => {
                                                 color="#28c4ac"
                                                 mt={1}
                                                 className="texto-card2">
-                                                Equipo
+                                                Chat
                                             </Typography>
                                         </Grid>
                                     {<Grid item xs={4} md={2} mt={2}>
@@ -405,7 +407,7 @@ export const PatientView = (props) => {
                                                 <CardMedia component="text" height="90" />
                                                 <Grid container className="texto-encima">
                                                     <Grid item container xs={12} justifyContent='center' alignItems='center'>
-                                                        <FavoriteBorderIcon
+                                                        <AssessmentIcon
                                                             sx={{ fontSize: 60, color: "white" }} />
                                                     </Grid>
                                                 </Grid>
@@ -419,7 +421,7 @@ export const PatientView = (props) => {
                                             color="#28c4ac"
                                             mt={1}
                                             className="texto-card2">
-                                            Solicitud Recibida
+                                            Familia
                                         </Typography>
                                     </Grid>}
                                     {/* <Grid item xs={4} md={2} mt={2}>
@@ -555,6 +557,7 @@ export const PatientView = (props) => {
                 dataInitial={estado}
                 recoveryData={recoveryData}
                 setRecoveryData={setRecoveryData}
+                statusDefault={statusDefault}
             />
             <ParticipantChatModal
              open={showModalEquipo}

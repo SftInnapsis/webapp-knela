@@ -42,7 +42,7 @@ export const PatientTutorView = (props) => {
 
     const [mensajePaciente, setmensajePaciente] = React.useState([]);
     const [statusDefault, setstatusDefault] = React.useState(null)
-    const [typePublication, setTypePublication] = React.useState('')
+    const [typePublication, setTypePublication] = React.useState(-1)
     const [statusName, setStatusName] = useState(null)
     const [estado, setEstado] = React.useState([])
     const [recoveryData, setRecoveryData] = React.useState({})
@@ -59,7 +59,8 @@ export const PatientTutorView = (props) => {
     const [printRequestError, setPrintRequestError] = React.useState('');
     console.log(item)
 
-    const getStatusPatient = async (id_typePublication) => {
+    const getStatusPatient = async (type_publication) => {
+      const id_typePublication = type_publication == 0? '': type_publication;
         const res = await attentionService.getStatusUpdatePatient([item?.idpatients], MedicalCenterReducer.id_medical_center, id_typePublication,[item?.id]);
         if (res.data && res.data.status !== false) {
             console.log(res.data.length);
@@ -112,7 +113,8 @@ export const PatientTutorView = (props) => {
             }
         })
         if (data && data.length > 0) {
-            const res = await RequestService.createRequest(MedicalCenterReducer.id_medical_center, item.id, item.idtutor, cont_txt, cont_file, formData)
+            // const transmitter_solicitud = item.idtutor? item.idtutor : item.idpatients;
+            const res = await RequestService.createRequest(MedicalCenterReducer.id_medical_center, item.id, item.idtutor?item.idtutor:'',item.idpatients?item.idpatients:'' ,cont_txt, cont_file, formData)
             if (res?.data?.message && res?.data?.detail) {
                 const { message = '' } = res.data;
                 setSnackBarConfig(prev => ({
@@ -132,6 +134,7 @@ export const PatientTutorView = (props) => {
     }
     React.useEffect(() => {
         dataInitialStatusPatient()
+        setTypePublication(1);
         getStatusPatient(typePublication)
         getSendRequest()
     }, [MedicalCenterReducer.id_medical_center])
@@ -273,7 +276,7 @@ export const PatientTutorView = (props) => {
                                     </Grid>}
                                 </Grid>
                                 <Grid item container xs={12} md={4} direction={'row'} justifyContent={'flex-end'} spacing={1}>
-                                    {dataUser?.user?.role == ROLE_TUTOR &&
+                                    {/* {dataUser?.user?.role == ROLE_TUTOR && */}
                                         <Grid item xs={4} md={2} mt={1}>
                                             <Card
                                                 key={item.id}
@@ -303,7 +306,7 @@ export const PatientTutorView = (props) => {
                                                 className="texto-card2">
                                                 Generar Solicitud
                                             </Typography>
-                                        </Grid>}
+                                        </Grid>
                                     {<Grid item xs={4} md={2} mt={1}>
                                         <Card
                                             key={item.id}
@@ -360,8 +363,8 @@ export const PatientTutorView = (props) => {
                                             value={typePublication}
                                             onChange={handleChangePublication}
                                         >
-                                            <MenuItem value={''}>
-                                                All
+                                            <MenuItem value={0}>
+                                                Todos
                                             </MenuItem>
                                             <MenuItem value={1}>
                                                 Publicación médica

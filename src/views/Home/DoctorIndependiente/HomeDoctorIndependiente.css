@@ -1,0 +1,59 @@
+.icon_back{
+   margin-bottom: -4px;
+}
+.title__main{
+   color: #202020;
+   /* font-family: 'Tourney', cursive !important; */
+   /* font-family: 'Basic Sans' !important;  */
+   font-weight: bolder !important;
+   /* font-style: italic; */
+}
+.subtitle_doctor{
+   color: #28c4ac;
+   /* font-family: 'Tourney', cursive !important; */
+   /* font-family: 'Basic Sans' !important;  */
+   font-weight: bolder !important;
+   text-align: end !important;
+   /* font-style: italic; */
+}
+
+.containerInvite{
+   padding: 7px;
+}
+.link__css-back{
+   /* text-decoration: none; */
+   font-weight: bold !important;
+   color: #202020;
+   /* color: #1c4e81!important; */
+/* font-weight: bold; */
+   /* font-size: 22px; */
+   /* font-family:  Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
+}
+.link__css{
+   text-decoration: none!important;
+   /* font-style: italic; */
+
+   /* font-size: 22px; */
+   /* font-family:  Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
+}
+.texto-encima{
+   bottom: 1px;
+   text-align: start !important;
+   text-decoration: none!important;
+}
+.texto-card{
+   font-weight: bolder !important;
+   text-decoration: none!important;
+   color: brown;
+   }
+.texto-card2{
+   text-decoration: none!important;
+   font-weight: bolder !important;
+       /* font-weight: bolder !important; */
+}
+.texto-card3{
+   text-decoration: none!important;
+   color: red;
+   font-weight: bolder !important;
+       /* font-weight: bolder !important; */
+}

@@ -10,7 +10,7 @@ import { ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 import { userService } from '@/service/services/User.service';
 import { SaveIcon, CancelIcon } from "@toolbox/constants/icons";
 import { AccountPerfil } from './AccountPerfil';
-import { ROUTE_ACCOUNT_PERFIL } from '@/toolbox/constants/route-map';
+import { ROUTE_ACCOUNT_PERFIL, ROUTE_HOME } from '@/toolbox/constants/route-map';
 import { useHistory } from 'react-router-dom';
 // mocks_
 // import account from '../../../_mock/account';
@@ -30,10 +30,10 @@ const MENU_OPTIONS = [
     label: 'Cambiar contraseña',
     icon: 'eva:person-fill',
   },
-  {
-    label: 'Configuración',
-    icon: 'eva:settings-2-fill',
-  },
+//   {
+//     label: 'Configuración',
+//     icon: 'eva:settings-2-fill',
+//   },
 ];
 
 // ----------------------------------------------------------------------
@@ -67,13 +67,17 @@ export default function AccountPopover() {
 
   const handleClose = (label) => {
     setOpen(null);
+    console.log(label)
+    if(label == 'Inicio'){
+      history.push(ROUTE_HOME)
+    }
     if(label == 'Cambiar contraseña'){
       setOpenModal(true)
     }
     else if (label == 'Perfil'){
       //acepta solo rutas
       history.push(ROUTE_ACCOUNT_PERFIL)
-      } 
+      }
   };
 
   const [openModal, setOpenModal] = useState<any>(false);
@@ -205,7 +209,7 @@ export default function AccountPopover() {
                             onClick={() => { setOpenModal(false) }}
                             variant="contained"
                             fullWidth
-                            color="error"             
+                            color="error"
                             startIcon={<CancelIcon />}
                             sx={{ background: '#FFBB34', color: '#fff', mt: '10px', '&:hover': { bgcolor: '#bf6c00' } }}>
                             Cancelar

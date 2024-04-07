@@ -26,7 +26,7 @@ import FactCheckIcon from '@mui/icons-material/FactCheck';
 import { HomeDoctor } from './Doctor';
 import { HomeTutor } from './Tutor' ;
 import { HomePatient } from './Paciente';
-import { ROLE_DOCTOR, ROLE_SUPER_ADMIN, ROLE_TUTOR, ROLE_PACIENTE } from '@/toolbox/defaults/static-roles';
+import { ROLE_DOCTOR, ROLE_SUPER_ADMIN, ROLE_TUTOR, ROLE_PACIENTE, ROLE_DOCTOR_IND } from '@/toolbox/defaults/static-roles';
 import { MedicalCenter } from '../MedicalCenter';
 import { ROLE_ADMIN, ROLE_PROFESSIONAL } from '@/toolbox/constants/role-type';
 import { Doctor } from '../Doctors';
@@ -35,6 +35,7 @@ import { DoctorView } from '../Doctors/Doctors';
 import { useHistory } from 'react-router-dom';
 import { AttentionView } from '../Attention';
 import { AttentionKnelaView } from '../Attention/AttentionKnela';
+import { HomeDoctorIndependiente } from './DoctorIndependiente';
 
 export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
    const { MessageReducer='' ,MedicalCenterReducer} = props;
@@ -83,6 +84,9 @@ export const HomeView: React.FC<Props> = (props: any): JSX.Element => {
          case ROLE_PACIENTE:
             console.log('paciente')
             return<HomePatient/>
+         case ROLE_DOCTOR_IND:
+            console.log('doctor_indp')
+            return<HomeDoctorIndependiente/>
             default:
                console.log('default')
                return <HomeDoctor/>

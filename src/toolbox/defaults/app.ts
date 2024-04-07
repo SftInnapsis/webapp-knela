@@ -6,6 +6,7 @@ export const API_URL_BASE = process.env.REACT_APP_API_URL;
 export const API_URL_BASE_FRONT = process.env.REACT_APP_URL;
 export const API_URL_BYPASS = process.env.REACT_APP_API_URL_BYPASS;
 export const API_URL_SOFTNET = process.env.REACT_APP_API_URL_SOFTNET;
+export const ID_AMBULATORIO = process.env.REACT_APP_ID_AMBULATORIO;
 
 export const APP_AUTHORIZE_KEY = process.env.REACT_APP_AUTHORIZE_KEY || '-';
 

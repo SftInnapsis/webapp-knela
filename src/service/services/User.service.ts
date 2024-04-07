@@ -50,7 +50,9 @@ export const userService = {
    },
    getUserData: () =>{
       return userRepository.getUserData();
-   }
+   },
+   collectionOfUserInformation,
+   recoverPassword
 };
 
 async function getUser () {
@@ -76,8 +78,17 @@ async function ResendPassword(idusuario)
    return user
 }
 
-async function recoveryPassword(id_user, rol_type) {
-   const user = await userRepository.recoveryPassword(id_user, rol_type);
+async function recoveryPassword(id_user, rol_type,medicalCenter=null) {
+   const user = await userRepository.recoveryPassword(id_user, rol_type,medicalCenter);
    return user
 }
 
+async function collectionOfUserInformation(id_user, userType) {
+   const user = await userRepository.collectionOfUserInformation(id_user, userType);
+   return user
+}
+
+async function recoverPassword(rut, rol_type) {
+   const user = await userRepository.recoverPassword(rut, rol_type,);
+   return user
+}

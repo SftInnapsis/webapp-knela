@@ -26,6 +26,9 @@ export const ROUTE_PATIENT_MASTER = "/patient-master";
 export const ROUTE_PATIENT         = "/patient";
 export const ROUTE_PATIENT_TUTOR   = "/patient-tutor";
 export const ROUTE_ATTENTION        = "/attention";
-export const ROUTE_ATTENTION_KNELA = "/attention-knela"
-export const ROUTE_ATTENTION_LIST = "/attenttion-list"
-export const ROUTE_DOCTORES_INDEPENDIENTES = "/doc-ind-solicitudes"
+export const ROUTE_ATTENTION_KNELA = "/attention-knela";
+export const ROUTE_ATTENTION_LIST = "/attenttion-list";
+export const ROUTE_DOCTORES_INDEPENDIENTES = "/doc-ind-solicitudes";
+export const ROUTE_DETAIL_DOCTORES_INDEPENDIENTES = "/doc-ind-solicitudes/detalle";
+export const ROUTE_PATIENT_INDEPENDIENTE        = "/patientind";
+

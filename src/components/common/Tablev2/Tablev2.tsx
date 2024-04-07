@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Paper, TableBody, TableCell, TableContainer, Typography, TableHead, TablePagination, TableRow, Grid, Table,ButtonGroup, createTheme, ThemeProvider, Button, Container, Stack, Card, Checkbox, Avatar, IconButton, Popover, MenuItem, Chip, InputBase, Modal } from '@mui/material';
 import { esES } from '@mui/material/locale';
-import { VisibilityIcon, PencilIcon, DeleteIcon, MoreIcon, UsersIcon, DeleteRedIcon } from "@toolbox/constants/icons";
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { Link } from 'react-router-dom';
@@ -32,7 +31,8 @@ import { Box } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
 import PanToolAltIcon from '@mui/icons-material/PanToolAlt';
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import DoneIcon from '@mui/icons-material/Done';
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import PersonIcon from '@mui/icons-material/Person';
@@ -66,7 +66,10 @@ type TableProps = {
    openImport?:any,
    add_tutor_button?:any,
    credential?:any,
-   disabled_edit?:any
+   disabled_edit?:any,
+   view?:any,
+   accept?:any,
+   select_asing?:any
 }
 
 // ----------------------------------------------------------------------
@@ -256,7 +259,7 @@ export const TableDataV2: React.FC<TableProps> = (
 
 
                <Box sx={{ m: 1 }}>
-               {props?.button_import &&
+               {props?.button_import && !props.select_asing &&
                <>
                <Button
                   href={props?.ruta_import} target="_blank"
@@ -275,7 +278,7 @@ export const TableDataV2: React.FC<TableProps> = (
                </>
                }
                {
-               !props.disabled_action_save &&
+               !props.disabled_action_save  && !props.select_asing &&
                <Button
                   color="primary"
                   variant="contained"
@@ -366,7 +369,7 @@ export const TableDataV2: React.FC<TableProps> = (
                                        {
                                            ! props?.disabled_popover &&
                                              <>
-                                               {!props.disabled_edit &&
+                                               {!props.disabled_edit && !props.select_asing &&
                                                <Tooltip title="Editar" >
                                                <IconButton size="small" color="success" aria-label="view"
                                                     onClick={()=>{props.RecuperarData({...data,action:'edit'}); props.actionSelect('edit')}}
@@ -375,15 +378,33 @@ export const TableDataV2: React.FC<TableProps> = (
                                                 </IconButton>
                                                 </Tooltip>
                                                 }
-                                                <Tooltip title="Eliminar">
+                                               {!props.select_asing && <Tooltip title="Eliminar">
                                                 <IconButton size="small" color="error" aria-label="view"
                                                 onClick={()=>{props.RecuperarData({...data,action:'delete'})}}                                             >
                                                 <DeleteOutlineIcon fontSize='small' />
                                              </IconButton>
-                                             </Tooltip>
+                                             </Tooltip>}
                                              </>
                                           }
-                                           {props.credential &&
+                                           {props.view &&
+                                           <Tooltip title="Visualizar">
+                                             <IconButton size="small" color="primary" aria-label="view"
+                                                onClick={() => { props.RecuperarData({ ...data, action: 'view' }) }}
+                                             >
+                                                <VisibilityIcon fontSize='small' />
+                                             </IconButton>
+                                             </Tooltip>
+                                          }
+                                           {props.accept &&
+                                           <Tooltip title="Aceptar">
+                                             <IconButton size="small" color="primary" aria-label="view"
+                                                onClick={() => { props.RecuperarData({ ...data, action: 'accept' }) }}
+                                             >
+                                                <DoneIcon fontSize='small' />
+                                             </IconButton>
+                                             </Tooltip>
+                                          }
+                                           {props.credential && !props.select_asing &&
                                            <Tooltip title="Reenviar credenciales">
                                              <IconButton size="small" color="primary" aria-label="view"
                                                 onClick={() => { props.RecuperarData({ ...data, action: 'credential' }) }}
@@ -402,7 +423,7 @@ export const TableDataV2: React.FC<TableProps> = (
                                           </Tooltip>
                                           }
                                           {
-                                             props.add_tutor_button &&
+                                             props.add_tutor_button && !props.select_asing &&
                                              <Tooltip title="Agregar / Editar tutor">
                                              <IconButton size="small" color="warning" aria-label="view"
                                              onClick={() => { props.RecuperarData({ ...data, action: 'add_tutor' }) }}

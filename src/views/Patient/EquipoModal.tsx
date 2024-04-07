@@ -51,7 +51,8 @@ type ModalProps = {
    idChat?: any,
    typeChat?:any,
    MessageReducer?:any,
-   $action?:any
+   $action?:any,
+   dataCabecera?:any
    // message?:any
    //    editPatientMaster?: ({ }) => void,
 }
@@ -60,7 +61,7 @@ type ModalProps = {
 export const EquipoModalView: React.FC<ModalProps> = (
    props: ModalProps
 ): JSX.Element => {
-   const { open, setOpen, actionSelect, recoveryData, idChat, typeChat} = props
+   const { open, setOpen, actionSelect, recoveryData, idChat, typeChat, dataCabecera} = props
    const user_data = readLocalStorage(KEY_USER_DATA)
    const inputRef = createRef();
    const { MessageReducer ='' } = props;
@@ -195,11 +196,15 @@ export const EquipoModalView: React.FC<ModalProps> = (
                   src={logoknelaV2}
                   sx={{ width: 66, height: 66, mr: 2 }}
                />
-               <div style={{color:'#C22828', fontWeight:600,fontSize:'25px'}}>KNELA</div>
+              <Grid>
+              <div style={{color:'#C22828', fontWeight:600,fontSize:'25px',marginBottom:'6px'}}>KNELA</div>
+              <div style={{color:'#C22828',fontSize:'15px', marginBottom:'6px'}}>{typeChat == 2 ? dataCabecera.name : 'EQUIPO MÉDICO' }</div>
+              {typeChat == 2 && <div style={{color:'#C22828',fontSize:'12px'}}>{dataCabecera.name_rol }</div>}
+              </Grid>
             </Grid>
-            <Grid item container direction='row' xs={1}>
+            {/* <Grid item container direction='row' xs={1}>
                <ExpandMoreIcon />
-            </Grid>
+            </Grid> */}
          </Grid>
          <Grid item xs={12} md={12} sx={{ height: 550, bgcolor: '#F0F0F0' }} >
             {/* <List

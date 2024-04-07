@@ -9,6 +9,7 @@ import { Button, InputAdornment, Autocomplete, TextField, Grid, CircularProgress
 import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
 import { KEY_MEDICAL_CENTER } from "@/toolbox/constants/local-storage";
 import { userService } from "@/service/services/User.service";
+import { API_URL_BASE } from "@/toolbox/defaults/app";
 
 export const DoctorView = (props) => {
     const { MedicalCenterReducer = '' } = props;
@@ -84,7 +85,7 @@ export const DoctorView = (props) => {
                 setDialog(prev => ({ ...prev, message: `Seguro que quiere eliminar a ${name} ${last_name}`, id: id, medical_center: idmedical_center, open: true, confirm: true }));
                 break;
             case 'seleccionar':
-               //  props?.recuperarData(data);
+                props?.recuperarData(data);
                 break;
             case 'credential':
                const res = await userService.recoveryPassword(id, 4)
@@ -210,7 +211,7 @@ export const DoctorView = (props) => {
             status_action
             checkbox
             button_import={true}
-            ruta_import = {''}
+            ruta_import = {`${API_URL_BASE}/storage/app/public/DoctorExport.xlsx`}
             GenerateExportExcel={GenerateExportExcel}
             openImport={openImport}
             setOpenImport={setOpenImport}

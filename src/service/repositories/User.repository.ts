@@ -208,9 +208,19 @@ export const userRepository = {
       return resp;
    },
 
-   recoveryPassword: async (id_user,rol_type): Promise<any> => {
+   recoveryPassword: async (id_user,rol_type, medicalCenter=null): Promise<any> => {
       const dataUser = readLocalStorage(KEY_USER_DATA);
-      const response = await http.get<any>(`${API_URL_BASE}/v1/user/recoveryPass/${id_user}?rol_type=${rol_type}`);
+      const response = await http.get<any>(`${API_URL_BASE}/v1/user/recoveryPass/${id_user}?rol_type=${rol_type}&medical_center=${medicalCenter}`);
+      return response;
+   },
+
+   collectionOfUserInformation: async (id_user, userType): Promise<any> => {
+      const response = await http.get<any>(`${API_URL_BASE}/v1/user/dataInformation?userType=${userType}&id_user=${id_user}`);
+      return response;
+   },
+
+   recoverPassword: async (rut, rol_type): Promise<any> => {
+      const response = await http.get<any>(`${API_URL_BASE}/v1/user/recoverPassword/${rut}?rol_type=${rol_type}`);
       return response;
    },
 }

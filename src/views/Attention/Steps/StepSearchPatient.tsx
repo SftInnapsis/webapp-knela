@@ -15,7 +15,7 @@ export const StepSearchPatient = (props) => {
 
     return (
         <>
-        <PatientMaster isNOtProtected recuperarData={recuperarData} select_button={true} />
+        <PatientMaster isNOtProtected recuperarData={recuperarData} select_button={true} select_asing={true}/>
         </>
     )
 }

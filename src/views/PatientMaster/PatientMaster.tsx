@@ -1,18 +1,19 @@
 import { TableDataV2 } from "@/components/common/Tablev2";
 import { Protected } from "@/components/layout/Protected";
 import { patientService } from "@/service/services/Patient.service";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ConfirmDialog } from '@components/common/DialogConfirm';
 import { PatientMasterModal } from "./PatientMasterModal";
 import { SaveIcon, CancelIcon } from "@toolbox/constants/icons";
 import { Button, InputAdornment, Autocomplete, TextField, Grid, CircularProgress, Snackbar, Alert, FormControl, OutlinedInput, InputLabel, MenuItem, Select } from '@mui/material';
 import { readLocalStorage } from "@/toolbox/helpers/local-storage-helper";
-import { KEY_USER_DATA } from "@/toolbox/constants/local-storage";
-import { ROLE_SUPER_ADMIN } from "@/toolbox/defaults/static-roles";
+import { KEY_MEDICAL_CENTER, KEY_USER_DATA } from "@/toolbox/constants/local-storage";
+import { ROLE_SUPER_ADMIN, ROLE_DOCTOR_IND} from "@/toolbox/defaults/static-roles";
 import { tutorService } from "@/service/services/Tutor.service";
 import { ModalTutor } from "../Tutor/ModalTutor"
 import { userService } from "@/service/services/User.service";
 import { ModalEditTutor } from "../Tutor/ModalEditTutor";
+import { API_URL_BASE } from "@/toolbox/defaults/app";
 
 export const PatientMasterView = (props) => {
    console.log(props)
@@ -20,6 +21,7 @@ export const PatientMasterView = (props) => {
    const role = user_data.user.role
    const { MedicalCenterReducer = '' } = props;
    const [dataPatient, setDataPatient] = useState<any>([]);
+   const [openImport,setOpenImport] = useState<boolean>(false);
    const [open, setOpen] = useState<boolean>(false);
    const [openModalTutor, setOpenModalTutor] = useState<boolean>(false)
    const [openEditModalTutor, setOpenEditModalTutor] = useState<boolean>(false)
@@ -60,22 +62,41 @@ export const PatientMasterView = (props) => {
       console.log(file);
    }
 
-   const GenerateExportExcel = async () => {
+   const GenerateExportExcel = async (file) => {
+      console.log(file)
+      const idMedicalCenter = readLocalStorage(KEY_MEDICAL_CENTER)
       const formFile = new FormData();
-      formFile.append('file', saveFile.data || null);
+      if(!file?.data){return setSnackBarConfig({...snackBarConfig, open:true, severity:'error', message:'No añadió ningun archivo'})}
+      formFile.append('file', file.data || null);
+      formFile.append('medical_center', idMedicalCenter || null);
+      console.log('shshs')
+      const resp = await patientService.createPatientExcel(formFile);
+      if(resp){
+         setSnackBarConfig({...snackBarConfig, open:true, severity:'success',message:'Documento Importado con éxito'})
+      }
 
+      getDataPatient();
 
    }
 
 
    const getDataPatient = async () => {
+      console.log(role)
       if (role == ROLE_SUPER_ADMIN) {
          const resp: any = await patientService.getPatientPageAll();
          console.log(resp)
          if (resp.data) {
             setDataPatient(resp.data);
          }
-      } else {
+      }else if(role == ROLE_DOCTOR_IND){
+         const resp: any = await patientService.getPatientAmbulatorioPageAll(30, user_data.user.rut );
+         console.log(resp)
+         if (resp.data) {
+            setDataPatient(resp.data);
+         }
+        console.log(user_data.user.rut)
+      }
+      else {
          const resp: any = await patientService.getPatientPage(MedicalCenterReducer.id_medical_center);
          console.log(resp)
          if (resp.data) {
@@ -94,6 +115,14 @@ export const PatientMasterView = (props) => {
             setDataPatient(resp.data);
          }
 
+      }else if(role == ROLE_DOCTOR_IND){
+
+         const resp: any = await patientService.getPatientAmbulatorioSearch(30,user_data.user.rut, term );
+         console.log(resp)
+         if (resp.data) {
+            setDataPatient(resp.data);
+         }
+        console.log(user_data.user.rut)
       } else {
          const resp: any = await patientService.getPatientSearch(MedicalCenterReducer.id_medical_center, term);
          console.log(resp)
@@ -187,6 +216,7 @@ export const PatientMasterView = (props) => {
                severity: 'info',
                message: res.data.message,
             }));
+            getDataPatient();
             setOpen(false)
             setOpenModalTutor(true)
             setPatientCreated(res.data.detail)
@@ -258,6 +288,8 @@ export const PatientMasterView = (props) => {
    useEffect(() => {
       getDataPatient();
    }, [MedicalCenterReducer.id_medical_center])
+
+   // const initialData =  useMemo(()=>getDataPatient(),[dataPatient])
 
    const headerAdmin = [
       { name: 'rut', label: 'RUT', filter: false, Chip: false },
@@ -331,9 +363,12 @@ export const PatientMasterView = (props) => {
          status_action
          checkbox
          select_button={props?.select_button ? true : false}
+         select_asing={props?.select_asing ? true : false}
          button_import={true}
          add_tutor_button
-         ruta_import={''}
+         ruta_import = {`${API_URL_BASE}/storage/app/public/PacienteExport.xlsx`}
+         openImport={openImport}
+         setOpenImport={setOpenImport}
          // changefile={changefile}
          GenerateExportExcel={GenerateExportExcel}
          title={'Pacientes'}

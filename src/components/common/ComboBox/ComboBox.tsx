@@ -24,6 +24,7 @@ const ComboBoxView = (props: any): JSX.Element => {
 
   const dataUser: any = readLocalStorage(KEY_USER_DATA);
   const initialMedicalCenter = readLocalStorage(KEY_MEDICAL_CENTER)
+  console.log(initialMedicalCenter)
   const [ubicationclinica, setubicationclinica] = useState(props.MedicalCenterReducer.id_medical_center?props.MedicalCenterReducer.id_medical_center:initialMedicalCenter);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);

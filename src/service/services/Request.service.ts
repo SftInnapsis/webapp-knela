@@ -9,7 +9,7 @@ async function getRequest(id, medical_center) {
     return tutor;
 }
 
-async function createRequest(medical_center, idattention, idtutor, countTexts, countFiles, data) {
-    const tutor = await RequestRepository.createRequest(medical_center, idattention, idtutor, countTexts, countFiles, data);
+async function createRequest(medical_center, idattention, idtutor,idpatients, countTexts, countFiles, data) {
+    const tutor = await RequestRepository.createRequest(medical_center, idattention, idtutor,idpatients, countTexts, countFiles, data);
     return tutor;
 }

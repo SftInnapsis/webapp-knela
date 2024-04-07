@@ -47,6 +47,70 @@ export const patientRepository = {
          message
       };
    },
+   getPatientAmbulatorioPageAll: async (id_medical_center,rut_doctorInd): Promise<any> => {
+      const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
+      const patient = await http.get<any>(`${API_URL_BASE}/v1/patients/for_doc_ind?medical_center=${id_medical_center}&rut_doctorInd=${rut_doctorInd}` )
+      const {data,error,message} = patient
+      console.log(data)
+      return {
+         // data,
+         data : (data||[]).map((dt) => ({
+            id: dt.id,
+            idTypeSeguro: dt.idTypeSeguro,
+            date_birth: dt.date_birth,
+            idmedical_center: dt.idmedical_center,
+            name: dt.name,
+            last_name: dt.last_name,
+            full_name: dt.name + ' ' +  dt.last_name,
+            mail: dt.mail,
+            medicalCenter_name: dt.medicalCenter_name,
+            medicalCenter_rut: dt.medicalCenter_rut,
+            nameTypeSeguro: dt.nameTypeSeguro,
+            rut: dt.rut,
+            status: dt.status,
+            tutor_id:dt.tutor_id,
+            tutor_last_name: dt.tutor_last_name,
+            tutor_name: dt.tutor_name,
+            tutor_mail: dt.tutor_mail,
+            full_name_tutor: dt.tutor_name ? dt.tutor_name + ' ' + dt.tutor_last_name: '',
+            tutor_rut: dt.tutor_rut
+         })),
+         error,
+         message
+      };
+   },
+   getPatientAmbulatorioSearch: async (id_medical_center,rut_doctorInd, term): Promise<any> => {
+      const medical_centerr = readLocalStorage(KEY_MEDICAL_CENTER)
+      const patient = await http.get<any>(`${API_URL_BASE}/v1/patients/for_doc_ind?medical_center=${id_medical_center}&rut_doctorInd=${rut_doctorInd}&term=${term}` )
+      const {data,error,message} = patient
+      console.log(data)
+      return {
+         // data,
+         data : (data||[]).map((dt) => ({
+            id: dt.id,
+            idTypeSeguro: dt.idTypeSeguro,
+            date_birth: dt.date_birth,
+            idmedical_center: dt.idmedical_center,
+            name: dt.name,
+            last_name: dt.last_name,
+            full_name: dt.name + ' ' +  dt.last_name,
+            mail: dt.mail,
+            medicalCenter_name: dt.medicalCenter_name,
+            medicalCenter_rut: dt.medicalCenter_rut,
+            nameTypeSeguro: dt.nameTypeSeguro,
+            rut: dt.rut,
+            status: dt.status,
+            tutor_id:dt.tutor_id,
+            tutor_last_name: dt.tutor_last_name,
+            tutor_name: dt.tutor_name,
+            tutor_mail: dt.tutor_mail,
+            full_name_tutor: dt.tutor_name ? dt.tutor_name + ' ' + dt.tutor_last_name: '',
+            tutor_rut: dt.tutor_rut
+         })),
+         error,
+         message
+      };
+   },
    getPatientSearch: async (perPage=null, page=null, idarea=null, medical_center=null, term): Promise<any> => {
       const patient = await http.get<any>(`${API_URL_BASE}/v1/patients?medical_center=${medical_center}&term=${term}` )
       const {data,error,message} = patient
@@ -81,6 +145,7 @@ export const patientRepository = {
         name: datapatient?.name,
         last_name: datapatient?.last_name,
         rut: datapatient?.rut,
+        idarea: datapatient?.idarea,
         date_birth: datapatient?.date_birth,
         mail: datapatient?.mail,
         medical_center: datapatient?.medical_center,
@@ -95,7 +160,6 @@ export const patientRepository = {
       };
    },
    createPatientExcel: async (dataExcel) : Promise<any> => {
-
       const resp= await http.post<any>(`${API_URL_BASE}/v1/patients/load-excel`, dataExcel)
       return {
          status: resp.status,
@@ -126,6 +190,16 @@ export const patientRepository = {
       const medical_center = readLocalStorage(KEY_MEDICAL_CENTER)
       const statusPatient = await http.get(`${API_URL_BASE}/v1/statusPatient?medical_center=${medical_center}`)
       return statusPatient
-   }
+   },
+
+    createDoctorExcel: async (dataExcel) : Promise<any> => {
+
+      const resp= await http.post<any>(`${API_URL_BASE}/v1/doctor/load-excel`, dataExcel)
+      return {
+         status: resp.status,
+         message: resp.message,
+         data: resp.data
+      };
+   },
 
 }

@@ -18,7 +18,7 @@ import { VisibilityIcon, VisibilityOffIcon } from '@toolbox/constants/icons';
 import { professionalService } from '@/service/services/Professional.service';
 import { ubigeoService } from '@/service/services/Ubigeo.service';
 import { areaService } from '@/service/services/Area.service';
-import { ROLE_ADMIN, ROLE_SUPER_ADMIN } from '@/toolbox/defaults/static-roles';
+import { ROLE_ADMIN, ROLE_SUPER_ADMIN, ROLE_DOCTOR_IND } from '@/toolbox/defaults/static-roles';
 import { medicalCenterService } from '@/service/services/MedicalCenter.service';
 
 
@@ -170,7 +170,8 @@ export const PatientMasterModal: React.FC<ModalProps> = (
          ...data,
          medical_center: user_data?.user?.role == ROLE_SUPER_ADMIN ? medicalCenter.id : medicalStorage,
          idTypeSeguro: idType,
-         nameTypeSeguro: valueTypeSeguro?.name
+         nameTypeSeguro: valueTypeSeguro?.name,
+         idarea: user_data?.user?.role == ROLE_DOCTOR_IND ? user_data?.user?.idarea : null
       }
       if (actionSelect == 'edit') {
          editPatientMaster(bodyRequest)

@@ -37,6 +37,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import PersonIcon from '@mui/icons-material/Person';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { chatService } from "@/service/services/Chat.service";
+import { userService } from "@/service/services/User.service";
 
 const theme = createTheme();
 
@@ -54,6 +55,7 @@ const theme = createTheme();
 
 export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
    const history = useHistory();
+
    const inputRefs = useRef<Array<InputRef | null>>([]);
    const [loadData, setLoadData] = useState<boolean>(false);
    const [open, setOpen] = useState<boolean>(false)
@@ -67,6 +69,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
       showPassword: false
    });
    const name = props.location.pathname.split("/")[2];
+   // const { rut_empresa, usuario, password } = props.location && qs.parse(ruta.slice(1, -1));
    // aca esta como descomponemos la ruta osea si www.lhdsfjj.com/login/admin toma admin y lo manda al switch
    // const msg = firebase.messaging();
    console.log(name);
@@ -79,7 +82,32 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
    const [verify, setVerify] = useState(false);
 
    const ruta = props.location.search + '.';
-   const { rut, password, idtype } = props.location && qs.parse(ruta.slice(1, -1));
+   const { r, pw } = props.location && qs.parse(ruta.slice(1, -1));
+   console.log(r +'----'+pw);
+   // const { rut, password, idtype } = props.location && qs.parse(ruta.slice(1, -1));
+
+   const validateTypeId = () => {
+      switch (name) {
+         case 'admin':
+            return 1;
+         case 'admin-centro-medico':
+            return 2;
+         case 'doctor-independiente':
+            return 3;
+         case 'doctor':
+            return 4;
+         case 'paciente':
+            return 5;
+         case 'tutor':
+            return 6;
+         case 'equipo-medico':
+            return 8;
+         case 'profesional-admistrativo':
+            return 8;
+         default:
+            return null;
+      }
+   }
    const validateType = () => {
       // console.log(name)
       // estos son los logins de cada perfil
@@ -117,18 +145,18 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
    }
    useEffect(() => {
       validateType()
-      if (rut && idtype && password) {
+      console.log(r +'----'+pw);
+      if (r  && pw) {
          var decodeRut;
-         var decodeIdType;
          var decodePassword;
-
-         try {
-            decodeRut = atob(rut);
-            decodeIdType = atob(idtype);
-            decodePassword = atob(password);
-            authSubmit(decodeRut, decodePassword, decodeIdType);
-         } catch (error) {
-         }
+         // console.log(atob(r))
+         // try {
+            decodeRut = atob(r);
+            decodePassword = pw;
+            console.log(decodeRut)
+            authSubmit(decodeRut, decodePassword, validateTypeId(),'auth');
+         // } catch (error) {
+         // }
       }
    }, []);
 
@@ -230,9 +258,36 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
       }
    }
 
-   const authSubmit = async (rut, password, perfil) => {
+   const recoverPassword = async () =>{
+      const { rut, perfil } = data;
+
+    if(!rut){
+      setSnackBarConfig(prev => ({
+        ...prev,
+        open: true,
+        severity: 'warning',
+        message: "Debe rellenar el campo rut",
+     }));
+    }
+      if(rut && perfil)
+      {
+         const res = await userService.recoverPassword(rut, perfil);
+         if(res?.data)
+         {
+            setSnackBarConfig(prev => ({
+               ...prev,
+               open: true,
+               severity: res.data.severity,
+               message: res.data.message,
+            }));
+         }
+      }
+
+   }
+
+   const authSubmit = async (rut, password, perfil,from='') => {
       setLoading(true);
-      const response: any = await authenticationService.login(rut, password, perfil);
+      const response: any = await authenticationService.login(rut, password, perfil,from);
       // console.log(response.user.medical_center[0].id)
       console.log(response)
       if (response?.token == '') {
@@ -409,7 +464,7 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
                                     <FormControl fullWidth variant="outlined" >
                                        <OutlinedInput
                                           id="outlined-adornment-password"
-                                          placeholder={'rut'}
+                                          placeholder={'22222222-2'}
                                           name='rut'
                                           value={data.rut}
                                           onChange={handleInput}
@@ -456,10 +511,11 @@ export const LoginView: React.FC<Props> = (props: any): JSX.Element => {
                                  </Grid>
 
                                  <Grid mb={2} container justifyContent='end'>
-                                    <a className='forgot-password1' >
+                                    <a className='forgot-password1' onClick={()=>{recoverPassword()}}>
                                        ¿Olvidaste tu contraseña?
                                     </a>
                                  </Grid>
+
 
                                  <Grid container spacing={1} >
                                     <Grid item xs={12} md={12}>

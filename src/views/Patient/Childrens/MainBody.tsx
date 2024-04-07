@@ -49,6 +49,7 @@ export const MainBody: React.FC<ModalProps> = (
   return (
     <div className="main-chat-content" >
       {messages.map((message, index) => {
+         console.log(message)
         var defaultImageType = message.userSex || "M";
         return (
           <ChatItem
@@ -60,7 +61,7 @@ export const MainBody: React.FC<ModalProps> = (
             isMyMessage={message.userId == user.id}
             imageUpload={message.idsend_type == 3 ? (`${API_URL_BASE}/${message.message}`) : ""}
             file={message.idsend_type == 2 ? (`${API_URL_BASE}/${message.message}`) : ''}
-            hour={message.created_at}
+            hour={message.send_date}
           />
         );
       })}

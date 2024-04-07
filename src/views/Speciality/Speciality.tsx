@@ -29,7 +29,7 @@ export const SpecialtyView: React.FC<any> = (props: any): JSX.Element => {
         title: 'Eliminar',
         confirm: false,
         id: null,
-        message: `¿Desea eliminar al contacto --- con Rut ----?`
+        message: ``
     })
     const [snackBarConfig, setSnackBarConfig] = useState<any>({
         open: false,
@@ -38,7 +38,7 @@ export const SpecialtyView: React.FC<any> = (props: any): JSX.Element => {
         autoHideDuration: 5000,
      })
 
-   
+
     const getDataSpeciality = async () => {
         const resp: any = await SpecialityService.getSpecialtyPage();
         console.log(resp)
@@ -54,7 +54,7 @@ export const SpecialtyView: React.FC<any> = (props: any): JSX.Element => {
         }
     }
 
-    
+
     const RecuperarData = async (data) => {
         const { action, id } = data;
         switch (action) {
@@ -146,7 +146,7 @@ export const SpecialtyView: React.FC<any> = (props: any): JSX.Element => {
               getDataInitial = {getDataInitial}
               data = {data}
             />
-           
+
             <TableDataV2
                 data={dataSpeciality}
                 header={[

@@ -94,23 +94,23 @@ export default function NavSection() {
         }
       ]
     },
-    {
-      id:2,
-      name: "Reporte",
-      icon: <DashboardIcon/>,
-      rutas: [
-        {
-          name_ruta: "Atenciones",
-          location: "/reporte-atenciones",
-          icon: <AddToQueueIcon/>,
-        },
-        {
-          name_ruta: "Chats Cerrados",
-          location: "/chats-cerrados",
-          icon: <ChatIcon/>,
-        }
-      ]
-    }
+   //  {
+   //    id:2,
+   //    name: "Reporte",
+   //    icon: <DashboardIcon/>,
+   //    rutas: [
+   //      {
+   //        name_ruta: "Atenciones",
+   //        location: "/reporte-atenciones",
+   //        icon: <AddToQueueIcon/>,
+   //      },
+   //      {
+   //        name_ruta: "Chats Cerrados",
+   //        location: "/chats-cerrados",
+   //        icon: <ChatIcon/>,
+   //      }
+   //    ]
+   //  }
   ]
 
 
@@ -162,11 +162,11 @@ export default function NavSection() {
           location: ROUTE_DOCTORES_INDEPENDIENTES,
           icon: <AddCommentIcon/>,
         },
-        {
-          name_ruta: "Control",
-          location: "/membresias",
-          icon: <ThreePIcon/>,
-        }
+      //   {
+      //     name_ruta: "Control",
+      //     location: "/membresias",
+      //     icon: <ThreePIcon/>,
+      //   }
       ]
     },
     {

@@ -64,7 +64,15 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
     const [openModalEquipo, setOpenModalEquipo] = useState<any>(false)
     const [idChat, setIdChat] = useState<any>(null)
     const [typeChat, setTypeChat] = useState<any>(null)
+    const [nameParticipantReceptor, setnameParticipantReceptor] = useState<any>(null)
     const userData = readLocalStorage(KEY_USER_DATA)
+    const [snackBarConfig, setSnackBarConfig] = useState<any>({
+      open: false,
+      severity: 'warning',
+      message: 'Error',
+      autoHideDuration: 3000,
+   })
+
     const getListParticipants = async (idattention) => {
         const resp = await chatService.ListParticipantAtentiton(idattention);
         let particpanNotEmisor
@@ -80,10 +88,10 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
     }
    //  const [message, setMessage] = useState([]);
 
-    const validateOrCreateChat = async (idattention, id_participant_chat_receptor, id_participant_chat_emisor) => {
-        const resp = await chatService.validateOrCreateChatPrivate(idattention, id_participant_chat_receptor, id_participant_chat_emisor);
-        return resp?.data
-    }
+   //  const validateOrCreateChat = async (idattention, id_participant_chat_receptor, id_participant_chat_emisor) => {
+   //      const resp = await chatService.validateOrCreateChatPrivate(idattention, id_participant_chat_receptor, id_participant_chat_emisor);
+   //      return resp?.data;
+   //  }
 
     const abrirChatPublic = (idChat) => {
       if (idChat) {
@@ -95,23 +103,50 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
 
    const abrirChat = async (data) => {
       console.log(data);
-      let participantEmisorFind;
-      if(userData?.user?.role == ROLE_PROFESSIONAL){
-          participantEmisorFind = participantsPublic.find(item => item.idprofessional == userData?.user.id_professional)
-      }else{
-          participantEmisorFind = participantsPublic.find(item => item.iddoctor == userData?.user.id_doctor)
-      }
+      const {idParticipant } = data
+      if (idParticipant) {
+         let participantEmisorFind;
+         if (userData?.user?.role == ROLE_PROFESSIONAL) {
+            participantEmisorFind = participantsPublic.find(item => item.idprofessional == userData?.user.id_professional)
+         } else {
+            participantEmisorFind = participantsPublic.find(item => item.iddoctor == userData?.user.id_doctor)
+         }
+         setnameParticipantReceptor(data)
+         console.log('RECEPTOR'+idParticipant,'EMISOR'+participantEmisorFind?.idParticipant,'ATENCION'+idAttention);
+          if(idAttention && idParticipant &&  participantEmisorFind?.idParticipant)
+          {
+            const resp = await chatService.validateOrCreateChatPrivate(idAttention, idParticipant, participantEmisorFind?.idParticipant);
+            if(resp?.data)
+            {
+               const idChat = resp.data;
+               if (idChat) {
+                  setIdChat(idChat)
+                  setTypeChat(2)
+                  setOpenModalEquipo(true)
+               }
+            }
+          }
+          else{
+            setSnackBarConfig(prev => ({
+               ...prev,
+               open: true,
+               message: 'Error Recargar Página',
+            }));
+          }
+            // return resp?.data;
+         // const idChat = await validateOrCreateChat(idAttention, idParticipant, participantEmisorFind?.idParticipant)
+         // if (idChat) {
+         //    onListMessage(idChat)
+         // }
 
-      const idChat = await validateOrCreateChat(idAttention, data?.idParticipant, participantEmisorFind?.idParticipant)
-      // if (idChat) {
-      //    onListMessage(idChat)
-      // }
-    if(idChat)
-    {
-      setIdChat(idChat)
-      setTypeChat(2)
-      setOpenModalEquipo(true)
-    }
+      }else{
+         // window.location.reload();
+            setSnackBarConfig(prev => ({
+            ...prev,
+            open: true,
+            message: 'Recargar Página',
+         }));
+      }
    }
 
     useEffect(()=>{
@@ -151,9 +186,9 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
                />
                <div style={{color:'#C22828', fontWeight:600,fontSize:'25px'}}>KNELA</div>
             </Grid>
-            <Grid item container direction='row' xs={1}>
+            {/* <Grid item container direction='row' xs={1}>
                <ExpandMoreIcon />
-            </Grid>
+            </Grid> */}
          </Grid>
          <Grid>
                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
@@ -189,6 +224,20 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
 
    return (
       <div>
+          <Snackbar
+            open={snackBarConfig.open}
+            autoHideDuration={snackBarConfig.autoHideDuration}
+            onClose={() => setSnackBarConfig(prev => ({ ...prev, open: false }))}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+         >
+            <Alert
+               onClose={() => setSnackBarConfig(prev => ({ ...prev, open: false }))}
+               severity={snackBarConfig.severity}
+               variant="filled"
+            >
+               {snackBarConfig.message}
+            </Alert>
+         </Snackbar>
          <Modal
             open={open}
             onClose={() => { setOpen(false) }}>
@@ -199,6 +248,7 @@ export const ParticipantChatModal: React.FC<ModalProps> = (
                 setOpen={setOpenModalEquipo}
                 idChat = {idChat}
                 typeChat = {typeChat}
+                dataCabecera={nameParticipantReceptor}
                //  message={message}
             />
       </div>

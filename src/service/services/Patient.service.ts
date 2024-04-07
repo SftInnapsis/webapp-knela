@@ -1,6 +1,6 @@
 import { patientRepository } from "../repositories/Patient.respository";
 export const patientService = {
- 
+
    getPatientPage,
    getPatientPageAll,
    getPatientSearchAll,
@@ -9,7 +9,9 @@ export const patientService = {
    updatepatient,
    getStatusPatient,
    deletePatient,
-   getPatientSearch
+   getPatientSearch,
+   getPatientAmbulatorioPageAll,
+   getPatientAmbulatorioSearch
 };
 
 async function getPatientPage (medical_center) {
@@ -48,4 +50,14 @@ async function createPatient (dataArea) {
    const status = await patientRepository.getStatusPatient();
    return status
  }
+ async function getPatientAmbulatorioPageAll(id_medical_center,rut_doctorInd){
+   const status = await patientRepository.getPatientAmbulatorioPageAll(id_medical_center,rut_doctorInd);
+   return status
+ }
+ async function getPatientAmbulatorioSearch(id_medical_center,rut_doctorInd, term){
+   const status = await patientRepository.getPatientAmbulatorioSearch(id_medical_center,rut_doctorInd, term);
+   return status
+ }
+
+
 

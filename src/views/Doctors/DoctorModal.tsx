@@ -270,8 +270,8 @@ export const DoctorModal: React.FC<ModalProps> = (
       if (data.rut === '') { return setError('rut') }
       if (data.date_birth === '') { return setError('date_birth') }
       if (data.mail === '') { return setError('mail') }
-      let validate = ValidateEmail(data.mail)
-      if(!validate){return setError('mail_invalid') }
+      // let validate = ValidateEmail(data.mail)//se comento
+      // if(!validate){return setError('mail_invalid') }
       // if (data.address === '') { return setError('address') }
       // if (data.address.length >= 100) { return setError('address_limit') }
       if(!typeRol){return setError('idTypeRol')};
@@ -287,10 +287,10 @@ export const DoctorModal: React.FC<ModalProps> = (
          idarea: idArea.id,
          idspecialty: idEspecialidad.id,
          // iddistrict: iddistrito.id,
-         type_rol: typeRol.id,
-         name_rol: typeRol.name,
-         medical_center: medicalCenter.id,
-         iddoctor_type: idDoctorType.id
+         type_rol: typeRol.id ? typeRol.id :null,
+         name_rol: typeRol.name ? typeRol.name : '',
+         medical_center: medicalCenter.id? medicalCenter.id :null,
+         iddoctor_type: idDoctorType.id ? idDoctorType.id : null
       }
       if (actionSelect == 'edit') {
          editDoctor(bodyRequest)

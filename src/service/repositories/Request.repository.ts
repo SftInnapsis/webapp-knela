@@ -16,9 +16,9 @@ export const RequestRepository = {
         };
     },
 
-    createRequest: async (medical_center, idattention, idtutor, countTexts, countFiles, data): Promise<any> => {
+    createRequest: async (medical_center, idattention, idtutor, idpatients, countTexts, countFiles, data): Promise<any> => {
         const medical_centere = readLocalStorage(KEY_MEDICAL_CENTER)
-        const resp = await http.post<any>(`${API_URL_BASE}/v1/requestUpdate?medical_center=${medical_center}&idattention=${idattention}&idtutor=${idtutor}&countTexts=${countTexts}&countFiles=${countFiles}`,data)
+        const resp = await http.post<any>(`${API_URL_BASE}/v1/requestUpdate?medical_center=${medical_center}&idattention=${idattention}&idtutor=${idtutor}&idpatients=${idpatients}&countTexts=${countTexts}&countFiles=${countFiles}`,data)
         return {
             status: resp.status,
             message: resp.message,

@@ -65,7 +65,7 @@ export const HomeDoctorView = (props) => {
         console.log(elemento);
         history.push(ROUTE_PATIENT, { dataPaciente: elemento });
     };
-
+console.log(dataUser)
     const handleChanges = (event) => {
         const value = event.target.value
         setubicationclinica(event.target.value);
@@ -204,7 +204,7 @@ export const HomeDoctorView = (props) => {
                                                 className="title__main"
                                                 sx={{ textAlign: "start", color: "#28c4ac" }}
                                             >
-                                                 Mis Pacientes
+                                               Pacientes del área {dataUser?.user?.name_area}
                                             </Typography>
                                         </Grid>
                                     </Grid>
